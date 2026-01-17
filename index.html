@@ -1156,7 +1156,7 @@ function render() {
     <div class="container">
       ${renderHeader()}
       <main>${state.mainTab === 'kana' ? (state.activeTab === 'home' ? renderHome() : state.activeTab === 'write' ? renderWrite() : state.activeTab === 'free' ? renderFree() : renderQuiz()) : renderAdvanced()}</main>
-      ${state.mainTab === 'kana' ? renderNav() : ''}
+      ${renderNav()}
       ${state.showComplete ? renderCompletePopup() : ''}
     </div>
   `;
@@ -1544,7 +1544,7 @@ function renderListContent(data, title) {
   return `
     <div style="display:flex;flex-direction:column;gap:0.5rem;">
       ${data.map(item => `
-        <div class="card p-3 flex justify-between items-center">
+        <div class="card p-3 flex justify-between items-center adv-card" data-jp="${item.jp}" data-r="${item.r}" data-kr="${item.kr}" title="더블클릭으로 단어장 추가">
           <div>
             ${item.n ? `<span class="text-gray-500 mr-2">${item.n}</span>` : ''}
             <span class="font-bold text-indigo-600">${item.jp}</span>
@@ -1562,11 +1562,11 @@ function renderListContent(data, title) {
 
 function renderSimpleCard(item) {
   return `
-    <div class="card p-3 text-center">
+    <div class="card p-3 text-center adv-card" data-jp="${item.jp}" data-r="${item.r}" data-kr="${item.kr || item.v || ''}" title="더블클릭으로 단어장 추가">
       ${item.n ? `<div class="text-lg font-bold text-gray-800">${item.n}</div>` : ''}
       <div class="text-indigo-600 font-bold">${item.jp}</div>
       <div class="text-sm text-gray-500">${item.r}</div>
-      <div class="text-xs text-gray-400">${item.kr}</div>
+      <div class="text-xs text-gray-400">${item.kr || item.v || ''}</div>
       <button class="btn btn-sm btn-primary mt-2" onclick="playSound('${item.jp}')">🔊</button>
     </div>
   `;
@@ -1617,7 +1617,7 @@ function renderParticlesContent() {
     </div>
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
       ${GRAMMAR_DATA.particles.map(p => `
-        <div class="card p-3">
+        <div class="card p-3 adv-card" data-jp="${p.jp}" data-r="${p.r}" data-kr="${p.kr}" title="더블클릭으로 단어장 추가">
           <div class="flex items-center gap-3 mb-2">
             <span class="text-2xl font-bold text-indigo-600">${p.jp}</span>
             <span class="text-gray-500">${p.r}</span>
@@ -1659,7 +1659,7 @@ function renderDemonstrativesContent() {
     </div>
     <div class="grid-2">
       ${data.map((item, i) => `
-        <div class="card p-3 text-center ${i === 0 ? 'border-green-300 bg-green-50' : i === 1 ? 'border-indigo-300 bg-indigo-50' : i === 2 ? 'border-purple-300 bg-purple-50' : 'border-gray-300'}">
+        <div class="card p-3 text-center adv-card ${i === 0 ? 'border-green-300 bg-green-50' : i === 1 ? 'border-indigo-300 bg-indigo-50' : i === 2 ? 'border-purple-300 bg-purple-50' : 'border-gray-300'}" data-jp="${item.jp}" data-r="${item.r}" data-kr="${item.kr}" title="더블클릭으로 단어장 추가">
           <div class="text-xs text-gray-500 mb-1">${['이(가까운)', '그(상대쪽)', '저(먼)', '어느(의문)'][i]}</div>
           <div class="text-xl font-bold">${item.jp}</div>
           <div class="text-sm text-gray-600">${item.r}</div>
@@ -1675,7 +1675,7 @@ function renderQuestionsContent() {
   return `
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
       ${GRAMMAR_DATA.questions.map(q => `
-        <div class="card p-3">
+        <div class="card p-3 adv-card" data-jp="${q.jp.split('/')[0]}" data-r="${q.r}" data-kr="${q.kr}" title="더블클릭으로 단어장 추가">
           <div class="flex items-center gap-3 mb-2">
             <span class="text-xl font-bold text-purple-600">${q.jp}</span>
             ${q.n ? `<span class="text-gray-500">${q.n}</span>` : ''}
@@ -1700,7 +1700,7 @@ function renderAdjectivesContent(data, title) {
     </div>
     <div class="grid-2">
       ${data.map(adj => `
-        <div class="card p-2 text-center">
+        <div class="card p-2 text-center adv-card" data-jp="${adj.jp.split('/')[0]}" data-r="${adj.r}" data-kr="${adj.kr}" title="더블클릭으로 단어장 추가">
           ${adj.n ? `<div class="text-sm text-gray-500">${adj.n}</div>` : ''}
           <div class="font-bold text-indigo-600">${adj.jp}</div>
           <div class="text-xs text-gray-500">${adj.r}</div>
@@ -1736,7 +1736,7 @@ function renderVerbsContent() {
     </div>
     <div style="display:flex;flex-direction:column;gap:0.5rem;">
       ${data.map(v => `
-        <div class="card p-3">
+        <div class="card p-3 adv-card" data-jp="${v.jp}" data-r="${v.r}" data-kr="${v.kr}" title="더블클릭으로 단어장 추가">
           <div class="flex items-center justify-between mb-1">
             <div>
               ${v.n ? `<span class="text-gray-500 mr-1">${v.n}</span>` : ''}
@@ -1765,7 +1765,7 @@ function renderCountersContent() {
     </div>
     <div style="display:flex;flex-direction:column;gap:0.75rem;">
       ${GRAMMAR_DATA.counters.map(c => `
-        <div class="card p-3">
+        <div class="card p-3 adv-card" data-jp="${c.jp}" data-r="${c.r}" data-kr="${c.kr}" title="더블클릭으로 단어장 추가">
           <div class="flex items-center gap-3 mb-2">
             <span class="text-xl font-bold text-purple-600">${c.jp}</span>
             ${c.n ? `<span class="text-gray-500">${c.n}</span>` : ''}
@@ -1852,7 +1852,7 @@ function renderPhraseList(data, title) {
     ${title ? `<div class="font-bold text-gray-700 mb-2">${title}</div>` : ''}
     <div style="display:flex;flex-direction:column;gap:0.5rem;">
       ${data.map(item => `
-        <div class="card p-3">
+        <div class="card p-3 adv-card" data-jp="${item.jp.replace(/[〜～]/g, '')}" data-r="${item.r}" data-kr="${item.kr}" title="더블클릭으로 단어장 추가">
           <div class="flex items-start justify-between">
             <div class="flex-1">
               <div class="font-bold text-indigo-600 text-lg mb-1">${item.jp}</div>
@@ -2119,6 +2119,61 @@ function closeComplete() { state.showComplete = false; render(); }
 function goHome() { state.showComplete = false; state.activeTab = 'home'; render(); }
 function resetAll() { if (confirm('"' + currentProfile + '" 프로필의 모든 데이터를 초기화할까요?')) { localStorage.removeItem(getStorageKey()); location.reload(); } }
 function bindEvents() {}
+
+// ========== 단어장 추가 기능 ==========
+function getNotebookKey() {
+  return 'notebook_' + currentProfile + '_data';
+}
+
+function addToNotebook(item) {
+  const nb = JSON.parse(localStorage.getItem(getNotebookKey()) || '{}');
+  const today = new Date().toISOString().split('T')[0];
+  if (!nb[today]) nb[today] = [];
+  
+  // 중복 체크
+  const itemStr = JSON.stringify(item);
+  const exists = nb[today].some(x => JSON.stringify(x) === itemStr);
+  if (exists) {
+    showToast('이미 추가된 항목이에요!', '#FF9800');
+    return;
+  }
+  
+  nb[today].push(item);
+  localStorage.setItem(getNotebookKey(), JSON.stringify(nb));
+  showToast('📖 단어장에 추가했어요!', '#4CAF50');
+}
+
+function showToast(msg, color) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:${color || '#4CAF50'};color:white;padding:1rem 2rem;border-radius:10px;z-index:9999;animation:fadeInOut 2s;`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
+function confirmAddToNotebook(item) {
+  if (confirm('단어장에 추가할까요?')) {
+    addToNotebook(item);
+  }
+}
+
+// 더블클릭 이벤트 (심화학습 카드)
+document.addEventListener('dblclick', function(e) {
+  const card = e.target.closest('.adv-card');
+  if (card) {
+    const jp = card.dataset.jp;
+    const r = card.dataset.r;
+    const kr = card.dataset.kr;
+    if (jp) {
+      confirmAddToNotebook({
+        type: 'vocab',
+        jp: jp,
+        reading: r || '',
+        kr: kr || ''
+      });
+    }
+  }
+});
 
 // ===== Init =====
 const today = new Date().toDateString();
