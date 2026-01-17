@@ -94,6 +94,7 @@ function switchProfile(name) {
   currentProfile = name;
   localStorage.setItem('currentProfile', name);
   loadProgress();
+  quizState = { type: 'kanji', questions: [], current: 0, score: 0, answered: false, selected: null };
   render();
 }
 
@@ -102,11 +103,12 @@ function addProfile() {
   if (name && name.trim() && !profiles.includes(name.trim())) {
     profiles.push(name.trim());
     localStorage.setItem('profiles', JSON.stringify(profiles));
-    // 새 프로필은 초기화된 상태로 시작
     currentProfile = name.trim();
     localStorage.setItem('currentProfile', currentProfile);
+    // 새 프로필 진행도 초기화
     progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
-    saveProgress();
+    localStorage.setItem(getStorageKey('progress'), JSON.stringify(progress));
+    quizState = { type: 'kanji', questions: [], current: 0, score: 0, answered: false, selected: null };
     render();
   }
 }
@@ -114,7 +116,8 @@ function addProfile() {
 function resetProgress() {
   if (confirm(`"${currentProfile}" 프로필의 학습 진행도를 초기화할까요?`)) {
     progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
-    saveProgress();
+    localStorage.setItem(getStorageKey('progress'), JSON.stringify(progress));
+    quizState = { type: 'kanji', questions: [], current: 0, score: 0, answered: false, selected: null };
     render();
     alert('초기화 완료!');
   }
@@ -983,6 +986,11 @@ function renderGrammar() {
 // ========== 퀴즈 섹션 ==========
 let quizState = { type: 'kanji', questions: [], current: 0, score: 0, answered: false, selected: null };
 
+function resetQuiz() {
+  quizState = { type: 'kanji', questions: [], current: 0, score: 0, answered: false, selected: null };
+  render();
+}
+
 function renderQuiz() {
   if (!quizState.questions.length || quizState.current >= quizState.questions.length) {
     return `
@@ -1007,7 +1015,10 @@ function renderQuiz() {
   const q = quizState.questions[quizState.current];
   return `
     <div class="card">
-      <div class="text-sm text-gray mb-2">${quizState.current + 1} / ${quizState.questions.length}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+        <div class="text-sm text-gray">${quizState.current + 1} / ${quizState.questions.length}</div>
+        <button class="btn btn-sm btn-gray" onclick="resetQuiz()">✕ 그만두기</button>
+      </div>
       <div class="progress-bar mb-3"><div class="progress-fill" style="width:${((quizState.current)/quizState.questions.length*100)}%"></div></div>
       <div class="text-center" style="font-size:2.5rem;margin:1.5rem 0">${q.question}</div>
       ${quizState.type === 'listening' ? `<button class="btn btn-primary" onclick="speak('${q.question}')" style="margin:0 auto;display:block">🔊 다시 듣기</button>` : ''}
