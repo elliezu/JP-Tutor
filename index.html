@@ -1174,10 +1174,10 @@ function renderWrite() {
   const completedInSet = state.smallCanvases.filter(c => c?.done).length;
 
   return `<div style="padding:1rem;">
-    <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3">
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
       ${[{t:'hiragana',l:'ひらがな',lv:1},{t:'katakana',l:'カタカナ',lv:2},{t:'dakuten',l:'탁음',lv:3},{t:'youon',l:'요음',lv:4}].map(x => `<button class="btn btn-sm btn-pill ${state.currentType===x.t?'btn-primary':'btn-gray'}" ${state.userData.level<x.lv?'disabled':''} onclick="changeType('${x.t}')">${state.userData.level<x.lv?'🔒 ':''}${x.l}</button>`).join('')}
     </div>
-    <div class="flex gap-1 overflow-x-auto hide-scrollbar mb-3">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.75rem;">
       ${Object.keys(data).map(r => `<button class="btn btn-sm ${state.currentRow===r?'btn-purple':'btn-gray'}" onclick="changeRow('${r}')">${r}</button>`).join('')}
     </div>
     <div class="flex gap-1 justify-center flex-wrap mb-3">
@@ -1209,10 +1209,10 @@ function renderFree() {
   const info = getKanaInfo(state.writingKana);
   return `<div style="padding:1rem;">
     <div class="bg-purple-50 rounded-lg p-3 text-center mb-3"><div class="text-lg font-bold text-purple-700">📓 자유 연습장</div><div class="text-sm text-purple-600">미션 카운트 없이 마음껏 연습!</div></div>
-    <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3">
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
       ${[{t:'hiragana',l:'ひらがな'},{t:'katakana',l:'カタカナ'},{t:'dakuten',l:'탁음'},{t:'youon',l:'요음'}].map(x => `<button class="btn btn-sm btn-pill ${state.currentType===x.t?'btn-purple':'btn-gray'}" onclick="changeType('${x.t}')">${x.l}</button>`).join('')}
     </div>
-    <div class="flex gap-1 overflow-x-auto hide-scrollbar mb-3">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.75rem;">
       ${Object.keys(data).map(r => `<button class="btn btn-sm ${state.currentRow===r?'btn-purple':'btn-gray'}" onclick="changeRow('${r}')">${r}</button>`).join('')}
     </div>
     <div class="flex gap-1 justify-center flex-wrap mb-3">
@@ -1287,7 +1287,7 @@ function renderAdvanced() {
   return `
     <div style="padding:0.5rem;">
       <!-- 메인 카테고리 탭 -->
-      <div class="flex gap-2 mb-3 overflow-x-auto hide-scrollbar" style="padding-bottom:0.25rem;">
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
         ${categories.map(c => `
           <button class="btn btn-sm ${advState.category === c.id ? 'btn-primary' : 'btn-gray'}" 
                   onclick="setAdvCategory('${c.id}')" style="white-space:nowrap;">
@@ -1322,7 +1322,7 @@ function renderVocabSection() {
   ];
 
   return `
-    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.75rem;">
       ${subCats.map(s => `
         <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
                 onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
@@ -1403,7 +1403,7 @@ function renderCalendarContent() {
   const data = ADVANCED_DATA.calendar[advState.subTab] || ADVANCED_DATA.calendar.weekdays;
   
   return `
-    <div class="flex gap-1 mb-2 overflow-x-auto hide-scrollbar">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.5rem;">
       ${tabs.map(t => `
         <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
                 onclick="setAdvSubTab('${t.id}')" style="white-space:nowrap;font-size:0.7rem;">
@@ -1534,7 +1534,7 @@ function renderGrammarSection() {
   ];
 
   return `
-    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.75rem;">
       ${subCats.map(s => `
         <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
                 onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
@@ -1745,7 +1745,7 @@ function renderConvoSection() {
   ];
 
   return `
-    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.75rem;">
       ${subCats.map(s => `
         <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
                 onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
@@ -1784,7 +1784,7 @@ function renderGreetingsContent() {
   const data = CONVERSATION_DATA.greetings[advState.subTab] || CONVERSATION_DATA.greetings.basic;
   
   return `
-    <div class="flex gap-1 mb-2 overflow-x-auto hide-scrollbar">
+    <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-bottom:0.5rem;">
       ${tabs.map(t => `
         <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
                 onclick="setAdvSubTab('${t.id}')" style="white-space:nowrap;font-size:0.7rem;">
