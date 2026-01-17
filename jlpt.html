@@ -102,7 +102,21 @@ function addProfile() {
   if (name && name.trim() && !profiles.includes(name.trim())) {
     profiles.push(name.trim());
     localStorage.setItem('profiles', JSON.stringify(profiles));
-    switchProfile(name.trim());
+    // 새 프로필은 초기화된 상태로 시작
+    currentProfile = name.trim();
+    localStorage.setItem('currentProfile', currentProfile);
+    progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
+    saveProgress();
+    render();
+  }
+}
+
+function resetProgress() {
+  if (confirm(`"${currentProfile}" 프로필의 학습 진행도를 초기화할까요?`)) {
+    progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
+    saveProgress();
+    render();
+    alert('초기화 완료!');
   }
 }
 
@@ -113,11 +127,29 @@ function loadProgress() {
   try {
     const saved = localStorage.getItem(getStorageKey('progress'));
     if (saved) progress = JSON.parse(saved);
-  } catch(e) { console.error(e); }
+    else progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
+  } catch(e) { 
+    progress = { n5: { kanji: [], vocab: [], grammar: [] }, n4: { kanji: [], vocab: [], grammar: [] } };
+  }
 }
 
 function saveProgress() {
   localStorage.setItem(getStorageKey('progress'), JSON.stringify(progress));
+}
+
+// 섹션별 리셋 함수
+function resetSection(level, section) {
+  if (confirm(`${level.toUpperCase()} ${section} 진행도를 초기화할까요?`)) {
+    progress[level][section] = [];
+    saveProgress();
+    render();
+  }
+}
+
+// 퀴즈 리셋
+function resetQuiz() {
+  quizState = { type: null, questions: [], current: 0, score: 0, answered: false, selected: null };
+  render();
 }
 
 function markLearned(level, section, index) {
@@ -799,6 +831,7 @@ function render() {
             ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
           </select>
           <button onclick="addProfile()" title="프로필 추가">➕</button>
+          <button onclick="resetProgress()" title="진행도 초기화">🔄</button>
         </div>
       </div>
       <div class="level-tabs">
@@ -849,7 +882,10 @@ function renderKanji() {
   
   return `
     <div class="card">
-      <div class="card-title">📚 ${state.level.toUpperCase()} 한자 (${data.length}자)</div>
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>📚 ${state.level.toUpperCase()} 한자 (${data.length}자)</span>
+        ${learned.length > 0 ? `<button class="btn btn-sm btn-gray" onclick="resetSection('${state.level}','kanji')">🔄 리셋</button>` : ''}
+      </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${(learned.length/data.length*100).toFixed(1)}%"></div></div>
       <div class="text-xs text-gray" style="margin-top:0.25rem">${learned.length}/${data.length} 학습완료</div>
     </div>
