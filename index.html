@@ -1056,9 +1056,17 @@ let state = {
   isCorrect: false,
 };
 
+// 프로필 관리
+let currentProfile = localStorage.getItem('currentProfile') || '기본';
+let profiles = JSON.parse(localStorage.getItem('profiles') || '["기본"]');
+
+function getStorageKey() {
+  return 'kanaDataV10_' + currentProfile;
+}
+
 function loadUserData() {
   try {
-    const saved = localStorage.getItem('kanaDataV10');
+    const saved = localStorage.getItem(getStorageKey());
     return saved ? JSON.parse(saved) : getDefaultData();
   } catch(e) { return getDefaultData(); }
 }
@@ -1068,7 +1076,36 @@ function getDefaultData() {
 }
 
 function saveUserData() {
-  try { localStorage.setItem('kanaDataV10', JSON.stringify(state.userData)); } catch(e) {}
+  try { localStorage.setItem(getStorageKey(), JSON.stringify(state.userData)); } catch(e) {}
+}
+
+function switchProfile(name) {
+  currentProfile = name;
+  localStorage.setItem('currentProfile', name);
+  state.userData = loadUserData();
+  render();
+}
+
+function addProfile() {
+  const name = prompt('새 프로필 이름:');
+  if (name && name.trim() && !profiles.includes(name.trim())) {
+    profiles.push(name.trim());
+    localStorage.setItem('profiles', JSON.stringify(profiles));
+    switchProfile(name.trim());
+  }
+}
+
+function deleteProfile() {
+  if (profiles.length <= 1) {
+    alert('최소 1개의 프로필은 필요합니다.');
+    return;
+  }
+  if (confirm('"' + currentProfile + '" 프로필을 삭제할까요?')) {
+    localStorage.removeItem(getStorageKey());
+    profiles = profiles.filter(p => p !== currentProfile);
+    localStorage.setItem('profiles', JSON.stringify(profiles));
+    switchProfile(profiles[0]);
+  }
 }
 
 function getKanaInfo(kana) {
@@ -1130,7 +1167,17 @@ function render() {
 
 function renderHeader() {
   return `<header>
-    <div class="header-title"><span>🇯🇵 일본어 학습</span><button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1.25rem;">🔄</button></div>
+    <div class="header-title">
+      <span>🇯🇵 일본어 학습</span>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <select onchange="switchProfile(this.value)" style="padding:0.25rem 0.5rem;border-radius:0.5rem;border:1px solid #ddd;font-size:0.8rem;background:#fff;">
+          ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
+        </select>
+        <button onclick="addProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 추가">➕</button>
+        <button onclick="deleteProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 삭제">🗑️</button>
+        <button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="데이터 초기화">🔄</button>
+      </div>
+    </div>
     <div class="header-tabs">
       <button class="header-tab ${state.mainTab === 'kana' ? 'active' : ''}" onclick="setMainTab('kana')">📝 가나 마스터</button>
       <button class="header-tab ${state.mainTab === 'advanced' ? 'active' : ''}" onclick="setMainTab('advanced')">📖 심화 학습</button>
@@ -2070,7 +2117,7 @@ function goToNextKana(kana) {
 }
 function closeComplete() { state.showComplete = false; render(); }
 function goHome() { state.showComplete = false; state.activeTab = 'home'; render(); }
-function resetAll() { if (confirm('모든 데이터를 초기화할까요?')) { localStorage.removeItem('kanaDataV10'); location.reload(); } }
+function resetAll() { if (confirm('"' + currentProfile + '" 프로필의 모든 데이터를 초기화할까요?')) { localStorage.removeItem(getStorageKey()); location.reload(); } }
 function bindEvents() {}
 
 // ===== Init =====
