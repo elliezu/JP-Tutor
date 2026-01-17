@@ -1388,7 +1388,7 @@ document.addEventListener('dblclick', function(e) {
   const kanjiCard = e.target.closest('.kanji-card');
   if (kanjiCard) {
     const k = kanjiCard.dataset.kanji;
-    const data = (state.level === 'N5' ? N5_KANJI : N4_KANJI).find(x => x.k === k);
+    const data = (state.level === 'n5' ? N5_KANJI : N4_KANJI).find(x => x.k === k);
     if (data) {
       confirmAddToNotebook({
         type: 'kanji',
@@ -1407,7 +1407,7 @@ document.addEventListener('dblclick', function(e) {
   const vocabCard = e.target.closest('.vocab-card');
   if (vocabCard) {
     const jp = vocabCard.dataset.jp;
-    const vocabData = state.level === 'N5' ? N5_VOCAB : N4_VOCAB;
+    const vocabData = state.level === 'n5' ? N5_VOCAB : N4_VOCAB;
     let found = null;
     Object.values(vocabData).forEach(cat => {
       const item = cat.items.find(x => x.jp === jp);
@@ -1428,7 +1428,7 @@ document.addEventListener('dblclick', function(e) {
   const grammarCard = e.target.closest('.grammar-card');
   if (grammarCard) {
     const pt = grammarCard.dataset.pattern;
-    const data = (state.level === 'N5' ? N5_GRAMMAR : N4_GRAMMAR).find(x => x.pt === pt);
+    const data = (state.level === 'n5' ? N5_GRAMMAR : N4_GRAMMAR).find(x => x.pt === pt);
     if (data) {
       confirmAddToNotebook({
         type: 'grammar',
