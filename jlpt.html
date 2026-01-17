@@ -149,9 +149,21 @@ function resetSection(level, section) {
   }
 }
 
-// 퀴즈 리셋
+// 퀴즈 리셋 (점수 초기화)
 function resetQuiz() {
-  quizState = { type: null, questions: [], current: 0, score: 0, answered: false, selected: null };
+  if (confirm('퀴즈를 처음부터 다시 시작할까요? 점수가 초기화됩니다.')) {
+    quizState = { type: null, questions: [], current: 0, score: 0, answered: false, selected: null };
+    render();
+  }
+}
+
+// 퀴즈 홈으로 (진행도 유지)
+function goQuizHome() {
+  quizState.questions = [];
+  quizState.current = 0;
+  quizState.answered = false;
+  quizState.selected = null;
+  // score는 유지
   render();
 }
 
@@ -172,9 +184,46 @@ let state = {
   level: 'n5',
   section: 'kanji',
   subSection: 'all',
+  page: 1,
   quizMode: false,
   quizData: null
 };
+
+const ITEMS_PER_PAGE = 10;
+
+function setPage(p) {
+  state.page = p;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function renderPagination(totalItems) {
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  if (totalPages <= 1) return '';
+  
+  let pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= state.page - 2 && i <= state.page + 2)) {
+      pages.push(i);
+    } else if (pages[pages.length - 1] !== '...') {
+      pages.push('...');
+    }
+  }
+  
+  return `
+    <div style="display:flex;justify-content:center;gap:0.25rem;margin-top:1rem;flex-wrap:wrap">
+      <button class="btn btn-sm ${state.page === 1 ? 'btn-gray' : 'btn-primary'}" 
+        onclick="setPage(${state.page - 1})" ${state.page === 1 ? 'disabled' : ''}>◀</button>
+      ${pages.map(p => p === '...' 
+        ? `<span style="padding:0.375rem">...</span>`
+        : `<button class="btn btn-sm ${state.page === p ? 'btn-primary' : 'btn-gray'}" onclick="setPage(${p})">${p}</button>`
+      ).join('')}
+      <button class="btn btn-sm ${state.page === totalPages ? 'btn-gray' : 'btn-primary'}" 
+        onclick="setPage(${state.page + 1})" ${state.page === totalPages ? 'disabled' : ''}>▶</button>
+    </div>
+    <div class="text-center text-xs text-gray" style="margin-top:0.5rem">${state.page} / ${totalPages} 페이지</div>
+  `;
+}
 
 // ========== 발음 (TTS) ==========
 function speak(text, rate = 0.8) {
@@ -658,6 +707,106 @@ const N5_GRAMMAR = [
   {pt:'~ないでください',m:'~하지 마세요',d:'부정 요청',ex:[
     {jp:'ここで写真を撮らないでください。',kr:'여기서 사진을 찍지 마세요.'},
     {jp:'心配しないでください。',kr:'걱정하지 마세요.'}
+  ]},
+  {pt:'~くなる/~になる',m:'~해지다',d:'상태 변화',ex:[
+    {jp:'日本語が上手になりました。',kr:'일본어가 잘하게 되었습니다.'},
+    {jp:'寒くなりましたね。',kr:'추워졌네요.'}
+  ]},
+  {pt:'~すぎる',m:'너무 ~하다',d:'과도함',ex:[
+    {jp:'食べすぎました。',kr:'너무 많이 먹었습니다.'},
+    {jp:'この服は高すぎる。',kr:'이 옷은 너무 비싸다.'}
+  ]},
+  {pt:'~やすい/~にくい',m:'~하기 쉽다/어렵다',d:'난이도',ex:[
+    {jp:'この本は読みやすいです。',kr:'이 책은 읽기 쉽습니다.'},
+    {jp:'この漢字は覚えにくい。',kr:'이 한자는 외우기 어렵다.'}
+  ]},
+  {pt:'~方',m:'~하는 방법',d:'방법',ex:[
+    {jp:'使い方を教えてください。',kr:'사용법을 알려주세요.'},
+    {jp:'作り方が分からない。',kr:'만드는 방법을 모른다.'}
+  ]},
+  {pt:'~ても',m:'~해도',d:'역접 조건',ex:[
+    {jp:'雨が降っても行きます。',kr:'비가 와도 갑니다.'},
+    {jp:'いくら食べても太らない。',kr:'아무리 먹어도 안 찐다.'}
+  ]},
+  {pt:'~そうだ(전문)',m:'~라고 한다',d:'전해들은 정보',ex:[
+    {jp:'明日は雨だそうです。',kr:'내일은 비라고 합니다.'},
+    {jp:'彼は来月結婚するそうだ。',kr:'그는 다음 달 결혼한다고 한다.'}
+  ]},
+  {pt:'~し',m:'~하고, ~해서',d:'이유 나열',ex:[
+    {jp:'安いし、おいしいし、最高です。',kr:'싸고, 맛있고, 최고입니다.'},
+    {jp:'時間もないし、お金もない。',kr:'시간도 없고, 돈도 없다.'}
+  ]},
+  {pt:'~のに',m:'~인데도',d:'역접',ex:[
+    {jp:'約束したのに来なかった。',kr:'약속했는데 오지 않았다.'},
+    {jp:'高いのに売れている。',kr:'비싼데도 팔리고 있다.'}
+  ]},
+  {pt:'~かもしれない',m:'~일지도 모른다',d:'불확실한 추측',ex:[
+    {jp:'明日は雨かもしれません。',kr:'내일은 비일지도 모릅니다.'},
+    {jp:'彼は知らないかもしれない。',kr:'그는 모를지도 모른다.'}
+  ]},
+  {pt:'~でしょう',m:'~겠지요',d:'추측/확인',ex:[
+    {jp:'明日は晴れるでしょう。',kr:'내일은 맑겠지요.'},
+    {jp:'これは高いでしょう？',kr:'이거 비싸죠?'}
+  ]},
+  {pt:'~らしい',m:'~인 것 같다',d:'추측(간접)',ex:[
+    {jp:'彼女は忙しいらしい。',kr:'그녀는 바쁜 것 같다.'},
+    {jp:'電車が遅れているらしいです。',kr:'전철이 늦어지고 있는 것 같습니다.'}
+  ]},
+  {pt:'~んです/~のです',m:'~거든요/~인 거예요',d:'설명/강조',ex:[
+    {jp:'どうしたんですか。',kr:'어떻게 된 거예요?'},
+    {jp:'明日テストがあるんです。',kr:'내일 시험이 있거든요.'}
+  ]},
+  {pt:'~てあげる',m:'~해 주다(내가)',d:'수수표현',ex:[
+    {jp:'友達に本を貸してあげました。',kr:'친구에게 책을 빌려줬습니다.'},
+    {jp:'道を教えてあげる。',kr:'길을 알려줄게.'}
+  ]},
+  {pt:'~てもらう',m:'~해 받다',d:'수수표현',ex:[
+    {jp:'友達に手伝ってもらいました。',kr:'친구에게 도움을 받았습니다.'},
+    {jp:'先生に教えてもらった。',kr:'선생님께 배웠다.'}
+  ]},
+  {pt:'~てくれる',m:'~해 주다(남이)',d:'수수표현',ex:[
+    {jp:'母が作ってくれました。',kr:'어머니가 만들어 주셨습니다.'},
+    {jp:'友達が助けてくれた。',kr:'친구가 도와줬다.'}
+  ]},
+  {pt:'~てほしい',m:'~해 줬으면 한다',d:'희망(타인에게)',ex:[
+    {jp:'早く来てほしいです。',kr:'빨리 와줬으면 합니다.'},
+    {jp:'静かにしてほしい。',kr:'조용히 해줬으면 해.'}
+  ]},
+  {pt:'~ところ',m:'막 ~하는 중',d:'시점',ex:[
+    {jp:'今、食べているところです。',kr:'지금 막 먹고 있는 중입니다.'},
+    {jp:'出かけるところだった。',kr:'막 나가려던 참이었다.'}
+  ]},
+  {pt:'~たばかり',m:'막 ~한',d:'직후',ex:[
+    {jp:'今起きたばかりです。',kr:'방금 막 일어났습니다.'},
+    {jp:'日本に来たばかりだ。',kr:'일본에 막 왔다.'}
+  ]},
+  {pt:'~はずだ',m:'~일 것이다',d:'당연한 추측',ex:[
+    {jp:'彼はもう着いたはずです。',kr:'그는 이미 도착했을 겁니다.'},
+    {jp:'知っているはずだ。',kr:'알고 있을 것이다.'}
+  ]},
+  {pt:'~とき',m:'~할 때',d:'시간',ex:[
+    {jp:'日本に行ったとき、富士山を見ました。',kr:'일본에 갔을 때 후지산을 봤습니다.'},
+    {jp:'暇なとき、遊びに来てください。',kr:'한가할 때 놀러 오세요.'}
+  ]},
+  {pt:'~たら',m:'~하면',d:'조건',ex:[
+    {jp:'雨が降ったら行きません。',kr:'비가 오면 안 갑니다.'},
+    {jp:'安かったら買います。',kr:'싸면 삽니다.'}
+  ]},
+  {pt:'~ば',m:'~하면',d:'조건(가정)',ex:[
+    {jp:'時間があれば行きます。',kr:'시간이 있으면 갑니다.'},
+    {jp:'早く寝れば大丈夫。',kr:'일찍 자면 괜찮아.'}
+  ]},
+  {pt:'~なら',m:'~라면',d:'조건(화제)',ex:[
+    {jp:'日本語なら、少し分かります。',kr:'일본어라면 조금 압니다.'},
+    {jp:'行くなら早く行って。',kr:'갈 거라면 빨리 가.'}
+  ]},
+  {pt:'~ように',m:'~하도록',d:'목적/바람',ex:[
+    {jp:'忘れないように書いておきます。',kr:'잊지 않도록 적어둡니다.'},
+    {jp:'聞こえるように大きい声で。',kr:'들리도록 큰 소리로.'}
+  ]},
+  {pt:'~ために',m:'~위해서',d:'목적',ex:[
+    {jp:'試験に受かるために勉強する。',kr:'시험에 붙기 위해 공부한다.'},
+    {jp:'健康のために運動しています。',kr:'건강을 위해 운동하고 있습니다.'}
   ]}
 ];
 
@@ -857,12 +1006,14 @@ function render() {
 function setLevel(level) {
   state.level = level;
   state.subSection = 'all';
+  state.page = 1;
   render();
 }
 
 function setSection(section) {
   state.section = section;
   state.subSection = 'all';
+  state.page = 1;
   state.quizMode = false;
   render();
 }
@@ -914,7 +1065,9 @@ function renderKanji() {
       </div>
     </div>
     <div class="grid-2">
-      ${data.map((item, i) => `
+      ${data.slice((state.page-1)*ITEMS_PER_PAGE, state.page*ITEMS_PER_PAGE).map((item, idx) => {
+        const i = (state.page-1)*ITEMS_PER_PAGE + idx;
+        return `
         <div class="kanji-card" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}">
           <div class="kanji-char">${item.k}</div>
           <div class="kanji-reading">
@@ -928,9 +1081,10 @@ function renderKanji() {
             <button class="btn-sound" onclick="speak('${item.ex.split('(')[0]}')">📖</button>
             ${!learned.includes(i)?`<button class="btn-sound" onclick="markLearned('${state.level}','kanji',${i});render()">✓</button>`:''}
           </div>
-        </div>
-      `).join('')}
+        </div>`;
+      }).join('')}
     </div>
+    ${renderPagination(data.length)}
   `;
 }
 
@@ -981,12 +1135,13 @@ async function playAllVocab(cat) {
 // ========== 문법 섹션 ==========
 function renderGrammar() {
   const data = state.level === 'n5' ? N5_GRAMMAR : N4_GRAMMAR;
+  const pageData = data.slice((state.page-1)*ITEMS_PER_PAGE, state.page*ITEMS_PER_PAGE);
   
   return `
     <div class="card">
       <div class="card-title">📝 ${state.level.toUpperCase()} 문법 (${data.length}개)</div>
     </div>
-    ${data.map((g, i) => `
+    ${pageData.map((g, i) => `
       <div class="grammar-card">
         <div class="grammar-pattern">${g.pt}</div>
         <div class="grammar-meaning"><strong>${g.m}</strong> - ${g.d}</div>
@@ -1001,6 +1156,7 @@ function renderGrammar() {
         `).join('')}
       </div>
     `).join('')}
+    ${renderPagination(data.length)}
   `;
 }
 
@@ -1038,7 +1194,10 @@ function renderQuiz() {
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="text-sm text-gray">${quizState.current + 1} / ${quizState.questions.length}</div>
-        <button class="btn btn-sm btn-gray" onclick="resetQuiz()">✕ 그만두기</button>
+        <div style="display:flex;gap:0.25rem">
+          <button class="btn btn-sm btn-gray" onclick="goQuizHome()">🏠 처음으로</button>
+          <button class="btn btn-sm btn-gray" onclick="resetQuiz()" style="color:#dc2626">🔄 리셋</button>
+        </div>
       </div>
       <div class="progress-bar mb-3"><div class="progress-fill" style="width:${((quizState.current)/quizState.questions.length*100)}%"></div></div>
       <div class="text-center" style="font-size:2.5rem;margin:1.5rem 0">${q.question}</div>
