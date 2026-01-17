@@ -82,6 +82,7 @@
 <body>
 <div class="app" id="app"></div>
 <a href="index.html" class="home-link" title="가나 학습으로">🏠</a>
+<script src="romaji.js"></script>
 <script>
 
 // ========== 프로필 시스템 (index.html과 공유) ==========
@@ -1071,8 +1072,8 @@ function renderKanji() {
         <div class="kanji-card" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}">
           <div class="kanji-char">${item.k}</div>
           <div class="kanji-reading">
-            <span style="color:#dc2626">음: ${item.o}</span>
-            <span style="color:#2563eb">훈: ${item.u}</span>
+            <span style="color:#dc2626">음: ${item.o} <span style="font-size:0.65rem;color:#888">${toRomaji(item.o)}</span></span>
+            <span style="color:#2563eb">훈: ${item.u} <span style="font-size:0.65rem;color:#888">${toRomaji(item.u)}</span></span>
           </div>
           <div class="kanji-meaning">${item.m}</div>
           <div class="kanji-example">${item.ex}</div>
@@ -1111,7 +1112,7 @@ function renderVocab() {
     ${items.map((item, i) => `
       <div class="vocab-card" style="margin-bottom:0.5rem">
         <div>
-          <div class="vocab-jp">${item.jp}${item.n?` (${item.n})`:''}</div>
+          <div class="vocab-jp">${item.jp}${item.n?` (${item.n})`:''} <span style="font-size:0.7rem;color:#888">${toRomaji(item.jp)}</span></div>
           <div class="vocab-kr">${item.kr}</div>
         </div>
         <button class="btn-sound" onclick="speak('${item.jp}')">🔊</button>
@@ -1143,7 +1144,7 @@ function renderGrammar() {
     </div>
     ${pageData.map((g, i) => `
       <div class="grammar-card">
-        <div class="grammar-pattern">${g.pt}</div>
+        <div class="grammar-pattern">${g.pt} <span style="font-size:0.75rem;color:#888">${toRomaji(g.pt)}</span></div>
         <div class="grammar-meaning"><strong>${g.m}</strong> - ${g.d}</div>
         ${g.ex.map(e => `
           <div class="grammar-example">
