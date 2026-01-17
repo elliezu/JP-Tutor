@@ -75,17 +75,26 @@
     /* 진행바 */
     .progress-bar { height: 0.5rem; background: #e5e7eb; border-radius: 1rem; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
-    /* 홈 버튼 */
-    .home-link { position: fixed; bottom: 1rem; right: 1rem; background: white; padding: 0.75rem; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.2); text-decoration: none; font-size: 1.25rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; }
-    .notebook-link { position: fixed; bottom: 1rem; right: 4.5rem; background: white; padding: 0.75rem; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.2); text-decoration: none; font-size: 1.25rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; }
+    /* 하단 네비게이션 */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+    .bottom-nav-inner { display: flex; justify-content: space-around; max-width: 500px; margin: 0 auto; padding: 0.5rem 0; }
+    .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem; border: none; background: none; color: #9ca3af; font-size: 0.7rem; cursor: pointer; text-decoration: none; min-width: 60px; }
+    .nav-btn.active { color: #667eea; }
+    .nav-btn span:first-child { font-size: 1.25rem; }
     .add-toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 1rem 2rem; border-radius: 10px; z-index: 9999; animation: fadeInOut 2s; }
     @keyframes fadeInOut { 0%,100% { opacity: 0; } 10%,90% { opacity: 1; } }
   </style>
 </head>
 <body>
-<div class="app" id="app"></div>
-<a href="index.html" class="home-link" title="가나 학습으로">🏠</a>
-<a href="notebook.html" class="notebook-link" title="나의 단어장">📖</a>
+<div class="app" id="app" style="padding-bottom: 70px;"></div>
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="nav-btn"><span>🏠</span><span>홈</span></a>
+    <button class="nav-btn" id="navN5" onclick="setLevel('n5')"><span>🟢</span><span>N5</span></button>
+    <button class="nav-btn" id="navN4" onclick="setLevel('n4')"><span>🟠</span><span>N4</span></button>
+    <a href="notebook.html" class="nav-btn"><span>📖</span><span>단어장</span></a>
+  </div>
+</nav>
 <script src="romaji.js"></script>
 <script src="n5-vocab.js"></script>
 <script src="n4-vocab.js"></script>
@@ -1049,6 +1058,10 @@ function render() {
       ${renderSection()}
     </main>
   `;
+  
+  // 하단 네비게이션 active 상태 업데이트
+  document.getElementById('navN5').classList.toggle('active', state.level === 'n5');
+  document.getElementById('navN4').classList.toggle('active', state.level === 'n4');
 }
 
 function setLevel(level) {
@@ -1443,6 +1456,13 @@ document.addEventListener('dblclick', function(e) {
 });
 
 // ========== 초기화 ==========
+// URL 파라미터로 레벨 설정
+const urlParams = new URLSearchParams(window.location.search);
+const levelParam = urlParams.get('level');
+if (levelParam === 'n5' || levelParam === 'n4') {
+  state.level = levelParam;
+}
+
 loadProgress();
 render();
 </script>

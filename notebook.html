@@ -61,16 +61,18 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
 .quiz-result { text-align: center; padding: 20px; }
 .quiz-score { font-size: 2em; color: #667eea; }
 .modal-close { margin-top: 20px; padding: 10px 30px; background: #667eea; color: white; border: none; border-radius: 10px; cursor: pointer; }
+/* 하단 네비게이션 */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+.bottom-nav-inner { display: flex; justify-content: space-around; max-width: 500px; margin: 0 auto; padding: 0.5rem 0; }
+.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem; border: none; background: none; color: #9ca3af; font-size: 0.7rem; cursor: pointer; text-decoration: none; min-width: 60px; }
+.nav-btn.active { color: #667eea; }
+.nav-btn span:first-child { font-size: 1.25rem; }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="padding-bottom: 70px;">
   <div class="header">
     <h1>📖 나의 단어장</h1>
-    <div class="nav-links">
-      <a href="index.html">🏠 가나</a>
-      <a href="jlpt.html">📚 JLPT</a>
-    </div>
   </div>
   
   <div class="date-selector">
@@ -433,5 +435,13 @@ function closeQuiz() {
 // 초기 로드
 renderCards();
 </script>
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="nav-btn"><span>🏠</span><span>홈</span></a>
+    <a href="jlpt.html?level=n5" class="nav-btn"><span>🟢</span><span>N5</span></a>
+    <a href="jlpt.html?level=n4" class="nav-btn"><span>🟠</span><span>N4</span></a>
+    <a href="notebook.html" class="nav-btn active"><span>📖</span><span>단어장</span></a>
+  </div>
+</nav>
 </body>
 </html>
