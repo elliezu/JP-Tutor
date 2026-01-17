@@ -37,14 +37,12 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
 .card-example-kr { font-size: 0.9em; color: #666; }
 .speak-btn { background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-left: 10px; }
 .practice-area { border-top: 2px dashed #ddd; padding-top: 15px; margin-top: 15px; }
-.practice-title { font-size: 0.9em; color: #666; margin-bottom: 10px; }
-.practice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-.practice-box { border: 2px solid #ddd; border-radius: 10px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-.practice-box input { width: 100%; height: 100%; border: none; text-align: center; font-size: 1.5em; background: transparent; font-family: 'Noto Sans JP', sans-serif; }
-.practice-box .guide { position: absolute; font-size: 2em; color: #eee; pointer-events: none; z-index: 0; }
-.practice-box input:focus { outline: 2px solid #667eea; }
-.practice-box.correct { border-color: #4CAF50; background: #e8f5e9; }
-.practice-box.wrong { border-color: #f44336; background: #ffebee; }
+.practice-title { font-size: 0.9em; color: #666; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.practice-clear { background: #ff6b6b; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; }
+.practice-notebook { display: flex; flex-direction: column; gap: 5px; }
+.practice-line { width: 100%; height: 40px; border: 1px solid #ddd; border-radius: 5px; background: #fafafa; position: relative; }
+.practice-line canvas { width: 100%; height: 100%; border-radius: 5px; cursor: crosshair; touch-action: none; }
+.practice-line .guide-text { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 1.2em; color: #ddd; pointer-events: none; z-index: 0; font-family: 'Noto Sans JP', sans-serif; }
 .quiz-section { background: white; border-radius: 15px; padding: 20px; margin-top: 20px; text-align: center; }
 .quiz-btn { padding: 15px 40px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; font-size: 1.1em; cursor: pointer; }
 .quiz-btn:hover { transform: scale(1.05); }
@@ -157,20 +155,71 @@ function deleteCard(date, index) {
   }
 }
 
-// 연습 체크
-function checkPractice(input, answer, boxEl) {
-  const val = input.value.trim();
-  if (val === '') {
-    boxEl.classList.remove('correct', 'wrong');
-    return;
-  }
-  if (val === answer) {
-    boxEl.classList.add('correct');
-    boxEl.classList.remove('wrong');
-  } else {
-    boxEl.classList.add('wrong');
-    boxEl.classList.remove('correct');
-  }
+// 캔버스 그리기 관련
+let activeCanvases = [];
+
+function initCanvases() {
+  activeCanvases = [];
+  document.querySelectorAll('.practice-line canvas').forEach(canvas => {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    
+    const getPos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return { x, y };
+    };
+    
+    const startDraw = (e) => {
+      e.preventDefault();
+      drawing = true;
+      const pos = getPos(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    };
+    
+    const draw = (e) => {
+      if (!drawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      lastX = pos.x;
+      lastY = pos.y;
+    };
+    
+    const endDraw = () => { drawing = false; };
+    
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', endDraw);
+    
+    activeCanvases.push({ canvas, ctx });
+  });
+}
+
+function clearAllCanvases(cardIdx) {
+  document.querySelectorAll(`#notebook_${cardIdx} canvas`).forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
 }
 
 // 카드 렌더링
@@ -215,14 +264,17 @@ function renderCards() {
   }
   
   container.innerHTML = cards.map((card, i) => renderCard(card, i)).join('');
+  
+  // 캔버스 초기화 (DOM 업데이트 후)
+  setTimeout(initCanvases, 100);
 }
 
 function renderCard(card, i) {
   const typeLabel = {vocab:'어휘', kanji:'한자', grammar:'문법', conv:'회화'}[card.type] || '기타';
   const typeClass = card.type || 'vocab';
   
-  // 연습할 글자 (일본어 첫 글자 또는 전체)
-  const practiceText = card.main?.charAt(0) || card.jp?.charAt(0) || '';
+  // 연습할 텍스트 (전체)
+  const practiceText = card.kanji || card.jp || card.pattern || card.main || '';
   
   let html = `<div class="card">
     <div class="card-header">
@@ -260,13 +312,16 @@ function renderCard(card, i) {
     html += `<div class="card-meaning">${card.kr || card.meaning}</div>`;
   }
   
-  // 따라쓰기 영역
+  // 따라쓰기 영역 (노트 형식)
   html += `<div class="practice-area">
-    <div class="practice-title">✍️ 따라쓰기 연습 (5회)</div>
-    <div class="practice-grid">
-      ${[0,1,2,3,4].map(n => `<div class="practice-box" id="box_${i}_${n}">
-        <span class="guide">${practiceText}</span>
-        <input type="text" maxlength="10" oninput="checkPractice(this, '${practiceText}', document.getElementById('box_${i}_${n}'))">
+    <div class="practice-title">
+      <span>✍️ 따라쓰기 연습 (5회)</span>
+      <button class="practice-clear" onclick="clearAllCanvases(${i})">🗑️ 지우기</button>
+    </div>
+    <div class="practice-notebook" id="notebook_${i}">
+      ${[0,1,2,3,4].map(n => `<div class="practice-line">
+        <span class="guide-text">${practiceText}</span>
+        <canvas id="canvas_${i}_${n}" data-card="${i}" data-line="${n}"></canvas>
       </div>`).join('')}
     </div>
   </div>`;
