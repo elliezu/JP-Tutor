@@ -1078,16 +1078,12 @@ function getKanaInfo(kana) {
 function playSound(text) {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
-    // 모바일 감지
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    // 한 글자면 반복 (모바일은 3번, PC는 2번)
-    let readText = text;
-    if (text.length <= 2) {
-      readText = isMobile ? text + '。' + text + '。' + text : text + '。' + text;
-    }
+    // 한 글자면 두 번 반복
+    let readText = text.length <= 2 ? text + '。' + text : text;
     const u = new SpeechSynthesisUtterance(readText);
     u.lang = 'ja-JP';
-    u.rate = isMobile ? 0.7 : 1.0;
+    u.rate = isMobile ? 0.5 : 1.0;
     window.speechSynthesis.speak(u);
   }
 }
