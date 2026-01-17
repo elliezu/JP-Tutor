@@ -1868,7 +1868,7 @@ function renderPhraseList(data, title) {
 }
 function renderNav() {
   return `<nav><div class="nav-inner">
-    ${[{id:'home',icon:'🎯',label:'홈'},{id:'write',icon:'✍️',label:'미션'},{id:'free',icon:'📓',label:'자유'},{id:'quiz',icon:'🧠',label:'퀴즈'}].map(t => `<button class="nav-btn ${state.activeTab===t.id?'active':''}" onclick="setActiveTab('${t.id}')"><span>${t.icon}</span><span>${t.label}</span></button>`).join('')}
+    ${[{id:'home',icon:'🎯',label:'홈'},{id:'write',icon:'✍️',label:'미션'},{id:'free',icon:'📓',label:'자유'},{id:'quiz',icon:'🧠',label:'퀴즈'},{id:'jlpt',icon:'📚',label:'JLPT'}].map(t => t.id==='jlpt'?`<a href="jlpt.html" class="nav-btn" style="text-decoration:none;"><span>${t.icon}</span><span>${t.label}</span></a>`:`<button class="nav-btn ${state.activeTab===t.id?'active':''}" onclick="setActiveTab('${t.id}')"><span>${t.icon}</span><span>${t.label}</span></button>`).join('')}
   </div></nav>`;
 }
 

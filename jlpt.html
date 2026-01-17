@@ -790,7 +790,10 @@ function render() {
   app.innerHTML = `
     <header>
       <div class="header-top">
-        <span class="header-title">🎯 JLPT ${state.level.toUpperCase()} 마스터</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <a href="index.html" style="background:rgba(255,255,255,0.2);border:none;padding:0.4rem 0.6rem;border-radius:0.5rem;color:white;text-decoration:none;font-size:1rem;">🏠</a>
+          <span class="header-title">🎯 JLPT ${state.level.toUpperCase()} 마스터</span>
+        </div>
         <div class="header-controls">
           <select onchange="switchProfile(this.value)">
             ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
