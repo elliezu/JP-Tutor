@@ -892,6 +892,14 @@ function renderKanji() {
       <div class="progress-bar"><div class="progress-fill" style="width:${(learned.length/data.length*100).toFixed(1)}%"></div></div>
       <div class="text-xs text-gray" style="margin-top:0.25rem">${learned.length}/${data.length} 학습완료</div>
     </div>
+    <div class="card" style="background:#f0f9ff;font-size:0.8rem;padding:0.75rem">
+      <div style="font-weight:bold;margin-bottom:0.5rem">📖 학습 가이드</div>
+      <div style="color:#374151;line-height:1.6">
+        • <span style="color:#dc2626;font-weight:bold">음(音)</span>: 음독 - 한자어에서 쓰는 읽기 (예: 山→サン)<br>
+        • <span style="color:#2563eb;font-weight:bold">훈(訓)</span>: 훈독 - 일본어 고유 읽기 (예: 山→やま)<br>
+        • 🔊 한자 발음 듣기 &nbsp;│&nbsp; 📖 예문 발음 듣기 &nbsp;│&nbsp; ✓ 학습 완료
+      </div>
+    </div>
     <div class="grid-2">
       ${data.map((item, i) => `
         <div class="kanji-card" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}">
