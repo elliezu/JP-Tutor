@@ -91,7 +91,8 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
   <div class="cards-container" id="cardsContainer"></div>
   
   <div class="quiz-section" id="quizSection" style="display:none;">
-    <h3>오늘 학습한 내용으로 퀴즈!</h3>
+    <h3>📝 단어장 퀴즈</h3>
+    <p style="color:#666;margin-bottom:15px;">저장한 단어로 실력을 테스트해보세요!</p>
     <button class="quiz-btn" onclick="startQuiz()">🎯 퀴즈 시작</button>
   </div>
 </div>
@@ -205,8 +206,8 @@ function renderCards() {
   document.getElementById('totalCount').textContent = total;
   document.getElementById('todayCount').textContent = nb[today]?.length || 0;
   
-  // 퀴즈 섹션
-  document.getElementById('quizSection').style.display = todayCards.length >= 3 ? 'block' : 'none';
+  // 퀴즈 섹션 - 현재 보는 카드 3개 이상이면 표시
+  document.getElementById('quizSection').style.display = cards.length >= 3 ? 'block' : 'none';
   
   if (cards.length === 0) {
     container.innerHTML = '<div class="empty-state"><h3>📝 아직 단어가 없어요</h3><p>JLPT나 회화 페이지에서 카드를 더블클릭해서 추가해보세요!</p></div>';
@@ -281,16 +282,22 @@ let quizScore = 0;
 
 function startQuiz() {
   const nb = getNotebook();
-  const today = getToday();
-  const todayCards = nb[today] || [];
   
-  if (todayCards.length < 3) {
+  // 현재 보고 있는 카드 수집
+  let quizCards = [];
+  if (viewAll) {
+    Object.values(nb).forEach(arr => quizCards.push(...arr));
+  } else {
+    quizCards = nb[currentViewDate] || [];
+  }
+  
+  if (quizCards.length < 3) {
     alert('퀴즈를 하려면 최소 3개 이상의 단어가 필요해요!');
     return;
   }
   
   // 셔플 및 10개 선택
-  quizData = shuffle([...todayCards]).slice(0, Math.min(10, todayCards.length));
+  quizData = shuffle([...quizCards]).slice(0, Math.min(10, quizCards.length));
   quizIndex = 0;
   quizScore = 0;
   
