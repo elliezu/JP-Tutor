@@ -1078,16 +1078,11 @@ function getKanaInfo(kana) {
 function playSound(text) {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
-    // 한 글자면 장음으로 길게 발음
-    let readText = text;
-    if (text.length === 1) {
-      readText = text + 'ー、' + text + 'ー';
-    } else if (text.length === 2) {
-      readText = text + '、' + text;
-    }
+    // 한 글자면 두 번 반복
+    let readText = text.length <= 2 ? text + '。' + text : text;
     const u = new SpeechSynthesisUtterance(readText);
     u.lang = 'ja-JP';
-    u.rate = 0.5;
+    u.rate = 0.8;
     window.speechSynthesis.speak(u);
   }
 }
