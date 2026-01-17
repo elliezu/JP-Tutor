@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🇯🇵 일본어 가나 마스터</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9fafb; min-height: 100vh; }
+    .container { max-width: 28rem; margin: 0 auto; padding-bottom: 5rem; }
+    
+    /* Header */
+    header { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; padding: 0.5rem 1rem; }
+    .header-title { font-size: 1.125rem; font-weight: bold; color: #1f2937; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .header-tabs { display: flex; gap: 0.5rem; }
+    .header-tab { flex: 1; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; }
+    .header-tab.active { background: #6366f1; color: white; }
+    .header-tab:not(.active) { background: #f3f4f6; color: #374151; }
+    
+    /* Main */
+    main { padding: 1rem; }
+    
+    /* Cards */
+    .card { background: white; border-radius: 1rem; padding: 1.25rem; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
+    .card-gradient { background: linear-gradient(to bottom right, #6366f1, #9333ea); color: white; border: none; }
+    
+    /* Buttons */
+    .btn { padding: 0.625rem 1rem; border-radius: 0.75rem; font-weight: 500; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; }
+    .btn-primary { background: #6366f1; color: white; }
+    .btn-white { background: white; color: #6366f1; }
+    .btn-gray { background: #f3f4f6; color: #374151; border: 2px solid #e5e7eb; }
+    .btn-purple { background: #9333ea; color: white; }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+    .btn-pill { border-radius: 9999px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Progress bar */
+    .progress-bg { height: 0.5rem; background: rgba(255,255,255,0.2); border-radius: 9999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: white; border-radius: 9999px; transition: width 0.3s; }
+    .progress-indigo-bg { background: #c7d2fe; }
+    .progress-indigo-fill { background: #6366f1; }
+    
+    /* Grid */
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .flex-wrap { flex-wrap: wrap; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-1 { flex: 1; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    
+    /* Text */
+    .text-xs { font-size: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-7xl { font-size: 4.5rem; }
+    .font-bold { font-weight: bold; }
+    .font-medium { font-weight: 500; }
+    .text-center { text-align: center; }
+    .text-white { color: white; }
+    .text-gray-400 { color: #9ca3af; }
+    .text-gray-500 { color: #6b7280; }
+    .text-gray-600 { color: #4b5563; }
+    .text-gray-800 { color: #1f2937; }
+    .text-indigo-500 { color: #6366f1; }
+    .text-indigo-600 { color: #4f46e5; }
+    .text-indigo-700 { color: #4338ca; }
+    .text-purple-600 { color: #9333ea; }
+    .text-purple-700 { color: #7e22ce; }
+    .text-green-600 { color: #16a34a; }
+    .text-green-700 { color: #15803d; }
+    .text-red-600 { color: #dc2626; }
+    
+    /* Background */
+    .bg-white { background: white; }
+    .bg-gray-50 { background: #f9fafb; }
+    .bg-gray-100 { background: #f3f4f6; }
+    .bg-indigo-50 { background: #eef2ff; }
+    .bg-indigo-100 { background: #e0e7ff; }
+    .bg-indigo-500 { background: #6366f1; }
+    .bg-purple-50 { background: #faf5ff; }
+    .bg-purple-100 { background: #f3e8ff; }
+    .bg-purple-500 { background: #9333ea; }
+    .bg-green-50 { background: #f0fdf4; }
+    .bg-green-100 { background: #dcfce7; }
+    .bg-green-500 { background: #22c55e; }
+    .bg-amber-50 { background: #fffbeb; }
+    .bg-cyan-100 { background: #cffafe; }
+    .bg-red-50 { background: #fef2f2; }
+    
+    /* Spacing */
+    .p-2 { padding: 0.5rem; }
+    .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .ml-1 { margin-left: 0.25rem; }
+    .ml-2 { margin-left: 0.5rem; }
+    
+    /* Border */
+    .rounded { border-radius: 0.25rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .rounded-xl { border-radius: 0.75rem; }
+    .rounded-2xl { border-radius: 1rem; }
+    .rounded-full { border-radius: 9999px; }
+    .border { border: 1px solid #e5e7eb; }
+    .border-2 { border: 2px solid #e5e7eb; }
+    .border-gray-200 { border-color: #e5e7eb; }
+    .border-gray-300 { border-color: #d1d5db; }
+    .border-green-300 { border-color: #86efac; }
+    .border-green-400 { border-color: #4ade80; }
+    .border-indigo-400 { border-color: #818cf8; }
+    .border-purple-300 { border-color: #d8b4fe; }
+    
+    /* Misc */
+    .shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .shadow-inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+    .overflow-x-auto { overflow-x: auto; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .hidden { display: none; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+    .z-50 { z-index: 50; }
+    .opacity-50 { opacity: 0.5; }
+    .scale-110 { transform: scale(1.1); }
+    canvas { touch-action: none; }
+    
+    /* Kana button */
+    .kana-btn { width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; font-size: 1.125rem; font-weight: 500; border: none; cursor: pointer; }
+    .kana-btn.active { background: #6366f1; color: white; transform: scale(1.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .kana-btn.passed { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .kana-btn:not(.active):not(.passed) { background: #f3f4f6; }
+    
+    /* Small canvas container */
+    .small-canvas-grid { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; padding: 0.5rem; background: #f3f4f6; border-radius: 0.75rem; }
+    .small-canvas { border-radius: 0.75rem; border: 2px solid #e5e7eb; background: white; }
+    .small-canvas.active { border-color: #818cf8; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .small-canvas.done { border-color: #4ade80; background: #f0fdf4; }
+    
+    /* Nav */
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; }
+    .nav-inner { max-width: 28rem; margin: 0 auto; display: flex; }
+    .nav-btn { flex: 1; padding: 0.75rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; border: none; background: none; cursor: pointer; color: #9ca3af; }
+    .nav-btn.active { color: #6366f1; }
+    .nav-btn span:first-child { font-size: 1.25rem; }
+    .nav-btn span:last-child { font-size: 0.75rem; }
+    
+    /* Quiz option */
+    .quiz-option { padding: 0.75rem; border-radius: 0.75rem; font-size: 1.25rem; font-weight: 500; border: none; cursor: pointer; background: #f3f4f6; }
+    .quiz-option:hover { background: #e0e7ff; }
+    .quiz-option.correct { background: #22c55e; color: white; }
+    .quiz-option.wrong { background: #f3f4f6; color: #d1d5db; }
+    .quiz-option:disabled { cursor: not-allowed; }
+    
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+    .modal-content { background: white; border-radius: 1rem; padding: 1.5rem; max-width: 24rem; width: 100%; text-center; animation: celebrate 0.5s ease-in-out; }
+    @keyframes celebrate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    
+    /* Scrollbar hide */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Aspect ratio */
+    .aspect-square { aspect-ratio: 1/1; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script>
+// ===== 데이터 =====
+const HIRAGANA = {
+  'あ행': [
+    { kana: 'あ', romaji: 'a', strokes: 3, order: '① 가로 → ② 세로+꺾임 → ③ 동그라미', mnemonic: '"아!"', img: '👄' },
+    { kana: 'い', romaji: 'i', strokes: 2, order: '① 왼세로 → ② 오른세로', mnemonic: '두 사람', img: '👯' },
+    { kana: 'う', romaji: 'u', strokes: 2, order: '① 위 가로 → ② 곡선', mnemonic: '"우~"', img: '😗' },
+    { kana: 'え', romaji: 'e', strokes: 2, order: '① 위 가로 → ② 아래 곡선', mnemonic: '에너지', img: '⚡' },
+    { kana: 'お', romaji: 'o', strokes: 3, order: '① 가로 → ② 세로 → ③ 동그라미', mnemonic: '"오~"', img: '⛳' },
+  ],
+  'か행': [
+    { kana: 'か', romaji: 'ka', strokes: 3, order: '① 가로 → ② 세로+꺾임 → ③ 삐침', mnemonic: '칼', img: '🔪' },
+    { kana: 'き', romaji: 'ki', strokes: 4, order: '① 위가로 → ② 아래가로 → ③ 세로 → ④ 점', mnemonic: '열쇠', img: '🔑' },
+    { kana: 'く', romaji: 'ku', strokes: 1, order: '① 꺾인 선', mnemonic: '쿠션', img: '↩️' },
+    { kana: 'け', romaji: 'ke', strokes: 3, order: '① 왼세로 → ② 가로 → ③ 오른세로', mnemonic: '케이크', img: '🍰' },
+    { kana: 'こ', romaji: 'ko', strokes: 2, order: '① 위 가로 → ② 아래 가로', mnemonic: '코인', img: '🪙' },
+  ],
+  'さ행': [
+    { kana: 'さ', romaji: 'sa', strokes: 3, order: '① 가로 → ② 세로+꺾임 → ③ 동그라미', mnemonic: '사무라이', img: '⚔️' },
+    { kana: 'し', romaji: 'shi', strokes: 1, order: '① 곡선', mnemonic: '낚싯줄', img: '🎣' },
+    { kana: 'す', romaji: 'su', strokes: 2, order: '① 가로+세로 → ② 동그라미', mnemonic: '스윙', img: '🏌️' },
+    { kana: 'せ', romaji: 'se', strokes: 3, order: '① 세로 → ② 가로 → ③ 곡선', mnemonic: 'say', img: '💬' },
+    { kana: 'そ', romaji: 'so', strokes: 1, order: '① 곡선', mnemonic: '소용돌이', img: '🌀' },
+  ],
+  'た행': [
+    { kana: 'た', romaji: 'ta', strokes: 4, order: '① 가로 → ② 세로 → ③ 가로 → ④ 삐침', mnemonic: '타워', img: '🗼' },
+    { kana: 'ち', romaji: 'chi', strokes: 2, order: '① 가로+꺾임 → ② 동그라미', mnemonic: '치어리더', img: '📣' },
+    { kana: 'つ', romaji: 'tsu', strokes: 1, order: '① 곡선', mnemonic: '쓰나미', img: '🌊' },
+    { kana: 'て', romaji: 'te', strokes: 1, order: '① 곡선', mnemonic: '손', img: '✋' },
+    { kana: 'と', romaji: 'to', strokes: 2, order: '① 세로+꺾임 → ② 점', mnemonic: '토네이도', img: '🌪️' },
+  ],
+  'な행': [
+    { kana: 'な', romaji: 'na', strokes: 4, order: '① 가로 → ② 세로+꺾임 → ③ 점 → ④ 동그라미', mnemonic: '매듭', img: '🪢' },
+    { kana: 'に', romaji: 'ni', strokes: 3, order: '① 왼세로 → ② 가로 → ③ 오른세로', mnemonic: '무릎', img: '🦵' },
+    { kana: 'ぬ', romaji: 'nu', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '누들', img: '🍜' },
+    { kana: 'ね', romaji: 'ne', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '고양이', img: '🐱' },
+    { kana: 'の', romaji: 'no', strokes: 1, order: '① 동그라미', mnemonic: 'NO', img: '🚫' },
+  ],
+  'は행': [
+    { kana: 'は', romaji: 'ha', strokes: 3, order: '① 왼세로 → ② 오른위 → ③ 오른아래', mnemonic: '하하', img: '😄' },
+    { kana: 'ひ', romaji: 'hi', strokes: 1, order: '① 곡선', mnemonic: '히히', img: '😊' },
+    { kana: 'ふ', romaji: 'fu', strokes: 4, order: '① 점 → ② 점 → ③ 점 → ④ 곡선', mnemonic: '후~', img: '💨' },
+    { kana: 'へ', romaji: 'he', strokes: 1, order: '① 산 모양', mnemonic: '산', img: '⛰️' },
+    { kana: 'ほ', romaji: 'ho', strokes: 4, order: '① 왼세로 → ② 가로 → ③ 오른쪽 → ④ 점', mnemonic: '호호', img: '🎅' },
+  ],
+  'ま행': [
+    { kana: 'ま', romaji: 'ma', strokes: 3, order: '① 가로 → ② 가로 → ③ 세로+동그라미', mnemonic: '마마', img: '👩' },
+    { kana: 'み', romaji: 'mi', strokes: 2, order: '① 위 → ② 아래', mnemonic: '미소', img: '😀' },
+    { kana: 'む', romaji: 'mu', strokes: 3, order: '① 세로 → ② 곡선 → ③ 점', mnemonic: '무~', img: '🐄' },
+    { kana: 'め', romaji: 'me', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '눈', img: '👁️' },
+    { kana: 'も', romaji: 'mo', strokes: 3, order: '① 가로 → ② 가로 → ③ 세로+곡선', mnemonic: '모자', img: '🎩' },
+  ],
+  'や행': [
+    { kana: 'や', romaji: 'ya', strokes: 3, order: '① 삐침 → ② 가로+세로 → ③ 오른쪽', mnemonic: '야호', img: '🙌' },
+    { kana: 'ゆ', romaji: 'yu', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '유령', img: '👻' },
+    { kana: 'よ', romaji: 'yo', strokes: 2, order: '① 가로+세로 → ② 동그라미', mnemonic: '요요', img: '🪀' },
+  ],
+  'ら행': [
+    { kana: 'ら', romaji: 'ra', strokes: 2, order: '① 위 → ② 아래', mnemonic: '라면', img: '🍜' },
+    { kana: 'り', romaji: 'ri', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '리본', img: '🎀' },
+    { kana: 'る', romaji: 'ru', strokes: 1, order: '① 곡선+동그라미', mnemonic: '루프', img: '➰' },
+    { kana: 'れ', romaji: 're', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '레이스', img: '🏁' },
+    { kana: 'ろ', romaji: 'ro', strokes: 1, order: '① 곡선', mnemonic: '로봇', img: '🤖' },
+  ],
+  'わ행': [
+    { kana: 'わ', romaji: 'wa', strokes: 2, order: '① 왼쪽 → ② 오른쪽', mnemonic: '와~', img: '😲' },
+    { kana: 'を', romaji: 'wo', strokes: 3, order: '① 가로 → ② 가로 → ③ 아래', mnemonic: '워~', img: '🤩' },
+    { kana: 'ん', romaji: 'n', strokes: 1, order: '① 곡선', mnemonic: '응~', img: '😌' },
+  ],
+};
+
+const KATAKANA = {
+  'ア행': [
+    { kana: 'ア', romaji: 'a', strokes: 2, order: '① 가로 → ② 삐침', mnemonic: '안테나', img: '📡' },
+    { kana: 'イ', romaji: 'i', strokes: 2, order: '① 삐침 → ② 세로', mnemonic: '이글', img: '🦅' },
+    { kana: 'ウ', romaji: 'u', strokes: 3, order: '① 점 → ② 가로 → ③ 세로', mnemonic: '위', img: '⬆️' },
+    { kana: 'エ', romaji: 'e', strokes: 3, order: '① 위가로 → ② 세로 → ③ 아래가로', mnemonic: '엘리베이터', img: '🛗' },
+    { kana: 'オ', romaji: 'o', strokes: 3, order: '① 가로 → ② 세로 → ③ 삐침', mnemonic: '오페라', img: '🎭' },
+  ],
+  'カ행': [
+    { kana: 'カ', romaji: 'ka', strokes: 2, order: '① 세로+꺾임 → ② 삐침', mnemonic: '칼', img: '⚔️' },
+    { kana: 'キ', romaji: 'ki', strokes: 3, order: '① 가로 → ② 가로 → ③ 세로', mnemonic: '키', img: '🔐' },
+    { kana: 'ク', romaji: 'ku', strokes: 2, order: '① 삐침 → ② 꺾임', mnemonic: '쿠키', img: '🍪' },
+    { kana: 'ケ', romaji: 'ke', strokes: 3, order: '① 삐침 → ② 가로 → ③ 세로', mnemonic: 'K', img: '🔤' },
+    { kana: 'コ', romaji: 'ko', strokes: 2, order: '① ㄱ모양 → ② 아래가로', mnemonic: '코너', img: '📐' },
+  ],
+  'サ행': [
+    { kana: 'サ', romaji: 'sa', strokes: 3, order: '① 가로 → ② 세로 → ③ 세로', mnemonic: '사다리', img: '🪜' },
+    { kana: 'シ', romaji: 'shi', strokes: 3, order: '① 점 → ② 점 → ③ 곡선', mnemonic: '시~', img: '😉' },
+    { kana: 'ス', romaji: 'su', strokes: 2, order: '① 삐침 → ② 꺾임', mnemonic: '스키', img: '⛷️' },
+    { kana: 'セ', romaji: 'se', strokes: 2, order: '① 세로+가로 → ② 삐침', mnemonic: '세트', img: '📦' },
+    { kana: 'ソ', romaji: 'so', strokes: 2, order: '① 점 → ② 삐침', mnemonic: '소나기', img: '🌧️' },
+  ],
+  'タ행': [
+    { kana: 'タ', romaji: 'ta', strokes: 3, order: '① 삐침 → ② 가로 → ③ 삐침', mnemonic: '타', img: '🎯' },
+    { kana: 'チ', romaji: 'chi', strokes: 3, order: '① 가로 → ② 가로 → ③ 삐침', mnemonic: '치즈', img: '🧀' },
+    { kana: 'ツ', romaji: 'tsu', strokes: 3, order: '① 점 → ② 점 → ③ 삐침', mnemonic: '쓰~', img: '💦' },
+    { kana: 'テ', romaji: 'te', strokes: 3, order: '① 가로 → ② 가로 → ③ 삐침', mnemonic: '테이블', img: '🪑' },
+    { kana: 'ト', romaji: 'to', strokes: 2, order: '① 세로 → ② 삐침', mnemonic: '토스트', img: '🍞' },
+  ],
+  'ナ행': [
+    { kana: 'ナ', romaji: 'na', strokes: 2, order: '① 가로 → ② 삐침', mnemonic: '나', img: '🙋' },
+    { kana: 'ニ', romaji: 'ni', strokes: 2, order: '① 위가로 → ② 아래가로', mnemonic: '니=2', img: '✌️' },
+    { kana: 'ヌ', romaji: 'nu', strokes: 2, order: '① 삐침 → ② X', mnemonic: '누들', img: '🍝' },
+    { kana: 'ネ', romaji: 'ne', strokes: 4, order: '① 점 → ② 가로세로 → ③ 삐침 → ④ 삐침', mnemonic: '네트', img: '🥅' },
+    { kana: 'ノ', romaji: 'no', strokes: 1, order: '① 삐침', mnemonic: '노~', img: '📝' },
+  ],
+  'ハ행': [
+    { kana: 'ハ', romaji: 'ha', strokes: 2, order: '① 왼삐침 → ② 오른삐침', mnemonic: '하하', img: '😆' },
+    { kana: 'ヒ', romaji: 'hi', strokes: 2, order: '① 세로 → ② 꺾임', mnemonic: '히~', img: '🤭' },
+    { kana: 'フ', romaji: 'fu', strokes: 1, order: '① 꺾임', mnemonic: '후~', img: '🌬️' },
+    { kana: 'ヘ', romaji: 'he', strokes: 1, order: '① 산모양', mnemonic: '산', img: '🏔️' },
+    { kana: 'ホ', romaji: 'ho', strokes: 4, order: '① 가로 → ② 세로 → ③ 왼삐침 → ④ 오른삐침', mnemonic: '호~', img: '🎄' },
+  ],
+  'マ행': [
+    { kana: 'マ', romaji: 'ma', strokes: 2, order: '① 가로+꺾임 → ② 삐침', mnemonic: '마~', img: '🐴' },
+    { kana: 'ミ', romaji: 'mi', strokes: 3, order: '① 가로 → ② 가로 → ③ 가로', mnemonic: '미=3', img: '3️⃣' },
+    { kana: 'ム', romaji: 'mu', strokes: 2, order: '① 꺾임 → ② 삐침', mnemonic: '무~', img: '🐮' },
+    { kana: 'メ', romaji: 'me', strokes: 2, order: '① 삐침 → ② 삐침', mnemonic: 'X', img: '❌' },
+    { kana: 'モ', romaji: 'mo', strokes: 3, order: '① 가로 → ② 가로 → ③ 세로', mnemonic: '모~', img: '🔲' },
+  ],
+  'ヤ행': [
+    { kana: 'ヤ', romaji: 'ya', strokes: 2, order: '① 삐침+가로 → ② 세로', mnemonic: '야~', img: '🎉' },
+    { kana: 'ユ', romaji: 'yu', strokes: 2, order: '① 세로+가로 → ② 세로', mnemonic: '유~', img: '🛁' },
+    { kana: 'ヨ', romaji: 'yo', strokes: 3, order: '① 가로 → ② 가로 → ③ 세로+가로', mnemonic: '요~', img: '🪆' },
+  ],
+  'ラ행': [
+    { kana: 'ラ', romaji: 'ra', strokes: 2, order: '① 가로+꺾임 → ② 삐침', mnemonic: '라~', img: '🎵' },
+    { kana: 'リ', romaji: 'ri', strokes: 2, order: '① 왼세로 → ② 오른세로', mnemonic: '리~', img: '🎶' },
+    { kana: 'ル', romaji: 'ru', strokes: 2, order: '① 세로 → ② 꺾임', mnemonic: '루~', img: '🔷' },
+    { kana: 'レ', romaji: 're', strokes: 1, order: '① 꺾임', mnemonic: '레~', img: '↗️' },
+    { kana: 'ロ', romaji: 'ro', strokes: 3, order: '① ㅁ모양', mnemonic: '로~', img: '⬜' },
+  ],
+  'ワ행': [
+    { kana: 'ワ', romaji: 'wa', strokes: 2, order: '① 세로+꺾임 → ② 삐침', mnemonic: '와~', img: '🎊' },
+    { kana: 'ヲ', romaji: 'wo', strokes: 3, order: '① 가로 → ② 가로+꺾임 → ③ 삐침', mnemonic: '워~', img: '✨' },
+    { kana: 'ン', romaji: 'n', strokes: 2, order: '① 점 → ② 곡선', mnemonic: '응~', img: '😊' },
+  ],
+};
+
+const DAKUTEN = {
+  'が행': [
+    { kana: 'が', romaji: 'ga', strokes: 4, order: 'か + ゛', img: '🔵' },
+    { kana: 'ぎ', romaji: 'gi', strokes: 5, order: 'き + ゛', img: '🔵' },
+    { kana: 'ぐ', romaji: 'gu', strokes: 2, order: 'く + ゛', img: '🔵' },
+    { kana: 'げ', romaji: 'ge', strokes: 4, order: 'け + ゛', img: '🔵' },
+    { kana: 'ご', romaji: 'go', strokes: 3, order: 'こ + ゛', img: '🔵' },
+  ],
+  'ざ행': [
+    { kana: 'ざ', romaji: 'za', strokes: 4, order: 'さ + ゛', img: '🔵' },
+    { kana: 'じ', romaji: 'ji', strokes: 2, order: 'し + ゛', img: '🔵' },
+    { kana: 'ず', romaji: 'zu', strokes: 3, order: 'す + ゛', img: '🔵' },
+    { kana: 'ぜ', romaji: 'ze', strokes: 4, order: 'せ + ゛', img: '🔵' },
+    { kana: 'ぞ', romaji: 'zo', strokes: 2, order: 'そ + ゛', img: '🔵' },
+  ],
+  'だ행': [
+    { kana: 'だ', romaji: 'da', strokes: 5, order: 'た + ゛', img: '🔵' },
+    { kana: 'ぢ', romaji: 'di', strokes: 3, order: 'ち + ゛', img: '🔵' },
+    { kana: 'づ', romaji: 'du', strokes: 2, order: 'つ + ゛', img: '🔵' },
+    { kana: 'で', romaji: 'de', strokes: 2, order: 'て + ゛', img: '🔵' },
+    { kana: 'ど', romaji: 'do', strokes: 3, order: 'と + ゛', img: '🔵' },
+  ],
+  'ば행': [
+    { kana: 'ば', romaji: 'ba', strokes: 4, order: 'は + ゛', img: '🔵' },
+    { kana: 'び', romaji: 'bi', strokes: 2, order: 'ひ + ゛', img: '🔵' },
+    { kana: 'ぶ', romaji: 'bu', strokes: 5, order: 'ふ + ゛', img: '🔵' },
+    { kana: 'べ', romaji: 'be', strokes: 2, order: 'へ + ゛', img: '🔵' },
+    { kana: 'ぼ', romaji: 'bo', strokes: 5, order: 'ほ + ゛', img: '🔵' },
+  ],
+  'ぱ행': [
+    { kana: 'ぱ', romaji: 'pa', strokes: 4, order: 'は + ゜', img: '⭕' },
+    { kana: 'ぴ', romaji: 'pi', strokes: 2, order: 'ひ + ゜', img: '⭕' },
+    { kana: 'ぷ', romaji: 'pu', strokes: 5, order: 'ふ + ゜', img: '⭕' },
+    { kana: 'ぺ', romaji: 'pe', strokes: 2, order: 'へ + ゜', img: '⭕' },
+    { kana: 'ぽ', romaji: 'po', strokes: 5, order: 'ほ + ゜', img: '⭕' },
+  ],
+};
+
+const YOUON = {
+  'きゃ행': [
+    { kana: 'きゃ', romaji: 'kya', strokes: 6, order: 'き + 작은や', img: '🔸' },
+    { kana: 'きゅ', romaji: 'kyu', strokes: 6, order: 'き + 작은ゆ', img: '🔸' },
+    { kana: 'きょ', romaji: 'kyo', strokes: 6, order: 'き + 작은よ', img: '🔸' },
+  ],
+  'しゃ행': [
+    { kana: 'しゃ', romaji: 'sha', strokes: 4, order: 'し + 작은や', img: '🔸' },
+    { kana: 'しゅ', romaji: 'shu', strokes: 3, order: 'し + 작은ゆ', img: '🔸' },
+    { kana: 'しょ', romaji: 'sho', strokes: 3, order: 'し + 작은よ', img: '🔸' },
+  ],
+  'ちゃ행': [
+    { kana: 'ちゃ', romaji: 'cha', strokes: 5, order: 'ち + 작은や', img: '🔸' },
+    { kana: 'ちゅ', romaji: 'chu', strokes: 4, order: 'ち + 작은ゆ', img: '🔸' },
+    { kana: 'ちょ', romaji: 'cho', strokes: 4, order: 'ち + 작은よ', img: '🔸' },
+  ],
+  'にゃ행': [
+    { kana: 'にゃ', romaji: 'nya', strokes: 6, order: 'に + 작은や', img: '🔸' },
+    { kana: 'にゅ', romaji: 'nyu', strokes: 5, order: 'に + 작은ゆ', img: '🔸' },
+    { kana: 'にょ', romaji: 'nyo', strokes: 5, order: 'に + 작은よ', img: '🔸' },
+  ],
+  'ひゃ행': [
+    { kana: 'ひゃ', romaji: 'hya', strokes: 4, order: 'ひ + 작은や', img: '🔸' },
+    { kana: 'ひゅ', romaji: 'hyu', strokes: 3, order: 'ひ + 작은ゆ', img: '🔸' },
+    { kana: 'ひょ', romaji: 'hyo', strokes: 3, order: 'ひ + 작은よ', img: '🔸' },
+  ],
+  'みゃ행': [
+    { kana: 'みゃ', romaji: 'mya', strokes: 5, order: 'み + 작은や', img: '🔸' },
+    { kana: 'みゅ', romaji: 'myu', strokes: 4, order: 'み + 작은ゆ', img: '🔸' },
+    { kana: 'みょ', romaji: 'myo', strokes: 4, order: 'み + 작은よ', img: '🔸' },
+  ],
+  'りゃ행': [
+    { kana: 'りゃ', romaji: 'rya', strokes: 5, order: 'り + 작은や', img: '🔸' },
+    { kana: 'りゅ', romaji: 'ryu', strokes: 4, order: 'り + 작은ゆ', img: '🔸' },
+    { kana: 'りょ', romaji: 'ryo', strokes: 4, order: 'り + 작은よ', img: '🔸' },
+  ],
+};
+
+const ALL_HIRAGANA = Object.values(HIRAGANA).flat();
+const ALL_KATAKANA = Object.values(KATAKANA).flat();
+const ALL_DAKUTEN = Object.values(DAKUTEN).flat();
+const ALL_YOUON = Object.values(YOUON).flat();
+
+const TYPE_DATA = { hiragana: HIRAGANA, katakana: KATAKANA, dakuten: DAKUTEN, youon: YOUON };
+const TYPE_ALL = { hiragana: ALL_HIRAGANA, katakana: ALL_KATAKANA, dakuten: ALL_DAKUTEN, youon: ALL_YOUON };
+// ===== 심화학습 데이터 =====
+
+const ADVANCED_DATA = {
+  // 숫자 확장
+  numbers: {
+    basic: [
+      {jp:'いち',n:'一',r:'ichi',v:1},{jp:'に',n:'二',r:'ni',v:2},{jp:'さん',n:'三',r:'san',v:3},
+      {jp:'よん/し',n:'四',r:'yon/shi',v:4},{jp:'ご',n:'五',r:'go',v:5},{jp:'ろく',n:'六',r:'roku',v:6},
+      {jp:'なな/しち',n:'七',r:'nana/shichi',v:7},{jp:'はち',n:'八',r:'hachi',v:8},
+      {jp:'きゅう/く',n:'九',r:'kyuu/ku',v:9},{jp:'じゅう',n:'十',r:'juu',v:10}
+    ],
+    tens: [
+      {jp:'じゅういち',n:'十一',r:'juuichi',v:11},{jp:'じゅうに',n:'十二',r:'juuni',v:12},
+      {jp:'にじゅう',n:'二十',r:'nijuu',v:20},{jp:'さんじゅう',n:'三十',r:'sanjuu',v:30},
+      {jp:'よんじゅう',n:'四十',r:'yonjuu',v:40},{jp:'ごじゅう',n:'五十',r:'gojuu',v:50},
+      {jp:'ろくじゅう',n:'六十',r:'rokujuu',v:60},{jp:'ななじゅう',n:'七十',r:'nanajuu',v:70},
+      {jp:'はちじゅう',n:'八十',r:'hachijuu',v:80},{jp:'きゅうじゅう',n:'九十',r:'kyuujuu',v:90}
+    ],
+    big: [
+      {jp:'ひゃく',n:'百',r:'hyaku',v:100},{jp:'にひゃく',n:'二百',r:'nihyaku',v:200},
+      {jp:'さんびゃく',n:'三百',r:'sanbyaku',v:300},{jp:'よんひゃく',n:'四百',r:'yonhyaku',v:400},
+      {jp:'ごひゃく',n:'五百',r:'gohyaku',v:500},{jp:'ろっぴゃく',n:'六百',r:'roppyaku',v:600},
+      {jp:'ななひゃく',n:'七百',r:'nanahyaku',v:700},{jp:'はっぴゃく',n:'八百',r:'happyaku',v:800},
+      {jp:'きゅうひゃく',n:'九百',r:'kyuuhyaku',v:900},{jp:'せん',n:'千',r:'sen',v:1000},
+      {jp:'いちまん',n:'一万',r:'ichiman',v:10000},{jp:'じゅうまん',n:'十万',r:'juuman',v:100000}
+    ],
+    ordinal: [
+      {jp:'ひとつ',r:'hitotsu',kr:'1개'},{jp:'ふたつ',r:'futatsu',kr:'2개'},
+      {jp:'みっつ',r:'mittsu',kr:'3개'},{jp:'よっつ',r:'yottsu',kr:'4개'},
+      {jp:'いつつ',r:'itsutsu',kr:'5개'},{jp:'むっつ',r:'muttsu',kr:'6개'},
+      {jp:'ななつ',r:'nanatsu',kr:'7개'},{jp:'やっつ',r:'yattsu',kr:'8개'},
+      {jp:'ここのつ',r:'kokonotsu',kr:'9개'},{jp:'とお',r:'too',kr:'10개'}
+    ]
+  },
+
+  // 시간
+  time: {
+    hours: [
+      {jp:'いちじ',r:'ichiji',kr:'1시'},{jp:'にじ',r:'niji',kr:'2시'},
+      {jp:'さんじ',r:'sanji',kr:'3시'},{jp:'よじ',r:'yoji',kr:'4시'},
+      {jp:'ごじ',r:'goji',kr:'5시'},{jp:'ろくじ',r:'rokuji',kr:'6시'},
+      {jp:'しちじ',r:'shichiji',kr:'7시'},{jp:'はちじ',r:'hachiji',kr:'8시'},
+      {jp:'くじ',r:'kuji',kr:'9시'},{jp:'じゅうじ',r:'juuji',kr:'10시'},
+      {jp:'じゅういちじ',r:'juuichiji',kr:'11시'},{jp:'じゅうにじ',r:'juuniji',kr:'12시'}
+    ],
+    minutes: [
+      {jp:'いっぷん',r:'ippun',kr:'1분'},{jp:'にふん',r:'nifun',kr:'2분'},
+      {jp:'さんぷん',r:'sanpun',kr:'3분'},{jp:'よんぷん',r:'yonpun',kr:'4분'},
+      {jp:'ごふん',r:'gofun',kr:'5분'},{jp:'ろっぷん',r:'roppun',kr:'6분'},
+      {jp:'ななふん',r:'nanafun',kr:'7분'},{jp:'はっぷん',r:'happun',kr:'8분'},
+      {jp:'きゅうふん',r:'kyuufun',kr:'9분'},{jp:'じゅっぷん',r:'juppun',kr:'10분'},
+      {jp:'じゅうごふん',r:'juugofun',kr:'15분'},{jp:'さんじゅっぷん',r:'sanjuppun',kr:'30분'},
+      {jp:'よんじゅうごふん',r:'yonjuugofun',kr:'45분'}
+    ],
+    periods: [
+      {jp:'ごぜん',r:'gozen',kr:'오전'},{jp:'ごご',r:'gogo',kr:'오후'},
+      {jp:'あさ',r:'asa',kr:'아침'},{jp:'ひる',r:'hiru',kr:'낮'},
+      {jp:'よる',r:'yoru',kr:'밤'},{jp:'ゆうがた',r:'yuugata',kr:'저녁'},
+      {jp:'はん',r:'han',kr:'반(30분)'},{jp:'まえ',r:'mae',kr:'전'},
+      {jp:'すぎ',r:'sugi',kr:'지나서'}
+    ]
+  },
+
+  // 요일/월/계절
+  calendar: {
+    weekdays: [
+      {jp:'げつようび',n:'月曜日',r:'getsuyoubi',kr:'월요일'},
+      {jp:'かようび',n:'火曜日',r:'kayoubi',kr:'화요일'},
+      {jp:'すいようび',n:'水曜日',r:'suiyoubi',kr:'수요일'},
+      {jp:'もくようび',n:'木曜日',r:'mokuyoubi',kr:'목요일'},
+      {jp:'きんようび',n:'金曜日',r:'kinyoubi',kr:'금요일'},
+      {jp:'どようび',n:'土曜日',r:'doyoubi',kr:'토요일'},
+      {jp:'にちようび',n:'日曜日',r:'nichiyoubi',kr:'일요일'}
+    ],
+    months: [
+      {jp:'いちがつ',n:'一月',r:'ichigatsu',kr:'1월'},{jp:'にがつ',n:'二月',r:'nigatsu',kr:'2월'},
+      {jp:'さんがつ',n:'三月',r:'sangatsu',kr:'3월'},{jp:'しがつ',n:'四月',r:'shigatsu',kr:'4월'},
+      {jp:'ごがつ',n:'五月',r:'gogatsu',kr:'5월'},{jp:'ろくがつ',n:'六月',r:'rokugatsu',kr:'6월'},
+      {jp:'しちがつ',n:'七月',r:'shichigatsu',kr:'7월'},{jp:'はちがつ',n:'八月',r:'hachigatsu',kr:'8월'},
+      {jp:'くがつ',n:'九月',r:'kugatsu',kr:'9월'},{jp:'じゅうがつ',n:'十月',r:'juugatsu',kr:'10월'},
+      {jp:'じゅういちがつ',n:'十一月',r:'juuichigatsu',kr:'11월'},{jp:'じゅうにがつ',n:'十二月',r:'juunigatsu',kr:'12월'}
+    ],
+    days: [
+      {jp:'ついたち',n:'一日',r:'tsuitachi',kr:'1일'},{jp:'ふつか',n:'二日',r:'futsuka',kr:'2일'},
+      {jp:'みっか',n:'三日',r:'mikka',kr:'3일'},{jp:'よっか',n:'四日',r:'yokka',kr:'4일'},
+      {jp:'いつか',n:'五日',r:'itsuka',kr:'5일'},{jp:'むいか',n:'六日',r:'muika',kr:'6일'},
+      {jp:'なのか',n:'七日',r:'nanoka',kr:'7일'},{jp:'ようか',n:'八日',r:'youka',kr:'8일'},
+      {jp:'ここのか',n:'九日',r:'kokonoka',kr:'9일'},{jp:'とおか',n:'十日',r:'tooka',kr:'10일'},
+      {jp:'じゅうよっか',n:'十四日',r:'juuyokka',kr:'14일'},{jp:'はつか',n:'二十日',r:'hatsuka',kr:'20일'},
+      {jp:'にじゅうよっか',n:'二十四日',r:'nijuuyokka',kr:'24일'}
+    ],
+    seasons: [
+      {jp:'はる',n:'春',r:'haru',kr:'봄'},{jp:'なつ',n:'夏',r:'natsu',kr:'여름'},
+      {jp:'あき',n:'秋',r:'aki',kr:'가을'},{jp:'ふゆ',n:'冬',r:'fuyu',kr:'겨울'}
+    ],
+    relative: [
+      {jp:'きょう',n:'今日',r:'kyou',kr:'오늘'},{jp:'あした',n:'明日',r:'ashita',kr:'내일'},
+      {jp:'きのう',n:'昨日',r:'kinou',kr:'어제'},{jp:'あさって',n:'明後日',r:'asatte',kr:'모레'},
+      {jp:'おととい',n:'一昨日',r:'ototoi',kr:'그저께'},{jp:'こんしゅう',n:'今週',r:'konshuu',kr:'이번 주'},
+      {jp:'らいしゅう',n:'来週',r:'raishuu',kr:'다음 주'},{jp:'せんしゅう',n:'先週',r:'senshuu',kr:'지난 주'},
+      {jp:'こんげつ',n:'今月',r:'kongetsu',kr:'이번 달'},{jp:'らいげつ',n:'来月',r:'raigetsu',kr:'다음 달'},
+      {jp:'せんげつ',n:'先月',r:'sengetsu',kr:'지난 달'},{jp:'ことし',n:'今年',r:'kotoshi',kr:'올해'},
+      {jp:'らいねん',n:'来年',r:'rainen',kr:'내년'},{jp:'きょねん',n:'去年',r:'kyonen',kr:'작년'}
+    ]
+  },
+
+  // 색깔
+  colors: [
+    {jp:'あか',n:'赤',r:'aka',kr:'빨강',hex:'#e53935'},
+    {jp:'あお',n:'青',r:'ao',kr:'파랑',hex:'#1e88e5'},
+    {jp:'きいろ',n:'黄色',r:'kiiro',kr:'노랑',hex:'#fdd835'},
+    {jp:'みどり',n:'緑',r:'midori',kr:'초록',hex:'#43a047'},
+    {jp:'オレンジ',r:'orenji',kr:'주황',hex:'#fb8c00'},
+    {jp:'むらさき',n:'紫',r:'murasaki',kr:'보라',hex:'#8e24aa'},
+    {jp:'ピンク',r:'pinku',kr:'분홍',hex:'#ec407a'},
+    {jp:'ちゃいろ',n:'茶色',r:'chairo',kr:'갈색',hex:'#795548'},
+    {jp:'くろ',n:'黒',r:'kuro',kr:'검정',hex:'#212121'},
+    {jp:'しろ',n:'白',r:'shiro',kr:'하양',hex:'#fafafa'},
+    {jp:'はいいろ',n:'灰色',r:'haiiro',kr:'회색',hex:'#9e9e9e'},
+    {jp:'きん',n:'金',r:'kin',kr:'금색',hex:'#ffd700'},
+    {jp:'ぎん',n:'銀',r:'gin',kr:'은색',hex:'#c0c0c0'}
+  ],
+
+  // 가족
+  family: {
+    own: [
+      {jp:'ちち',n:'父',r:'chichi',kr:'(우리) 아버지'},
+      {jp:'はは',n:'母',r:'haha',kr:'(우리) 어머니'},
+      {jp:'あに',n:'兄',r:'ani',kr:'(우리) 형/오빠'},
+      {jp:'あね',n:'姉',r:'ane',kr:'(우리) 누나/언니'},
+      {jp:'おとうと',n:'弟',r:'otouto',kr:'(우리) 남동생'},
+      {jp:'いもうと',n:'妹',r:'imouto',kr:'(우리) 여동생'},
+      {jp:'そふ',n:'祖父',r:'sofu',kr:'(우리) 할아버지'},
+      {jp:'そぼ',n:'祖母',r:'sobo',kr:'(우리) 할머니'},
+      {jp:'おっと',n:'夫',r:'otto',kr:'(우리) 남편'},
+      {jp:'つま',n:'妻',r:'tsuma',kr:'(우리) 아내'},
+      {jp:'むすこ',n:'息子',r:'musuko',kr:'(우리) 아들'},
+      {jp:'むすめ',n:'娘',r:'musume',kr:'(우리) 딸'}
+    ],
+    others: [
+      {jp:'おとうさん',n:'お父さん',r:'otousan',kr:'아버지 (남의/존칭)'},
+      {jp:'おかあさん',n:'お母さん',r:'okaasan',kr:'어머니 (남의/존칭)'},
+      {jp:'おにいさん',n:'お兄さん',r:'oniisan',kr:'형/오빠 (남의/존칭)'},
+      {jp:'おねえさん',n:'お姉さん',r:'oneesan',kr:'누나/언니 (남의/존칭)'},
+      {jp:'おとうとさん',n:'弟さん',r:'otoutosan',kr:'남동생 (남의)'},
+      {jp:'いもうとさん',n:'妹さん',r:'imoutosan',kr:'여동생 (남의)'},
+      {jp:'おじいさん',n:'お祖父さん',r:'ojiisan',kr:'할아버지 (남의/존칭)'},
+      {jp:'おばあさん',n:'お祖母さん',r:'obaasan',kr:'할머니 (남의/존칭)'},
+      {jp:'ごしゅじん',n:'ご主人',r:'goshujin',kr:'남편 (남의)'},
+      {jp:'おくさん',n:'奥さん',r:'okusan',kr:'아내 (남의)'}
+    ]
+  },
+
+  // 방향/위치
+  direction: [
+    {jp:'うえ',n:'上',r:'ue',kr:'위'},{jp:'した',n:'下',r:'shita',kr:'아래'},
+    {jp:'まえ',n:'前',r:'mae',kr:'앞'},{jp:'うしろ',n:'後ろ',r:'ushiro',kr:'뒤'},
+    {jp:'みぎ',n:'右',r:'migi',kr:'오른쪽'},{jp:'ひだり',n:'左',r:'hidari',kr:'왼쪽'},
+    {jp:'なか',n:'中',r:'naka',kr:'안'},{jp:'そと',n:'外',r:'soto',kr:'밖'},
+    {jp:'となり',n:'隣',r:'tonari',kr:'옆'},{jp:'ちかく',n:'近く',r:'chikaku',kr:'근처'},
+    {jp:'あいだ',n:'間',r:'aida',kr:'사이'},{jp:'よこ',n:'横',r:'yoko',kr:'옆(가로)'},
+    {jp:'きた',n:'北',r:'kita',kr:'북쪽'},{jp:'みなみ',n:'南',r:'minami',kr:'남쪽'},
+    {jp:'ひがし',n:'東',r:'higashi',kr:'동쪽'},{jp:'にし',n:'西',r:'nishi',kr:'서쪽'},
+    {jp:'こちら',r:'kochira',kr:'이쪽'},{jp:'そちら',r:'sochira',kr:'그쪽'},
+    {jp:'あちら',r:'achira',kr:'저쪽'},{jp:'どちら',r:'dochira',kr:'어느쪽'}
+  ],
+
+  // 날씨
+  weather: [
+    {jp:'てんき',n:'天気',r:'tenki',kr:'날씨'},{jp:'はれ',n:'晴れ',r:'hare',kr:'맑음'},
+    {jp:'くもり',n:'曇り',r:'kumori',kr:'흐림'},{jp:'あめ',n:'雨',r:'ame',kr:'비'},
+    {jp:'ゆき',n:'雪',r:'yuki',kr:'눈'},{jp:'かぜ',n:'風',r:'kaze',kr:'바람'},
+    {jp:'たいふう',n:'台風',r:'taifuu',kr:'태풍'},{jp:'かみなり',n:'雷',r:'kaminari',kr:'천둥'},
+    {jp:'あつい',n:'暑い',r:'atsui',kr:'덥다'},{jp:'さむい',n:'寒い',r:'samui',kr:'춥다'},
+    {jp:'すずしい',n:'涼しい',r:'suzushii',kr:'시원하다'},{jp:'あたたかい',n:'暖かい',r:'atatakai',kr:'따뜻하다'},
+    {jp:'むしあつい',n:'蒸し暑い',r:'mushiatsui',kr:'무덥다'}
+  ],
+
+  // 신체
+  body: [
+    {jp:'あたま',n:'頭',r:'atama',kr:'머리'},{jp:'かお',n:'顔',r:'kao',kr:'얼굴'},
+    {jp:'め',n:'目',r:'me',kr:'눈'},{jp:'みみ',n:'耳',r:'mimi',kr:'귀'},
+    {jp:'はな',n:'鼻',r:'hana',kr:'코'},{jp:'くち',n:'口',r:'kuchi',kr:'입'},
+    {jp:'は',n:'歯',r:'ha',kr:'이'},{jp:'した',n:'舌',r:'shita',kr:'혀'},
+    {jp:'くび',n:'首',r:'kubi',kr:'목'},{jp:'かた',n:'肩',r:'kata',kr:'어깨'},
+    {jp:'うで',n:'腕',r:'ude',kr:'팔'},{jp:'て',n:'手',r:'te',kr:'손'},
+    {jp:'ゆび',n:'指',r:'yubi',kr:'손가락'},{jp:'むね',n:'胸',r:'mune',kr:'가슴'},
+    {jp:'おなか',n:'お腹',r:'onaka',kr:'배'},{jp:'せなか',n:'背中',r:'senaka',kr:'등'},
+    {jp:'こし',n:'腰',r:'koshi',kr:'허리'},{jp:'あし',n:'足',r:'ashi',kr:'다리/발'},
+    {jp:'ひざ',n:'膝',r:'hiza',kr:'무릎'},{jp:'かかと',r:'kakato',kr:'발꿈치'}
+  ],
+
+  // 음식
+  food: {
+    meals: [
+      {jp:'あさごはん',n:'朝ご飯',r:'asagohan',kr:'아침밥'},
+      {jp:'ひるごはん',n:'昼ご飯',r:'hirugohan',kr:'점심밥'},
+      {jp:'ばんごはん',n:'晩ご飯',r:'bangohan',kr:'저녁밥'},
+      {jp:'ごはん',n:'ご飯',r:'gohan',kr:'밥/식사'}
+    ],
+    foods: [
+      {jp:'パン',r:'pan',kr:'빵'},{jp:'たまご',n:'卵',r:'tamago',kr:'계란'},
+      {jp:'にく',n:'肉',r:'niku',kr:'고기'},{jp:'さかな',n:'魚',r:'sakana',kr:'생선'},
+      {jp:'やさい',n:'野菜',r:'yasai',kr:'채소'},{jp:'くだもの',n:'果物',r:'kudamono',kr:'과일'},
+      {jp:'りんご',r:'ringo',kr:'사과'},{jp:'みかん',r:'mikan',kr:'귤'},
+      {jp:'バナナ',r:'banana',kr:'바나나'},{jp:'いちご',n:'苺',r:'ichigo',kr:'딸기'},
+      {jp:'すし',n:'寿司',r:'sushi',kr:'초밥'},{jp:'ラーメン',r:'raamen',kr:'라멘'},
+      {jp:'うどん',r:'udon',kr:'우동'},{jp:'そば',r:'soba',kr:'소바'},
+      {jp:'カレー',r:'karee',kr:'카레'},{jp:'てんぷら',n:'天ぷら',r:'tenpura',kr:'튀김'},
+      {jp:'とうふ',n:'豆腐',r:'toufu',kr:'두부'},{jp:'みそしる',n:'味噌汁',r:'misoshiru',kr:'미소국'}
+    ],
+    drinks: [
+      {jp:'みず',n:'水',r:'mizu',kr:'물'},{jp:'おちゃ',n:'お茶',r:'ocha',kr:'차'},
+      {jp:'コーヒー',r:'koohii',kr:'커피'},{jp:'こうちゃ',n:'紅茶',r:'koucha',kr:'홍차'},
+      {jp:'ぎゅうにゅう',n:'牛乳',r:'gyuunyuu',kr:'우유'},{jp:'ジュース',r:'juusu',kr:'주스'},
+      {jp:'ビール',r:'biiru',kr:'맥주'},{jp:'ワイン',r:'wain',kr:'와인'},
+      {jp:'さけ',n:'酒',r:'sake',kr:'술/사케'}
+    ],
+    tastes: [
+      {jp:'おいしい',r:'oishii',kr:'맛있다'},{jp:'まずい',r:'mazui',kr:'맛없다'},
+      {jp:'あまい',n:'甘い',r:'amai',kr:'달다'},{jp:'からい',n:'辛い',r:'karai',kr:'맵다'},
+      {jp:'しおからい',n:'塩辛い',r:'shiokarai',kr:'짜다'},{jp:'すっぱい',n:'酸っぱい',r:'suppai',kr:'시다'},
+      {jp:'にがい',n:'苦い',r:'nigai',kr:'쓰다'}
+    ]
+  }
+};
+
+// 문법 데이터
+const GRAMMAR_DATA = {
+  // 조사
+  particles: [
+    {jp:'は',r:'wa',kr:'~은/는 (주제)',ex:'わたしは学生です',exr:'watashi wa gakusei desu',exkr:'나는 학생입니다'},
+    {jp:'が',r:'ga',kr:'~이/가 (주어)',ex:'ねこがいます',exr:'neko ga imasu',exkr:'고양이가 있습니다'},
+    {jp:'を',r:'wo',kr:'~을/를 (목적어)',ex:'パンをたべます',exr:'pan wo tabemasu',exkr:'빵을 먹습니다'},
+    {jp:'に',r:'ni',kr:'~에 (장소/시간)',ex:'にほんにいきます',exr:'nihon ni ikimasu',exkr:'일본에 갑니다'},
+    {jp:'で',r:'de',kr:'~에서 (장소/수단)',ex:'でんしゃでいきます',exr:'densha de ikimasu',exkr:'전철로 갑니다'},
+    {jp:'と',r:'to',kr:'~와/과',ex:'ともだちとあそびます',exr:'tomodachi to asobimasu',exkr:'친구와 놉니다'},
+    {jp:'も',r:'mo',kr:'~도',ex:'わたしもいきます',exr:'watashi mo ikimasu',exkr:'나도 갑니다'},
+    {jp:'から',r:'kara',kr:'~부터/~에서',ex:'くじからはじまります',exr:'kuji kara hajimarimasu',exkr:'9시부터 시작합니다'},
+    {jp:'まで',r:'made',kr:'~까지',ex:'ごじまではたらきます',exr:'goji made hatarakimasu',exkr:'5시까지 일합니다'},
+    {jp:'の',r:'no',kr:'~의',ex:'わたしのほん',exr:'watashi no hon',exkr:'나의 책'},
+    {jp:'へ',r:'e',kr:'~으로 (방향)',ex:'がっこうへいきます',exr:'gakkou e ikimasu',exkr:'학교로 갑니다'},
+    {jp:'より',r:'yori',kr:'~보다',ex:'にくよりさかながすきです',exr:'niku yori sakana ga suki desu',exkr:'고기보다 생선을 좋아합니다'},
+    {jp:'か',r:'ka',kr:'~인가 (의문)',ex:'これはなんですか',exr:'kore wa nan desu ka',exkr:'이것은 무엇입니까'},
+    {jp:'ね',r:'ne',kr:'~지요/~네',ex:'いいてんきですね',exr:'ii tenki desu ne',exkr:'좋은 날씨네요'},
+    {jp:'よ',r:'yo',kr:'~요 (강조)',ex:'おいしいですよ',exr:'oishii desu yo',exkr:'맛있어요'}
+  ],
+
+  // 지시어
+  demonstratives: {
+    kore: [
+      {jp:'これ',r:'kore',kr:'이것 (물건)'},{jp:'それ',r:'sore',kr:'그것'},
+      {jp:'あれ',r:'are',kr:'저것'},{jp:'どれ',r:'dore',kr:'어느 것'}
+    ],
+    kono: [
+      {jp:'この',r:'kono',kr:'이 (+ 명사)'},{jp:'その',r:'sono',kr:'그'},
+      {jp:'あの',r:'ano',kr:'저'},{jp:'どの',r:'dono',kr:'어느'}
+    ],
+    koko: [
+      {jp:'ここ',r:'koko',kr:'여기'},{jp:'そこ',r:'soko',kr:'거기'},
+      {jp:'あそこ',r:'asoko',kr:'저기'},{jp:'どこ',r:'doko',kr:'어디'}
+    ],
+    kochira: [
+      {jp:'こちら',r:'kochira',kr:'이쪽 (정중)'},{jp:'そちら',r:'sochira',kr:'그쪽'},
+      {jp:'あちら',r:'achira',kr:'저쪽'},{jp:'どちら',r:'dochira',kr:'어느쪽'}
+    ]
+  },
+
+  // 의문사
+  questions: [
+    {jp:'なに/なん',n:'何',r:'nani/nan',kr:'무엇',ex:'これはなんですか',exkr:'이것은 무엇입니까?'},
+    {jp:'だれ',n:'誰',r:'dare',kr:'누구',ex:'あのひとはだれですか',exkr:'저 사람은 누구입니까?'},
+    {jp:'どこ',r:'doko',kr:'어디',ex:'えきはどこですか',exkr:'역은 어디입니까?'},
+    {jp:'いつ',r:'itsu',kr:'언제',ex:'いつきますか',exkr:'언제 옵니까?'},
+    {jp:'なぜ/どうして',r:'naze/doushite',kr:'왜',ex:'なぜですか',exkr:'왜입니까?'},
+    {jp:'いくら',r:'ikura',kr:'얼마',ex:'これはいくらですか',exkr:'이것은 얼마입니까?'},
+    {jp:'いくつ',r:'ikutsu',kr:'몇 개/몇 살',ex:'いくつですか',exkr:'몇 개입니까?'},
+    {jp:'どう',r:'dou',kr:'어떻게',ex:'にほんごはどうですか',exkr:'일본어는 어떻습니까?'},
+    {jp:'どんな',r:'donna',kr:'어떤',ex:'どんなおんがくがすきですか',exkr:'어떤 음악을 좋아합니까?'},
+    {jp:'どのくらい',r:'donokurai',kr:'얼마나',ex:'どのくらいかかりますか',exkr:'얼마나 걸립니까?'}
+  ],
+
+  // 형용사 - い형
+  adjI: [
+    {jp:'おおきい',n:'大きい',r:'ookii',kr:'크다'},{jp:'ちいさい',n:'小さい',r:'chiisai',kr:'작다'},
+    {jp:'たかい',n:'高い',r:'takai',kr:'높다/비싸다'},{jp:'やすい',n:'安い',r:'yasui',kr:'싸다'},
+    {jp:'あたらしい',n:'新しい',r:'atarashii',kr:'새롭다'},{jp:'ふるい',n:'古い',r:'furui',kr:'오래되다'},
+    {jp:'いい/よい',n:'良い',r:'ii/yoi',kr:'좋다'},{jp:'わるい',n:'悪い',r:'warui',kr:'나쁘다'},
+    {jp:'ながい',n:'長い',r:'nagai',kr:'길다'},{jp:'みじかい',n:'短い',r:'mijikai',kr:'짧다'},
+    {jp:'おもしろい',n:'面白い',r:'omoshiroi',kr:'재미있다'},{jp:'つまらない',r:'tsumaranai',kr:'재미없다'},
+    {jp:'むずかしい',n:'難しい',r:'muzukashii',kr:'어렵다'},{jp:'やさしい',n:'易しい',r:'yasashii',kr:'쉽다'},
+    {jp:'あつい',n:'暑い/熱い',r:'atsui',kr:'덥다/뜨겁다'},{jp:'さむい',n:'寒い',r:'samui',kr:'춥다'},
+    {jp:'つめたい',n:'冷たい',r:'tsumetai',kr:'차갑다'},{jp:'あたたかい',n:'暖かい',r:'atatakai',kr:'따뜻하다'},
+    {jp:'はやい',n:'早い/速い',r:'hayai',kr:'빠르다/이르다'},{jp:'おそい',n:'遅い',r:'osoi',kr:'느리다/늦다'},
+    {jp:'ひろい',n:'広い',r:'hiroi',kr:'넓다'},{jp:'せまい',n:'狭い',r:'semai',kr:'좁다'},
+    {jp:'おもい',n:'重い',r:'omoi',kr:'무겁다'},{jp:'かるい',n:'軽い',r:'karui',kr:'가볍다'},
+    {jp:'あかるい',n:'明るい',r:'akarui',kr:'밝다'},{jp:'くらい',n:'暗い',r:'kurai',kr:'어둡다'},
+    {jp:'うるさい',r:'urusai',kr:'시끄럽다'},{jp:'しずか',n:'静か',r:'shizuka',kr:'조용하다'},
+    {jp:'いそがしい',n:'忙しい',r:'isogashii',kr:'바쁘다'},{jp:'ひま',n:'暇',r:'hima',kr:'한가하다'},
+    {jp:'うれしい',n:'嬉しい',r:'ureshii',kr:'기쁘다'},{jp:'かなしい',n:'悲しい',r:'kanashii',kr:'슬프다'},
+    {jp:'こわい',n:'怖い',r:'kowai',kr:'무섭다'},{jp:'ほしい',n:'欲しい',r:'hoshii',kr:'갖고 싶다'}
+  ],
+
+  // 형용사 - な형
+  adjNa: [
+    {jp:'げんき',n:'元気',r:'genki',kr:'건강하다/활기차다'},{jp:'しずか',n:'静か',r:'shizuka',kr:'조용하다'},
+    {jp:'にぎやか',r:'nigiyaka',kr:'활기차다/번화하다'},{jp:'きれい',r:'kirei',kr:'예쁘다/깨끗하다'},
+    {jp:'ゆうめい',n:'有名',r:'yuumei',kr:'유명하다'},{jp:'しんせつ',n:'親切',r:'shinsetsu',kr:'친절하다'},
+    {jp:'べんり',n:'便利',r:'benri',kr:'편리하다'},{jp:'ふべん',n:'不便',r:'fuben',kr:'불편하다'},
+    {jp:'かんたん',n:'簡単',r:'kantan',kr:'간단하다'},{jp:'ふくざつ',n:'複雑',r:'fukuzatsu',kr:'복잡하다'},
+    {jp:'たいせつ',n:'大切',r:'taisetsu',kr:'소중하다'},{jp:'だいじょうぶ',n:'大丈夫',r:'daijoubu',kr:'괜찮다'},
+    {jp:'すき',n:'好き',r:'suki',kr:'좋아하다'},{jp:'きらい',n:'嫌い',r:'kirai',kr:'싫어하다'},
+    {jp:'じょうず',n:'上手',r:'jouzu',kr:'잘하다'},{jp:'へた',n:'下手',r:'heta',kr:'못하다'},
+    {jp:'ひま',n:'暇',r:'hima',kr:'한가하다'},{jp:'いろいろ',n:'色々',r:'iroiro',kr:'여러 가지의'},
+    {jp:'ハンサム',r:'hansamu',kr:'잘생기다'},{jp:'まじめ',n:'真面目',r:'majime',kr:'성실하다'}
+  ],
+
+  // 기본 동사
+  verbs: {
+    group1: [
+      {jp:'いく',n:'行く',r:'iku',kr:'가다',te:'いって',ta:'いった'},
+      {jp:'くる',n:'来る',r:'kuru',kr:'오다',te:'きて',ta:'きた'},
+      {jp:'かえる',n:'帰る',r:'kaeru',kr:'돌아가다',te:'かえって',ta:'かえった'},
+      {jp:'きく',n:'聞く',r:'kiku',kr:'듣다',te:'きいて',ta:'きいた'},
+      {jp:'かく',n:'書く',r:'kaku',kr:'쓰다',te:'かいて',ta:'かいた'},
+      {jp:'よむ',n:'読む',r:'yomu',kr:'읽다',te:'よんで',ta:'よんだ'},
+      {jp:'のむ',n:'飲む',r:'nomu',kr:'마시다',te:'のんで',ta:'のんだ'},
+      {jp:'はなす',n:'話す',r:'hanasu',kr:'말하다',te:'はなして',ta:'はなした'},
+      {jp:'まつ',n:'待つ',r:'matsu',kr:'기다리다',te:'まって',ta:'まった'},
+      {jp:'もつ',n:'持つ',r:'motsu',kr:'가지다',te:'もって',ta:'もった'},
+      {jp:'あう',n:'会う',r:'au',kr:'만나다',te:'あって',ta:'あった'},
+      {jp:'かう',n:'買う',r:'kau',kr:'사다',te:'かって',ta:'かった'},
+      {jp:'ある',r:'aru',kr:'있다(무생물)',te:'あって',ta:'あった'},
+      {jp:'わかる',n:'分かる',r:'wakaru',kr:'알다',te:'わかって',ta:'わかった'},
+      {jp:'おわる',n:'終わる',r:'owaru',kr:'끝나다',te:'おわって',ta:'おわった'}
+    ],
+    group2: [
+      {jp:'たべる',n:'食べる',r:'taberu',kr:'먹다',te:'たべて',ta:'たべた'},
+      {jp:'みる',n:'見る',r:'miru',kr:'보다',te:'みて',ta:'みた'},
+      {jp:'ねる',n:'寝る',r:'neru',kr:'자다',te:'ねて',ta:'ねた'},
+      {jp:'おきる',n:'起きる',r:'okiru',kr:'일어나다',te:'おきて',ta:'おきた'},
+      {jp:'いる',r:'iru',kr:'있다(생물)',te:'いて',ta:'いた'},
+      {jp:'でる',n:'出る',r:'deru',kr:'나가다',te:'でて',ta:'でた'},
+      {jp:'おしえる',n:'教える',r:'oshieru',kr:'가르치다',te:'おしえて',ta:'おしえた'},
+      {jp:'かける',r:'kakeru',kr:'걸다(전화)',te:'かけて',ta:'かけた'},
+      {jp:'あげる',r:'ageru',kr:'주다',te:'あげて',ta:'あげた'},
+      {jp:'もらう',r:'morau',kr:'받다',te:'もらって',ta:'もらった'}
+    ],
+    group3: [
+      {jp:'する',r:'suru',kr:'하다',te:'して',ta:'した'},
+      {jp:'くる',n:'来る',r:'kuru',kr:'오다',te:'きて',ta:'きた'},
+      {jp:'べんきょうする',n:'勉強する',r:'benkyou suru',kr:'공부하다',te:'べんきょうして',ta:'べんきょうした'},
+      {jp:'さんぽする',n:'散歩する',r:'sanpo suru',kr:'산책하다',te:'さんぽして',ta:'さんぽした'},
+      {jp:'りょこうする',n:'旅行する',r:'ryokou suru',kr:'여행하다',te:'りょこうして',ta:'りょこうした'},
+      {jp:'うんどうする',n:'運動する',r:'undou suru',kr:'운동하다',te:'うんどうして',ta:'うんどうした'},
+      {jp:'しごとする',n:'仕事する',r:'shigoto suru',kr:'일하다',te:'しごとして',ta:'しごとした'},
+      {jp:'でんわする',n:'電話する',r:'denwa suru',kr:'전화하다',te:'でんわして',ta:'でんわした'}
+    ]
+  },
+
+  // 카운터
+  counters: [
+    {jp:'〜つ',r:'~tsu',kr:'~개 (일반)',ex:'ひとつ、ふたつ、みっつ...'},
+    {jp:'〜にん',n:'〜人',r:'~nin',kr:'~명',ex:'ひとり、ふたり、さんにん...'},
+    {jp:'〜ひき',n:'〜匹',r:'~hiki',kr:'~마리 (작은동물)',ex:'いっぴき、にひき、さんびき...'},
+    {jp:'〜ほん',n:'〜本',r:'~hon',kr:'~개 (긴것)',ex:'いっぽん、にほん、さんぼん...'},
+    {jp:'〜まい',n:'〜枚',r:'~mai',kr:'~장',ex:'いちまい、にまい、さんまい...'},
+    {jp:'〜だい',n:'〜台',r:'~dai',kr:'~대 (기계)',ex:'いちだい、にだい、さんだい...'},
+    {jp:'〜さつ',n:'〜冊',r:'~satsu',kr:'~권 (책)',ex:'いっさつ、にさつ、さんさつ...'},
+    {jp:'〜かい',n:'〜回',r:'~kai',kr:'~번/회',ex:'いっかい、にかい、さんかい...'},
+    {jp:'〜かい',n:'〜階',r:'~kai',kr:'~층',ex:'いっかい、にかい、さんがい...'},
+    {jp:'〜ばん',n:'〜番',r:'~ban',kr:'~번째',ex:'いちばん、にばん、さんばん...'},
+    {jp:'〜はい',n:'〜杯',r:'~hai',kr:'~잔',ex:'いっぱい、にはい、さんばい...'},
+    {jp:'〜えん',n:'〜円',r:'~en',kr:'~엔',ex:'ひゃくえん、せんえん、いちまんえん...'}
+  ]
+};
+
+// 회화 패턴 데이터
+const CONVERSATION_DATA = {
+  // 인사 (확장)
+  greetings: {
+    basic: [
+      {jp:'おはようございます',r:'ohayou gozaimasu',kr:'안녕하세요 (아침, 정중)'},
+      {jp:'おはよう',r:'ohayou',kr:'안녕 (아침, 반말)'},
+      {jp:'こんにちは',r:'konnichiwa',kr:'안녕하세요 (낮)'},
+      {jp:'こんばんは',r:'konbanwa',kr:'안녕하세요 (저녁)'},
+      {jp:'おやすみなさい',r:'oyasuminasai',kr:'안녕히 주무세요'},
+      {jp:'おやすみ',r:'oyasumi',kr:'잘 자 (반말)'}
+    ],
+    meeting: [
+      {jp:'はじめまして',r:'hajimemashite',kr:'처음 뵙겠습니다'},
+      {jp:'どうぞよろしくおねがいします',r:'douzo yoroshiku onegaishimasu',kr:'잘 부탁드립니다'},
+      {jp:'よろしく',r:'yoroshiku',kr:'잘 부탁해 (반말)'},
+      {jp:'おひさしぶりです',r:'ohisashiburi desu',kr:'오랜만입니다'},
+      {jp:'ひさしぶり',r:'hisashiburi',kr:'오랜만이야 (반말)'},
+      {jp:'おげんきですか',r:'ogenki desu ka',kr:'잘 지내세요?'},
+      {jp:'げんき？',r:'genki?',kr:'잘 지내? (반말)'},
+      {jp:'おかげさまで',r:'okagesama de',kr:'덕분에요'}
+    ],
+    parting: [
+      {jp:'さようなら',r:'sayounara',kr:'안녕히 가세요/계세요'},
+      {jp:'じゃあね',r:'jaa ne',kr:'그럼 안녕 (반말)'},
+      {jp:'またね',r:'mata ne',kr:'또 봐'},
+      {jp:'またあした',r:'mata ashita',kr:'내일 봐'},
+      {jp:'きをつけて',r:'ki wo tsukete',kr:'조심해'},
+      {jp:'おさきにしつれいします',r:'osaki ni shitsurei shimasu',kr:'먼저 실례하겠습니다'},
+      {jp:'おつかれさまでした',r:'otsukaresama deshita',kr:'수고하셨습니다'}
+    ],
+    thanks: [
+      {jp:'ありがとうございます',r:'arigatou gozaimasu',kr:'감사합니다 (정중)'},
+      {jp:'ありがとう',r:'arigatou',kr:'고마워'},
+      {jp:'どうも',r:'doumo',kr:'고마워 (가벼움)'},
+      {jp:'どういたしまして',r:'dou itashimashite',kr:'천만에요'},
+      {jp:'いいえ',r:'iie',kr:'아니에요 (천만에요)'}
+    ],
+    apology: [
+      {jp:'すみません',r:'sumimasen',kr:'죄송합니다/실례합니다'},
+      {jp:'ごめんなさい',r:'gomen nasai',kr:'미안합니다'},
+      {jp:'ごめん',r:'gomen',kr:'미안 (반말)'},
+      {jp:'しつれいします',r:'shitsurei shimasu',kr:'실례합니다'},
+      {jp:'もうしわけありません',r:'moushiwake arimasen',kr:'정말 죄송합니다'}
+    ],
+    meals: [
+      {jp:'いただきます',r:'itadakimasu',kr:'잘 먹겠습니다'},
+      {jp:'ごちそうさまでした',r:'gochisousama deshita',kr:'잘 먹었습니다'},
+      {jp:'おいしい',r:'oishii',kr:'맛있다'},
+      {jp:'おなかがすいた',r:'onaka ga suita',kr:'배고프다'},
+      {jp:'おなかがいっぱい',r:'onaka ga ippai',kr:'배불러'}
+    ]
+  },
+
+  // 자기소개
+  selfIntro: [
+    {jp:'わたしは〜です',r:'watashi wa ~ desu',kr:'저는 ~입니다'},
+    {jp:'〜といいます',r:'~ to iimasu',kr:'~라고 합니다'},
+    {jp:'〜からきました',r:'~ kara kimashita',kr:'~에서 왔습니다'},
+    {jp:'〜さいです',r:'~ sai desu',kr:'~살입니다'},
+    {jp:'しゅみは〜です',r:'shumi wa ~ desu',kr:'취미는 ~입니다'},
+    {jp:'しごとは〜です',r:'shigoto wa ~ desu',kr:'직업은 ~입니다'},
+    {jp:'〜にすんでいます',r:'~ ni sunde imasu',kr:'~에 살고 있습니다'},
+    {jp:'にほんごをべんきょうしています',r:'nihongo wo benkyou shite imasu',kr:'일본어를 공부하고 있습니다'}
+  ],
+
+  // 쇼핑
+  shopping: [
+    {jp:'いらっしゃいませ',r:'irasshaimase',kr:'어서 오세요'},
+    {jp:'これをください',r:'kore wo kudasai',kr:'이것 주세요'},
+    {jp:'いくらですか',r:'ikura desu ka',kr:'얼마예요?'},
+    {jp:'〜えんです',r:'~en desu',kr:'~엔입니다'},
+    {jp:'ちょっとたかいですね',r:'chotto takai desu ne',kr:'좀 비싸네요'},
+    {jp:'やすくしてください',r:'yasuku shite kudasai',kr:'깎아주세요'},
+    {jp:'〜はありますか',r:'~ wa arimasu ka',kr:'~있어요?'},
+    {jp:'べつのいろはありますか',r:'betsu no iro wa arimasu ka',kr:'다른 색 있어요?'},
+    {jp:'しちゃくしてもいいですか',r:'shichaku shite mo ii desu ka',kr:'입어봐도 될까요?'},
+    {jp:'カードでいいですか',r:'kaado de ii desu ka',kr:'카드 돼요?'},
+    {jp:'げんきんでおねがいします',r:'genkin de onegai shimasu',kr:'현금으로 할게요'},
+    {jp:'レシートをください',r:'reshiito wo kudasai',kr:'영수증 주세요'},
+    {jp:'ふくろにいれてください',r:'fukuro ni irete kudasai',kr:'봉투에 넣어주세요'},
+    {jp:'けっこうです',r:'kekkou desu',kr:'괜찮습니다 (필요없어요)'}
+  ],
+
+  // 식당
+  restaurant: [
+    {jp:'なんめいさまですか',r:'nanmei sama desu ka',kr:'몇 분이세요?'},
+    {jp:'ふたりです',r:'futari desu',kr:'두 명이요'},
+    {jp:'メニューをください',r:'menyuu wo kudasai',kr:'메뉴 주세요'},
+    {jp:'ちゅうもんおねがいします',r:'chuumon onegai shimasu',kr:'주문할게요'},
+    {jp:'おすすめはなんですか',r:'osusume wa nan desu ka',kr:'추천 메뉴가 뭐예요?'},
+    {jp:'〜をひとつください',r:'~ wo hitotsu kudasai',kr:'~하나 주세요'},
+    {jp:'おみずをください',r:'omizu wo kudasai',kr:'물 주세요'},
+    {jp:'もうすこしまってください',r:'mou sukoshi matte kudasai',kr:'조금만 기다려주세요'},
+    {jp:'おあいそおねがいします',r:'oaiso onegai shimasu',kr:'계산해주세요'},
+    {jp:'べつべつでおねがいします',r:'betsubetsu de onegai shimasu',kr:'따로따로 계산해주세요'},
+    {jp:'アレルギーがあります',r:'arerugii ga arimasu',kr:'알레르기가 있어요'},
+    {jp:'ベジタリアンです',r:'bejitarian desu',kr:'채식주의자예요'},
+    {jp:'からくしないでください',r:'karaku shinaide kudasai',kr:'맵게 하지 마세요'},
+    {jp:'テイクアウトできますか',r:'teikuauto dekimasu ka',kr:'포장 돼요?'}
+  ],
+
+  // 교통
+  transport: [
+    {jp:'〜までいくらですか',r:'~ made ikura desu ka',kr:'~까지 얼마예요?'},
+    {jp:'〜までどうやっていきますか',r:'~ made dou yatte ikimasu ka',kr:'~까지 어떻게 가요?'},
+    {jp:'なんばんせんですか',r:'nanban sen desu ka',kr:'몇 번 선이에요?'},
+    {jp:'つぎのでんしゃはいつですか',r:'tsugi no densha wa itsu desu ka',kr:'다음 전철 언제예요?'},
+    {jp:'〜でのりかえてください',r:'~ de norikaete kudasai',kr:'~에서 갈아타세요'},
+    {jp:'このでんしゃは〜にいきますか',r:'kono densha wa ~ ni ikimasu ka',kr:'이 전철 ~에 가요?'},
+    {jp:'タクシーをよんでください',r:'takushii wo yonde kudasai',kr:'택시 불러주세요'},
+    {jp:'〜までおねがいします',r:'~ made onegai shimasu',kr:'~까지 가주세요'},
+    {jp:'ここでとめてください',r:'koko de tomete kudasai',kr:'여기서 세워주세요'},
+    {jp:'どのくらいかかりますか',r:'donokurai kakarimasu ka',kr:'얼마나 걸려요?'},
+    {jp:'まにあいますか',r:'maniaimasu ka',kr:'시간 맞출 수 있어요?'},
+    {jp:'きっぷをかいたいです',r:'kippu wo kaitai desu',kr:'표 사고 싶어요'}
+  ],
+
+  // 길 묻기
+  directions: [
+    {jp:'すみません、〜はどこですか',r:'sumimasen, ~ wa doko desu ka',kr:'실례합니다, ~은 어디예요?'},
+    {jp:'ちかくに〜はありますか',r:'chikaku ni ~ wa arimasu ka',kr:'근처에 ~있어요?'},
+    {jp:'みちにまよいました',r:'michi ni mayoimashita',kr:'길을 잃었어요'},
+    {jp:'ここはどこですか',r:'koko wa doko desu ka',kr:'여기가 어디예요?'},
+    {jp:'まっすぐいってください',r:'massugu itte kudasai',kr:'직진하세요'},
+    {jp:'みぎにまがってください',r:'migi ni magatte kudasai',kr:'오른쪽으로 도세요'},
+    {jp:'ひだりにまがってください',r:'hidari ni magatte kudasai',kr:'왼쪽으로 도세요'},
+    {jp:'つきあたりを〜',r:'tsukiatari wo ~',kr:'막다른 곳에서 ~'},
+    {jp:'こうさてんを〜',r:'kousaten wo ~',kr:'교차로에서 ~'},
+    {jp:'しんごうを〜',r:'shingou wo ~',kr:'신호등에서 ~'},
+    {jp:'あるいてどのくらいですか',r:'aruite donokurai desu ka',kr:'걸어서 얼마나 걸려요?'},
+    {jp:'ちかいですか/とおいですか',r:'chikai desu ka / tooi desu ka',kr:'가까워요?/멀어요?'},
+    {jp:'ちずをかいてください',r:'chizu wo kaite kudasai',kr:'지도 그려주세요'}
+  ],
+
+  // 전화
+  phone: [
+    {jp:'もしもし',r:'moshi moshi',kr:'여보세요'},
+    {jp:'〜さんをおねがいします',r:'~san wo onegai shimasu',kr:'~씨 부탁합니다'},
+    {jp:'〜さんはいらっしゃいますか',r:'~san wa irasshaimasu ka',kr:'~씨 계세요?'},
+    {jp:'でんわばんごうをおしえてください',r:'denwa bangou wo oshiete kudasai',kr:'전화번호 알려주세요'},
+    {jp:'もういちどおねがいします',r:'mou ichido onegai shimasu',kr:'다시 한번 부탁드려요'},
+    {jp:'ゆっくりはなしてください',r:'yukkuri hanashite kudasai',kr:'천천히 말해주세요'},
+    {jp:'でんわにでてください',r:'denwa ni dete kudasai',kr:'전화 받아주세요'},
+    {jp:'あとでかけなおします',r:'ato de kakenaoshimasu',kr:'나중에 다시 걸게요'},
+    {jp:'メッセージをのこしてもいいですか',r:'messeeji wo nokoshite mo ii desu ka',kr:'메시지 남겨도 될까요?'},
+    {jp:'でんわをきります',r:'denwa wo kirimasu',kr:'전화 끊을게요'}
+  ],
+
+  // 긴급상황
+  emergency: [
+    {jp:'たすけてください',r:'tasukete kudasai',kr:'도와주세요'},
+    {jp:'けいさつをよんでください',r:'keisatsu wo yonde kudasai',kr:'경찰 불러주세요'},
+    {jp:'きゅうきゅうしゃをよんでください',r:'kyuukyuusha wo yonde kudasai',kr:'구급차 불러주세요'},
+    {jp:'びょういんはどこですか',r:'byouin wa doko desu ka',kr:'병원 어디예요?'},
+    {jp:'きもちがわるいです',r:'kimochi ga warui desu',kr:'속이 안 좋아요'},
+    {jp:'あたまがいたいです',r:'atama ga itai desu',kr:'머리가 아파요'},
+    {jp:'おなかがいたいです',r:'onaka ga itai desu',kr:'배가 아파요'},
+    {jp:'ねつがあります',r:'netsu ga arimasu',kr:'열이 있어요'},
+    {jp:'くすりをください',r:'kusuri wo kudasai',kr:'약 주세요'},
+    {jp:'にほんごがわかりません',r:'nihongo ga wakarimasen',kr:'일본어 못해요'},
+    {jp:'えいごをはなせますか',r:'eigo wo hanasemasu ka',kr:'영어 할 수 있어요?'},
+    {jp:'たいしかんはどこですか',r:'taishikan wa doko desu ka',kr:'대사관 어디예요?'},
+    {jp:'パスポートをなくしました',r:'pasupooto wo nakushimashita',kr:'여권 잃어버렸어요'},
+    {jp:'さいふをぬすまれました',r:'saifu wo nusumaremashita',kr:'지갑 도둑맞았어요'}
+  ],
+
+  // 일상 유용 표현
+  useful: [
+    {jp:'わかりました',r:'wakarimashita',kr:'알겠습니다'},
+    {jp:'わかりません',r:'wakarimasen',kr:'모르겠습니다'},
+    {jp:'しりません',r:'shirimasen',kr:'몰라요'},
+    {jp:'もういちどいってください',r:'mou ichido itte kudasai',kr:'다시 한번 말해주세요'},
+    {jp:'かいてください',r:'kaite kudasai',kr:'써 주세요'},
+    {jp:'ちょっとまってください',r:'chotto matte kudasai',kr:'잠깐만요'},
+    {jp:'だいじょうぶです',r:'daijoubu desu',kr:'괜찮아요'},
+    {jp:'いいですよ',r:'ii desu yo',kr:'좋아요'},
+    {jp:'だめです',r:'dame desu',kr:'안 돼요'},
+    {jp:'いそいでください',r:'isoide kudasai',kr:'서둘러주세요'},
+    {jp:'てつだってください',r:'tetsudatte kudasai',kr:'도와주세요'},
+    {jp:'おしえてください',r:'oshiete kudasai',kr:'알려주세요'},
+    {jp:'〜してもいいですか',r:'~ shite mo ii desu ka',kr:'~해도 될까요?'},
+    {jp:'〜しないでください',r:'~ shinaide kudasai',kr:'~하지 마세요'},
+    {jp:'〜がほしいです',r:'~ ga hoshii desu',kr:'~을 원해요'},
+    {jp:'〜したいです',r:'~ shitai desu',kr:'~하고 싶어요'},
+    {jp:'つかれました',r:'tsukaremashita',kr:'피곤해요'},
+    {jp:'たのしかったです',r:'tanoshikatta desu',kr:'즐거웠어요'}
+  ]
+};
+
+// 장소/시설
+const PLACES_DATA = [
+  {jp:'えき',n:'駅',r:'eki',kr:'역'},{jp:'くうこう',n:'空港',r:'kuukou',kr:'공항'},
+  {jp:'びょういん',n:'病院',r:'byouin',kr:'병원'},{jp:'ぎんこう',n:'銀行',r:'ginkou',kr:'은행'},
+  {jp:'ゆうびんきょく',n:'郵便局',r:'yuubinkyoku',kr:'우체국'},{jp:'がっこう',n:'学校',r:'gakkou',kr:'학교'},
+  {jp:'だいがく',n:'大学',r:'daigaku',kr:'대학교'},{jp:'としょかん',n:'図書館',r:'toshokan',kr:'도서관'},
+  {jp:'こうえん',n:'公園',r:'kouen',kr:'공원'},{jp:'デパート',r:'depaato',kr:'백화점'},
+  {jp:'スーパー',r:'suupaa',kr:'슈퍼마켓'},{jp:'コンビニ',r:'konbini',kr:'편의점'},
+  {jp:'レストラン',r:'resutoran',kr:'레스토랑'},{jp:'カフェ',r:'kafe',kr:'카페'},
+  {jp:'ホテル',r:'hoteru',kr:'호텔'},{jp:'りょかん',n:'旅館',r:'ryokan',kr:'료칸'},
+  {jp:'えいがかん',n:'映画館',r:'eigakan',kr:'영화관'},{jp:'びじゅつかん',n:'美術館',r:'bijutsukan',kr:'미술관'},
+  {jp:'はくぶつかん',n:'博物館',r:'hakubutsukan',kr:'박물관'},{jp:'じんじゃ',n:'神社',r:'jinja',kr:'신사'},
+  {jp:'おてら',n:'お寺',r:'otera',kr:'절'},{jp:'トイレ',r:'toire',kr:'화장실'},
+  {jp:'いりぐち',n:'入口',r:'iriguchi',kr:'입구'},{jp:'でぐち',n:'出口',r:'deguchi',kr:'출구'},
+  {jp:'かいだん',n:'階段',r:'kaidan',kr:'계단'},{jp:'エレベーター',r:'erebeetaa',kr:'엘리베이터'}
+];
+
+// 직업
+const JOBS_DATA = [
+  {jp:'がくせい',n:'学生',r:'gakusei',kr:'학생'},{jp:'かいしゃいん',n:'会社員',r:'kaishain',kr:'회사원'},
+  {jp:'せんせい',n:'先生',r:'sensei',kr:'선생님'},{jp:'いしゃ',n:'医者',r:'isha',kr:'의사'},
+  {jp:'かんごし',n:'看護師',r:'kangoshi',kr:'간호사'},{jp:'べんごし',n:'弁護士',r:'bengoshi',kr:'변호사'},
+  {jp:'エンジニア',r:'enjinia',kr:'엔지니어'},{jp:'プログラマー',r:'puroguramaa',kr:'프로그래머'},
+  {jp:'デザイナー',r:'dezainaa',kr:'디자이너'},{jp:'けいさつかん',n:'警察官',r:'keisatsukan',kr:'경찰관'},
+  {jp:'しょうぼうし',n:'消防士',r:'shouboushi',kr:'소방관'},{jp:'うんてんしゅ',n:'運転手',r:'untenshu',kr:'운전사'},
+  {jp:'コック',r:'kokku',kr:'요리사'},{jp:'てんいん',n:'店員',r:'tenin',kr:'점원'},
+  {jp:'しゅふ',n:'主婦',r:'shufu',kr:'주부'},{jp:'むしょく',n:'無職',r:'mushoku',kr:'무직'}
+];
+
+// 취미
+const HOBBIES_DATA = [
+  {jp:'どくしょ',n:'読書',r:'dokusho',kr:'독서'},{jp:'おんがく',n:'音楽',r:'ongaku',kr:'음악'},
+  {jp:'えいが',n:'映画',r:'eiga',kr:'영화'},{jp:'りょこう',n:'旅行',r:'ryokou',kr:'여행'},
+  {jp:'りょうり',n:'料理',r:'ryouri',kr:'요리'},{jp:'うんどう',n:'運動',r:'undou',kr:'운동'},
+  {jp:'サッカー',r:'sakkaa',kr:'축구'},{jp:'やきゅう',n:'野球',r:'yakyuu',kr:'야구'},
+  {jp:'テニス',r:'tenisu',kr:'테니스'},{jp:'すいえい',n:'水泳',r:'suiei',kr:'수영'},
+  {jp:'さんぽ',n:'散歩',r:'sanpo',kr:'산책'},{jp:'ゲーム',r:'geemu',kr:'게임'},
+  {jp:'カラオケ',r:'karaoke',kr:'노래방'},{jp:'しゃしん',n:'写真',r:'shashin',kr:'사진'},
+  {jp:'え',n:'絵',r:'e',kr:'그림'},{jp:'ダンス',r:'dansu',kr:'댄스'}
+];
+const SIMILAR_KANA = [
+  { group: ['あ', 'お'], hint: 'あ는 열림, お는 동그라미' },
+  { group: ['き', 'さ'], hint: 'き는 가로 2개' },
+  { group: ['ぬ', 'め'], hint: '꼬리 방향' },
+  { group: ['シ', 'ツ'], hint: 'シ는 세로, ツ는 가로' },
+  { group: ['ソ', 'ン'], hint: '방향 다름' },
+];
+
+const TOTAL_PRACTICE = 50;
+const CANVAS_PER_SET = 5;
+const TOTAL_SETS = 10;
+
+// ===== State =====
+let state = {
+  mainTab: 'kana',
+  activeTab: 'home',
+  currentType: 'hiragana',
+  currentRow: 'あ행',
+  writingKana: 'あ',
+  userData: loadUserData(),
+  practiceMode: 'big',
+  currentSet: 1,
+  smallCanvases: [],
+  activeSmallIndex: 0,
+  freeMode: false,
+  bigPaths: [],
+  bigCurrentPath: [],
+  bigStrokeCount: 0,
+  bigIsDrawing: false,
+  showComplete: false,
+  quizMode: 'recognize',
+  currentQuiz: null,
+  showResult: false,
+  isCorrect: false,
+};
+
+function loadUserData() {
+  try {
+    const saved = localStorage.getItem('kanaDataV10');
+    return saved ? JSON.parse(saved) : getDefaultData();
+  } catch(e) { return getDefaultData(); }
+}
+
+function getDefaultData() {
+  return { writingProgress: {}, todayWritten: 0, lastDate: null, totalReviews: 0, correctAnswers: 0, level: 1 };
+}
+
+function saveUserData() {
+  try { localStorage.setItem('kanaDataV10', JSON.stringify(state.userData)); } catch(e) {}
+}
+
+function getKanaInfo(kana) {
+  return [...ALL_HIRAGANA, ...ALL_KATAKANA, ...ALL_DAKUTEN, ...ALL_YOUON].find(k => k.kana === kana);
+}
+
+function playSound(text) {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = 0.7;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+function checkLevel() {
+  const h = ALL_HIRAGANA.filter(k => state.userData.writingProgress[k.kana]?.passed).length;
+  const k = ALL_KATAKANA.filter(k => state.userData.writingProgress[k.kana]?.passed).length;
+  const d = ALL_DAKUTEN.filter(k => state.userData.writingProgress[k.kana]?.passed).length;
+  state.userData.level = h >= 46 && k >= 46 && d >= 25 ? 4 : h >= 46 && k >= 46 ? 3 : h >= 46 ? 2 : 1;
+}
+
+function getProgress(type) {
+  const list = TYPE_ALL[type] || ALL_HIRAGANA;
+  const passed = list.filter(k => state.userData.writingProgress[k.kana]?.passed).length;
+  return { passed, total: list.length, percent: Math.round((passed / list.length) * 100) };
+}
+
+function getNextKana() {
+  const data = TYPE_DATA[state.currentType];
+  const rowKanas = data[state.currentRow] || [];
+  const idx = rowKanas.findIndex(k => k.kana === state.writingKana);
+  if (idx < rowKanas.length - 1) return rowKanas[idx + 1].kana;
+  const rows = Object.keys(data);
+  const rowIdx = rows.indexOf(state.currentRow);
+  if (rowIdx < rows.length - 1) return data[rows[rowIdx + 1]][0].kana;
+  return null;
+}
+
+// ===== Render =====
+function render() {
+  const root = document.getElementById('root');
+  root.innerHTML = `
+    <div class="container">
+      ${renderHeader()}
+      <main>${state.mainTab === 'kana' ? (state.activeTab === 'home' ? renderHome() : state.activeTab === 'write' ? renderWrite() : state.activeTab === 'free' ? renderFree() : renderQuiz()) : renderAdvanced()}</main>
+      ${state.mainTab === 'kana' ? renderNav() : ''}
+      ${state.showComplete ? renderCompletePopup() : ''}
+    </div>
+  `;
+  bindEvents();
+  if ((state.activeTab === 'write' || state.activeTab === 'free') && state.practiceMode === 'big') initBigCanvas();
+  else if (state.activeTab === 'write' && state.practiceMode === 'small') initSmallCanvases();
+}
+
+function renderHeader() {
+  return `<header>
+    <div class="header-title"><span>🇯🇵 일본어 학습</span><button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1.25rem;">🔄</button></div>
+    <div class="header-tabs">
+      <button class="header-tab ${state.mainTab === 'kana' ? 'active' : ''}" onclick="setMainTab('kana')">📝 가나 마스터</button>
+      <button class="header-tab ${state.mainTab === 'advanced' ? 'active' : ''}" onclick="setMainTab('advanced')">📖 심화 학습</button>
+    </div>
+  </header>`;
+}
+
+function renderHome() {
+  return `<div style="padding:1rem;">
+    <div class="card card-gradient" style="margin-bottom:1rem;">
+      <div class="flex justify-between items-center mb-2">
+        <div><div class="font-bold text-lg">🔥 오늘의 연습</div><div class="text-sm" style="opacity:0.8">Lv.${state.userData.level}</div></div>
+        <div class="text-center"><div class="text-3xl font-bold">${state.userData.todayWritten}</div><div class="text-xs" style="opacity:0.7">/ 250</div></div>
+      </div>
+      <div class="progress-bg mb-3"><div class="progress-fill" style="width:${Math.min(100, (state.userData.todayWritten / 250) * 100)}%"></div></div>
+      <button class="btn btn-white btn-full font-bold" onclick="setActiveTab('write')">미션 따라쓰기 →</button>
+    </div>
+    <button class="card btn-full flex items-center gap-3" style="text-align:left;cursor:pointer;" onclick="setActiveTab('free')">
+      <span class="text-3xl">📓</span>
+      <div><div class="font-bold text-gray-800">자유 연습장</div><div class="text-sm text-gray-500">미션 상관없이 마음껏 연습!</div></div>
+    </button>
+    <div class="card">
+      <div class="font-bold text-gray-800 mb-3">🏆 학습 단계</div>
+      ${[{lv:1,name:'히라가나',type:'hiragana',icon:'🌸'},{lv:2,name:'가타카나',type:'katakana',icon:'🎌'},{lv:3,name:'탁음/반탁음',type:'dakuten',icon:'💫'},{lv:4,name:'요음',type:'youon',icon:'✨'}].map(l => {
+        const unlocked = state.userData.level >= l.lv;
+        const p = getProgress(l.type);
+        return `<button class="btn-full flex items-center gap-3 p-3 rounded-xl mb-2" style="text-align:left;background:${unlocked?'#eef2ff':'#f9fafb'};opacity:${unlocked?1:0.6};border:none;cursor:${unlocked?'pointer':'not-allowed'}" onclick="${unlocked?`startLevel('${l.type}')`:''}">
+          <span class="text-2xl">${l.icon}</span>
+          <div class="flex-1"><div class="font-medium">${l.name} ${unlocked?'🔓':'🔒'}</div><div class="text-xs text-gray-500">${unlocked?`${p.passed}/${p.total} (${p.percent}%)`:'잠금'}</div></div>
+          ${unlocked && p.passed === p.total ? '⭐' : ''}${unlocked ? '›' : ''}
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="grid-2">
+      <button class="card" style="cursor:pointer" onclick="startQuiz('recognize')"><div class="text-2xl mb-2">👁️</div><div class="font-bold text-sm">인식 퀴즈</div></button>
+      <button class="card" style="cursor:pointer" onclick="startQuiz('listen')"><div class="text-2xl mb-2">👂</div><div class="font-bold text-sm">청취 퀴즈</div></button>
+    </div>
+  </div>`;
+}
+
+function renderWrite() {
+  const data = TYPE_DATA[state.currentType];
+  const info = getKanaInfo(state.writingKana);
+  const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
+  const completedInSet = state.smallCanvases.filter(c => c?.done).length;
+
+  return `<div style="padding:1rem;">
+    <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3">
+      ${[{t:'hiragana',l:'ひらがな',lv:1},{t:'katakana',l:'カタカナ',lv:2},{t:'dakuten',l:'탁음',lv:3},{t:'youon',l:'요음',lv:4}].map(x => `<button class="btn btn-sm btn-pill ${state.currentType===x.t?'btn-primary':'btn-gray'}" ${state.userData.level<x.lv?'disabled':''} onclick="changeType('${x.t}')">${state.userData.level<x.lv?'🔒 ':''}${x.l}</button>`).join('')}
+    </div>
+    <div class="flex gap-1 overflow-x-auto hide-scrollbar mb-3">
+      ${Object.keys(data).map(r => `<button class="btn btn-sm ${state.currentRow===r?'btn-purple':'btn-gray'}" onclick="changeRow('${r}')">${r}</button>`).join('')}
+    </div>
+    <div class="flex gap-1 justify-center flex-wrap mb-3">
+      ${(data[state.currentRow]||[]).map(k => {const p=state.userData.writingProgress[k.kana];return `<button class="kana-btn ${state.writingKana===k.kana?'active':p?.passed?'passed':''}" onclick="selectKana('${k.kana}')">${k.kana}</button>`;}).join('')}
+    </div>
+    ${info ? `<div class="card bg-indigo-50 mb-3">
+      <div class="flex justify-between items-center">
+        <div><span class="text-xl font-bold text-indigo-600">${info.romaji}</span><span class="ml-2 text-xs px-2 py-1 bg-indigo-100 rounded-full">${progress.count}/${TOTAL_PRACTICE}번</span>${progress.passed?'✅':''}</div>
+        <button class="btn btn-sm btn-primary" onclick="playSound('${state.writingKana}')">🔊 발음</button>
+      </div>
+      ${info.mnemonic?`<div class="text-gray-600 mt-1 text-sm">${info.img} ${info.mnemonic}</div>`:''}
+      <div class="text-xs text-indigo-700 mt-1">📝 ${info.order}</div>
+      <div class="mt-2"><div class="flex justify-between text-xs text-gray-500 mb-1"><span>전체 진행</span><span>${progress.count}/${TOTAL_PRACTICE}</span></div><div class="progress-indigo-bg rounded-full" style="height:0.5rem;overflow:hidden;"><div class="progress-indigo-fill" style="height:100%;width:${(progress.count/TOTAL_PRACTICE)*100}%"></div></div></div>
+    </div>` : ''}
+    ${state.practiceMode === 'big' ? `
+      <div class="bg-amber-50 rounded-lg p-2 text-center text-sm mb-3" style="color:#b45309">📖 먼저 크게 따라 써보세요!</div>
+      <div class="relative mb-3"><canvas id="bigCanvas" width="280" height="280" class="aspect-square rounded-2xl border-2 border-gray-300 bg-white shadow-inner"></canvas><div id="bigMessage" class="absolute inset-0 flex items-center justify-center hidden"><div class="bg-white px-6 py-3 rounded-xl shadow-lg text-lg font-bold text-green-600">🎉 잘했어요!</div></div></div>
+      <div class="flex gap-2"><button class="btn btn-gray flex-1" onclick="resetBigCanvas()">🗑️ 지우기</button><button class="btn btn-primary flex-1" onclick="playSound('${state.writingKana}')">🔊 발음</button></div>
+    ` : `
+      <div class="bg-green-50 rounded-lg p-2 text-center text-sm mb-3" style="color:#15803d">📓 세트 ${state.currentSet}/${TOTAL_SETS} • ${completedInSet}/${CANVAS_PER_SET}칸 완료</div>
+      <div class="small-canvas-grid mb-3">${[0,1,2,3,4].map(i => `<canvas id="smallCanvas${i}" width="100" height="100" class="small-canvas ${state.smallCanvases[i]?.done?'done':i===state.activeSmallIndex?'active':''}" style="width:60px;height:60px;"></canvas>`).join('')}</div>
+      <div class="flex gap-2"><button class="btn btn-gray flex-1" onclick="switchToBig()">📖 크게 보기</button><button class="btn btn-primary flex-1" onclick="playSound('${state.writingKana}')">🔊 발음</button></div>
+    `}
+  </div>`;
+}
+
+function renderFree() {
+  const data = TYPE_DATA[state.currentType];
+  const info = getKanaInfo(state.writingKana);
+  return `<div style="padding:1rem;">
+    <div class="bg-purple-50 rounded-lg p-3 text-center mb-3"><div class="text-lg font-bold text-purple-700">📓 자유 연습장</div><div class="text-sm text-purple-600">미션 카운트 없이 마음껏 연습!</div></div>
+    <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-3">
+      ${[{t:'hiragana',l:'ひらがな'},{t:'katakana',l:'カタカナ'},{t:'dakuten',l:'탁음'},{t:'youon',l:'요음'}].map(x => `<button class="btn btn-sm btn-pill ${state.currentType===x.t?'btn-purple':'btn-gray'}" onclick="changeType('${x.t}')">${x.l}</button>`).join('')}
+    </div>
+    <div class="flex gap-1 overflow-x-auto hide-scrollbar mb-3">
+      ${Object.keys(data).map(r => `<button class="btn btn-sm ${state.currentRow===r?'btn-purple':'btn-gray'}" onclick="changeRow('${r}')">${r}</button>`).join('')}
+    </div>
+    <div class="flex gap-1 justify-center flex-wrap mb-3">
+      ${(data[state.currentRow]||[]).map(k => `<button class="kana-btn ${state.writingKana===k.kana?'active':''}" onclick="selectKana('${k.kana}')">${k.kana}</button>`).join('')}
+    </div>
+    ${info ? `<div class="card bg-purple-50 mb-3">
+      <div class="flex justify-between items-center">
+        <span class="text-xl font-bold text-purple-600">${info.romaji}</span>
+        <button class="btn btn-sm btn-purple" onclick="playSound('${state.writingKana}')">🔊 발음</button>
+      </div>
+      ${info.mnemonic?`<div class="text-gray-600 mt-1 text-sm">${info.img} ${info.mnemonic}</div>`:''}
+      <div class="text-xs text-purple-700 mt-1">📝 ${info.order}</div>
+    </div>` : ''}
+    <div class="relative mb-3"><canvas id="bigCanvas" width="280" height="280" class="aspect-square rounded-2xl border-2 border-purple-300 bg-white shadow-inner"></canvas></div>
+    <div class="flex gap-2"><button class="btn btn-gray flex-1" onclick="resetBigCanvas()">🗑️ 지우기</button><button class="btn btn-purple flex-1" onclick="playSound('${state.writingKana}')">🔊 발음</button></div>
+  </div>`;
+}
+
+function renderQuiz() {
+  if (!state.currentQuiz) return `<div class="text-center p-6"><button class="btn btn-primary" onclick="generateQuiz('recognize')">퀴즈 시작</button></div>`;
+  return `<div style="padding:1rem;">
+    <div class="flex gap-2 justify-center mb-3">
+      ${['recognize','similar','listen'].map(m => `<button class="btn btn-sm btn-pill ${state.quizMode===m?'btn-primary':'btn-gray'}" onclick="generateQuiz('${m}')">${m==='recognize'?'👁️인식':m==='similar'?'🧠유사':'👂청취'}</button>`).join('')}
+    </div>
+    <div class="card text-center">
+      ${state.quizMode === 'listen' ? `<button onclick="playSound('${state.currentQuiz.kana}')" style="width:6rem;height:6rem;border-radius:9999px;background:#cffafe;color:#0891b2;font-size:2.5rem;border:none;cursor:pointer;margin:0 auto 1rem;">🔊</button>` : `<div class="text-7xl mb-4">${state.currentQuiz.kana}</div>`}
+      <p class="text-gray-600 mb-2">${state.currentQuiz.question}</p>
+      ${state.currentQuiz.hint?`<p class="text-xs text-purple-600 mb-3">💡 ${state.currentQuiz.hint}</p>`:''}
+      <div class="grid-2">
+        ${state.currentQuiz.options.map(opt => `<button class="quiz-option ${state.showResult?(opt===state.currentQuiz.correctAnswer?'correct':'wrong'):''}" onclick="checkAnswer('${opt}')" ${state.showResult?'disabled':''}>${opt}</button>`).join('')}
+      </div>
+      ${state.showResult ? `<div class="mt-3 p-3 rounded-xl ${state.isCorrect?'bg-green-50 text-green-600':'bg-red-50 text-red-600'}"><p class="font-bold">${state.isCorrect?'정답! 🎉':'틀렸어요 😅'}</p><p class="text-sm mt-1">1.5초 후 다음 문제...</p></div>` : ''}
+    </div>
+  </div>`;
+}
+
+// 심화학습 상태
+let advState = {
+  category: 'vocab',      // vocab, grammar, convo
+  subCategory: 'numbers', // 세부 카테고리
+  subTab: 'basic'         // 세부 탭
+};
+
+function setAdvCategory(cat) {
+  advState.category = cat;
+  // 기본 서브카테고리 설정
+  if (cat === 'vocab') advState.subCategory = 'numbers';
+  else if (cat === 'grammar') advState.subCategory = 'particles';
+  else advState.subCategory = 'greetings';
+  advState.subTab = 'basic';
+  render();
+}
+
+function setAdvSubCategory(subCat) {
+  advState.subCategory = subCat;
+  advState.subTab = 'basic';
+  render();
+}
+
+function setAdvSubTab(tab) {
+  advState.subTab = tab;
+  render();
+}
+
+function renderAdvanced() {
+  const categories = [
+    {id:'vocab', label:'📚 어휘', icon:'📚'},
+    {id:'grammar', label:'📝 문법', icon:'📝'},
+    {id:'convo', label:'💬 회화', icon:'💬'}
+  ];
+
+  return `
+    <div style="padding:0.5rem;">
+      <!-- 메인 카테고리 탭 -->
+      <div class="flex gap-2 mb-3 overflow-x-auto hide-scrollbar" style="padding-bottom:0.25rem;">
+        ${categories.map(c => `
+          <button class="btn btn-sm ${advState.category === c.id ? 'btn-primary' : 'btn-gray'}" 
+                  onclick="setAdvCategory('${c.id}')" style="white-space:nowrap;">
+            ${c.label}
+          </button>
+        `).join('')}
+      </div>
+      
+      <!-- 콘텐츠 영역 -->
+      ${advState.category === 'vocab' ? renderVocabSection() : 
+        advState.category === 'grammar' ? renderGrammarSection() : 
+        renderConvoSection()}
+    </div>
+  `;
+}
+
+// ===== 어휘 섹션 =====
+function renderVocabSection() {
+  const subCats = [
+    {id:'numbers', label:'🔢 숫자'},
+    {id:'time', label:'🕐 시간'},
+    {id:'calendar', label:'📅 날짜'},
+    {id:'colors', label:'🎨 색깔'},
+    {id:'family', label:'👨‍👩‍👧 가족'},
+    {id:'direction', label:'🧭 방향'},
+    {id:'weather', label:'🌤️ 날씨'},
+    {id:'body', label:'👤 신체'},
+    {id:'food', label:'🍱 음식'},
+    {id:'places', label:'🏢 장소'},
+    {id:'jobs', label:'💼 직업'},
+    {id:'hobbies', label:'🎮 취미'}
+  ];
+
+  return `
+    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+      ${subCats.map(s => `
+        <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
+                onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
+          ${s.label}
+        </button>
+      `).join('')}
+    </div>
+    ${renderVocabContent()}
+  `;
+}
+
+function renderVocabContent() {
+  switch(advState.subCategory) {
+    case 'numbers': return renderNumbersContent();
+    case 'time': return renderTimeContent();
+    case 'calendar': return renderCalendarContent();
+    case 'colors': return renderColorsContent();
+    case 'family': return renderFamilyContent();
+    case 'direction': return renderListContent(ADVANCED_DATA.direction, '방향/위치');
+    case 'weather': return renderListContent(ADVANCED_DATA.weather, '날씨');
+    case 'body': return renderListContent(ADVANCED_DATA.body, '신체');
+    case 'food': return renderFoodContent();
+    case 'places': return renderListContent(PLACES_DATA, '장소/시설');
+    case 'jobs': return renderListContent(JOBS_DATA, '직업');
+    case 'hobbies': return renderListContent(HOBBIES_DATA, '취미');
+    default: return '';
+  }
+}
+
+function renderNumbersContent() {
+  const tabs = [{id:'basic',label:'1~10'},{id:'tens',label:'11~99'},{id:'big',label:'100~'},{id:'ordinal',label:'개수'}];
+  const data = ADVANCED_DATA.numbers[advState.subTab] || ADVANCED_DATA.numbers.basic;
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;font-size:0.75rem;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="grid-2">
+      ${data.map(item => `
+        <div class="card p-3 text-center">
+          ${item.n ? `<div class="text-xl font-bold text-gray-800">${item.n}</div>` : ''}
+          <div class="text-lg text-indigo-600 font-bold">${item.jp}</div>
+          <div class="text-sm text-gray-500">${item.r}</div>
+          <div class="text-xs text-gray-400">${item.kr || item.v}</div>
+          <button class="btn btn-sm btn-primary mt-2" onclick="playSound('${item.jp}')">🔊</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderTimeContent() {
+  const tabs = [{id:'hours',label:'시'},{id:'minutes',label:'분'},{id:'periods',label:'시간대'}];
+  const data = ADVANCED_DATA.time[advState.subTab] || ADVANCED_DATA.time.hours;
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="grid-2">
+      ${data.map(item => renderSimpleCard(item)).join('')}
+    </div>
+  `;
+}
+
+function renderCalendarContent() {
+  const tabs = [{id:'weekdays',label:'요일'},{id:'months',label:'월'},{id:'days',label:'일'},{id:'seasons',label:'계절'},{id:'relative',label:'상대'}];
+  const data = ADVANCED_DATA.calendar[advState.subTab] || ADVANCED_DATA.calendar.weekdays;
+  
+  return `
+    <div class="flex gap-1 mb-2 overflow-x-auto hide-scrollbar">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="white-space:nowrap;font-size:0.7rem;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="grid-2">
+      ${data.map(item => renderSimpleCard(item)).join('')}
+    </div>
+  `;
+}
+
+function renderColorsContent() {
+  return `
+    <div class="grid-2">
+      ${ADVANCED_DATA.colors.map(c => `
+        <div class="card p-3 text-center" style="border-left:4px solid ${c.hex};">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1px solid #ddd;"></div>
+            <span class="font-bold">${c.jp}</span>
+          </div>
+          ${c.n ? `<div class="text-sm text-gray-600">${c.n}</div>` : ''}
+          <div class="text-sm text-indigo-600">${c.r}</div>
+          <div class="text-xs text-gray-400">${c.kr}</div>
+          <button class="btn btn-sm btn-primary mt-2" onclick="playSound('${c.jp}')">🔊</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderFamilyContent() {
+  const tabs = [{id:'own',label:'우리 가족'},{id:'others',label:'남의 가족'}];
+  const data = ADVANCED_DATA.family[advState.subTab] || ADVANCED_DATA.family.own;
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="card bg-amber-50 p-2 mb-2 text-sm">
+      💡 일본어는 자기 가족과 남의 가족을 다르게 부릅니다!
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${data.map(item => `
+        <div class="card p-3 flex justify-between items-center">
+          <div>
+            ${item.n ? `<span class="text-gray-600 mr-2">${item.n}</span>` : ''}
+            <span class="font-bold text-indigo-600">${item.jp}</span>
+            <span class="text-sm text-gray-500 ml-2">${item.r}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm">${item.kr}</span>
+            <button class="btn btn-sm btn-primary" onclick="playSound('${item.jp}')">🔊</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderFoodContent() {
+  const tabs = [{id:'meals',label:'식사'},{id:'foods',label:'음식'},{id:'drinks',label:'음료'},{id:'tastes',label:'맛'}];
+  const data = ADVANCED_DATA.food[advState.subTab] || ADVANCED_DATA.food.meals;
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;font-size:0.75rem;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="grid-2">
+      ${data.map(item => renderSimpleCard(item)).join('')}
+    </div>
+  `;
+}
+
+function renderListContent(data, title) {
+  return `
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${data.map(item => `
+        <div class="card p-3 flex justify-between items-center">
+          <div>
+            ${item.n ? `<span class="text-gray-500 mr-2">${item.n}</span>` : ''}
+            <span class="font-bold text-indigo-600">${item.jp}</span>
+            <span class="text-sm text-gray-500 ml-2">${item.r}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm">${item.kr}</span>
+            <button class="btn btn-sm btn-primary" onclick="playSound('${item.jp}')">🔊</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderSimpleCard(item) {
+  return `
+    <div class="card p-3 text-center">
+      ${item.n ? `<div class="text-lg font-bold text-gray-800">${item.n}</div>` : ''}
+      <div class="text-indigo-600 font-bold">${item.jp}</div>
+      <div class="text-sm text-gray-500">${item.r}</div>
+      <div class="text-xs text-gray-400">${item.kr}</div>
+      <button class="btn btn-sm btn-primary mt-2" onclick="playSound('${item.jp}')">🔊</button>
+    </div>
+  `;
+}
+
+// ===== 문법 섹션 =====
+function renderGrammarSection() {
+  const subCats = [
+    {id:'particles', label:'조사'},
+    {id:'demonstratives', label:'지시어'},
+    {id:'questions', label:'의문사'},
+    {id:'adjI', label:'い형용사'},
+    {id:'adjNa', label:'な형용사'},
+    {id:'verbs', label:'동사'},
+    {id:'counters', label:'카운터'}
+  ];
+
+  return `
+    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+      ${subCats.map(s => `
+        <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
+                onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
+          ${s.label}
+        </button>
+      `).join('')}
+    </div>
+    ${renderGrammarContent()}
+  `;
+}
+
+function renderGrammarContent() {
+  switch(advState.subCategory) {
+    case 'particles': return renderParticlesContent();
+    case 'demonstratives': return renderDemonstrativesContent();
+    case 'questions': return renderQuestionsContent();
+    case 'adjI': return renderAdjectivesContent(GRAMMAR_DATA.adjI, 'い형용사');
+    case 'adjNa': return renderAdjectivesContent(GRAMMAR_DATA.adjNa, 'な형용사');
+    case 'verbs': return renderVerbsContent();
+    case 'counters': return renderCountersContent();
+    default: return '';
+  }
+}
+
+function renderParticlesContent() {
+  return `
+    <div class="card bg-indigo-50 p-2 mb-3 text-sm">
+      💡 조사는 단어 뒤에 붙어서 문법적 역할을 나타냅니다
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      ${GRAMMAR_DATA.particles.map(p => `
+        <div class="card p-3">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-2xl font-bold text-indigo-600">${p.jp}</span>
+            <span class="text-gray-500">${p.r}</span>
+            <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-sm">${p.kr}</span>
+          </div>
+          <div class="bg-gray-50 rounded p-2 text-sm">
+            <div class="text-indigo-600 font-medium">${p.ex}</div>
+            <div class="text-gray-500">${p.exr}</div>
+            <div class="text-gray-600">${p.exkr}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderDemonstrativesContent() {
+  const tabs = [{id:'kore',label:'これ계열'},{id:'kono',label:'この계열'},{id:'koko',label:'ここ계열'},{id:'kochira',label:'こちら계열'}];
+  const data = GRAMMAR_DATA.demonstratives[advState.subTab] || GRAMMAR_DATA.demonstratives.kore;
+  
+  const hints = {
+    kore: '물건을 가리킬 때',
+    kono: '명사 앞에서 수식할 때',
+    koko: '장소를 가리킬 때',
+    kochira: '방향이나 정중한 표현'
+  };
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;font-size:0.7rem;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="card bg-amber-50 p-2 mb-2 text-sm">
+      💡 ${hints[advState.subTab] || hints.kore}
+    </div>
+    <div class="grid-2">
+      ${data.map((item, i) => `
+        <div class="card p-3 text-center ${i === 0 ? 'border-green-300 bg-green-50' : i === 1 ? 'border-indigo-300 bg-indigo-50' : i === 2 ? 'border-purple-300 bg-purple-50' : 'border-gray-300'}">
+          <div class="text-xs text-gray-500 mb-1">${['이(가까운)', '그(상대쪽)', '저(먼)', '어느(의문)'][i]}</div>
+          <div class="text-xl font-bold">${item.jp}</div>
+          <div class="text-sm text-gray-600">${item.r}</div>
+          <div class="text-sm text-gray-500">${item.kr}</div>
+          <button class="btn btn-sm btn-primary mt-2" onclick="playSound('${item.jp}')">🔊</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderQuestionsContent() {
+  return `
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      ${GRAMMAR_DATA.questions.map(q => `
+        <div class="card p-3">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-xl font-bold text-purple-600">${q.jp}</span>
+            ${q.n ? `<span class="text-gray-500">${q.n}</span>` : ''}
+            <span class="text-gray-500">${q.r}</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-sm">${q.kr}</span>
+            <button class="btn btn-sm btn-primary ml-auto" onclick="playSound('${q.jp.split('/')[0]}')">🔊</button>
+          </div>
+          <div class="bg-gray-50 rounded p-2 text-sm">
+            <div class="text-purple-600">${q.ex}</div>
+            <div class="text-gray-500">${q.exkr}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAdjectivesContent(data, title) {
+  return `
+    <div class="card bg-indigo-50 p-2 mb-3 text-sm">
+      💡 ${title === 'い형용사' ? 'い형용사는 い로 끝나고, 활용할 때 い가 변합니다' : 'な형용사는 명사 앞에서 な를 붙입니다'}
+    </div>
+    <div class="grid-2">
+      ${data.map(adj => `
+        <div class="card p-2 text-center">
+          ${adj.n ? `<div class="text-sm text-gray-500">${adj.n}</div>` : ''}
+          <div class="font-bold text-indigo-600">${adj.jp}</div>
+          <div class="text-xs text-gray-500">${adj.r}</div>
+          <div class="text-xs text-gray-600">${adj.kr}</div>
+          <button class="btn btn-sm btn-primary mt-1" onclick="playSound('${adj.jp.split('/')[0]}')">🔊</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderVerbsContent() {
+  const tabs = [{id:'group1',label:'1그룹'},{id:'group2',label:'2그룹'},{id:'group3',label:'3그룹'}];
+  const data = GRAMMAR_DATA.verbs[advState.subTab] || GRAMMAR_DATA.verbs.group1;
+  
+  const groupHints = {
+    group1: 'う단으로 끝나는 동사 (5단 동사)',
+    group2: 'る로 끝나고 る앞이 い/え단 (1단 동사)',
+    group3: 'する, くる (불규칙 동사)'
+  };
+  
+  return `
+    <div class="flex gap-1 mb-2">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="flex:1;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="card bg-cyan-100 p-2 mb-2 text-sm">
+      💡 ${groupHints[advState.subTab] || groupHints.group1}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${data.map(v => `
+        <div class="card p-3">
+          <div class="flex items-center justify-between mb-1">
+            <div>
+              ${v.n ? `<span class="text-gray-500 mr-1">${v.n}</span>` : ''}
+              <span class="font-bold text-indigo-600 text-lg">${v.jp}</span>
+              <span class="text-sm text-gray-500 ml-2">${v.r}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm">${v.kr}</span>
+              <button class="btn btn-sm btn-primary" onclick="playSound('${v.jp}')">🔊</button>
+            </div>
+          </div>
+          <div class="flex gap-2 text-xs">
+            <span class="bg-green-100 text-green-700 px-2 py-1 rounded">て형: ${v.te}</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">た형: ${v.ta}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderCountersContent() {
+  return `
+    <div class="card bg-amber-50 p-2 mb-3 text-sm">
+      💡 일본어는 세는 대상에 따라 다른 카운터를 사용합니다
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      ${GRAMMAR_DATA.counters.map(c => `
+        <div class="card p-3">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-xl font-bold text-purple-600">${c.jp}</span>
+            ${c.n ? `<span class="text-gray-500">${c.n}</span>` : ''}
+            <span class="text-gray-500">${c.r}</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-sm">${c.kr}</span>
+          </div>
+          <div class="bg-gray-50 rounded p-2 text-sm text-gray-600">
+            예: ${c.ex}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ===== 회화 섹션 =====
+function renderConvoSection() {
+  const subCats = [
+    {id:'greetings', label:'👋 인사'},
+    {id:'selfIntro', label:'🙋 자기소개'},
+    {id:'shopping', label:'🛒 쇼핑'},
+    {id:'restaurant', label:'🍽️ 식당'},
+    {id:'transport', label:'🚃 교통'},
+    {id:'directions', label:'🗺️ 길찾기'},
+    {id:'phone', label:'📞 전화'},
+    {id:'emergency', label:'🏥 긴급'},
+    {id:'useful', label:'💡 유용'}
+  ];
+
+  return `
+    <div class="flex gap-1 mb-3 overflow-x-auto hide-scrollbar pb-1">
+      ${subCats.map(s => `
+        <button class="btn btn-sm btn-pill ${advState.subCategory === s.id ? 'btn-purple' : 'btn-gray'}" 
+                onclick="setAdvSubCategory('${s.id}')" style="white-space:nowrap;font-size:0.7rem;">
+          ${s.label}
+        </button>
+      `).join('')}
+    </div>
+    ${renderConvoContent()}
+  `;
+}
+
+function renderConvoContent() {
+  switch(advState.subCategory) {
+    case 'greetings': return renderGreetingsContent();
+    case 'selfIntro': return renderPhraseList(CONVERSATION_DATA.selfIntro, '자기소개 표현');
+    case 'shopping': return renderPhraseList(CONVERSATION_DATA.shopping, '쇼핑 회화');
+    case 'restaurant': return renderPhraseList(CONVERSATION_DATA.restaurant, '식당 회화');
+    case 'transport': return renderPhraseList(CONVERSATION_DATA.transport, '교통 회화');
+    case 'directions': return renderPhraseList(CONVERSATION_DATA.directions, '길 묻기');
+    case 'phone': return renderPhraseList(CONVERSATION_DATA.phone, '전화 회화');
+    case 'emergency': return renderPhraseList(CONVERSATION_DATA.emergency, '긴급상황');
+    case 'useful': return renderPhraseList(CONVERSATION_DATA.useful, '유용한 표현');
+    default: return '';
+  }
+}
+
+function renderGreetingsContent() {
+  const tabs = [
+    {id:'basic',label:'기본'},
+    {id:'meeting',label:'만남'},
+    {id:'parting',label:'헤어짐'},
+    {id:'thanks',label:'감사'},
+    {id:'apology',label:'사과'},
+    {id:'meals',label:'식사'}
+  ];
+  const data = CONVERSATION_DATA.greetings[advState.subTab] || CONVERSATION_DATA.greetings.basic;
+  
+  return `
+    <div class="flex gap-1 mb-2 overflow-x-auto hide-scrollbar">
+      ${tabs.map(t => `
+        <button class="btn btn-sm ${advState.subTab === t.id ? 'bg-indigo-500 text-white' : 'btn-gray'}" 
+                onclick="setAdvSubTab('${t.id}')" style="white-space:nowrap;font-size:0.7rem;">
+          ${t.label}
+        </button>
+      `).join('')}
+    </div>
+    ${renderPhraseList(data, '')}
+  `;
+}
+
+function renderPhraseList(data, title) {
+  return `
+    ${title ? `<div class="font-bold text-gray-700 mb-2">${title}</div>` : ''}
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${data.map(item => `
+        <div class="card p-3">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="font-bold text-indigo-600 text-lg mb-1">${item.jp}</div>
+              <div class="text-sm text-gray-500">${item.r}</div>
+              <div class="text-sm text-gray-700 mt-1">${item.kr}</div>
+            </div>
+            <button class="btn btn-sm btn-primary ml-2" onclick="playSound('${item.jp.replace(/[〜～]/g, '')}')">🔊</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function renderNav() {
+  return `<nav><div class="nav-inner">
+    ${[{id:'home',icon:'🎯',label:'홈'},{id:'write',icon:'✍️',label:'미션'},{id:'free',icon:'📓',label:'자유'},{id:'quiz',icon:'🧠',label:'퀴즈'}].map(t => `<button class="nav-btn ${state.activeTab===t.id?'active':''}" onclick="setActiveTab('${t.id}')"><span>${t.icon}</span><span>${t.label}</span></button>`).join('')}
+  </div></nav>`;
+}
+
+function renderCompletePopup() {
+  const nextKana = getNextKana();
+  const info = getKanaInfo(state.writingKana);
+  return `<div class="modal-overlay"><div class="modal-content">
+    <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
+    <div class="text-2xl font-bold text-gray-800 mb-2">축하해요!</div>
+    <div class="text-lg text-indigo-600 mb-4"><span style="font-size:2rem;">${state.writingKana}</span> (${info?.romaji})를<br><span class="font-bold">50번</span> 연습 완료!</div>
+    ${nextKana?`<button class="btn btn-primary btn-full mb-2" onclick="goToNextKana('${nextKana}')">다음 음절 → ${nextKana}</button>`:`<div class="text-green-600 font-bold mb-2">🏆 이 행을 모두 완료!</div>`}
+    <button class="btn btn-gray btn-full mb-2" onclick="closeComplete()">계속 연습하기</button>
+    <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="goHome()">홈으로</button>
+  </div></div>`;
+}
+
+// ===== Canvas =====
+function initBigCanvas() {
+  const canvas = document.getElementById('bigCanvas');
+  if (!canvas) return;
+  drawBigCanvas();
+  canvas.onpointerdown = e => { e.preventDefault(); state.bigIsDrawing = true; state.bigCurrentPath = [getCoords(canvas, e)]; };
+  canvas.onpointermove = e => { if (!state.bigIsDrawing) return; e.preventDefault(); state.bigCurrentPath.push(getCoords(canvas, e)); drawBigCanvas(); };
+  canvas.onpointerup = canvas.onpointerleave = e => {
+    if (!state.bigIsDrawing) return;
+    e.preventDefault(); state.bigIsDrawing = false;
+    if (state.bigCurrentPath.length >= 3) {
+      state.bigPaths.push([...state.bigCurrentPath]);
+      state.bigStrokeCount++;
+      if (state.activeTab === 'write') {
+        const info = getKanaInfo(state.writingKana);
+        if (state.bigStrokeCount >= (info?.strokes || 1)) completeBigCanvas();
+      }
+    }
+    state.bigCurrentPath = []; drawBigCanvas();
+  };
+}
+
+function drawBigCanvas() {
+  const canvas = document.getElementById('bigCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, s, s);
+  ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 1; ctx.setLineDash([5, 5]);
+  ctx.beginPath(); ctx.moveTo(s/2, 0); ctx.lineTo(s/2, s); ctx.moveTo(0, s/2); ctx.lineTo(s, s/2); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = `bold ${s * 0.7}px serif`; ctx.fillStyle = state.activeTab === 'free' ? 'rgba(147,51,234,0.12)' : 'rgba(99,102,241,0.12)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(state.writingKana, s/2, s/2);
+  [...state.bigPaths, state.bigCurrentPath].forEach((path, idx) => {
+    if (!path || path.length < 2) return;
+    ctx.beginPath(); ctx.strokeStyle = idx < state.bigPaths.length ? '#1f2937' : (state.activeTab === 'free' ? '#9333ea' : '#6366f1');
+    ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    path.forEach((pt, i) => i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)); ctx.stroke();
+  });
+  if (state.activeTab !== 'free') {
+    const info = getKanaInfo(state.writingKana);
+    ctx.fillStyle = '#6366f1'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(`${state.bigStrokeCount}/${info?.strokes || '?'}획`, 8, 8);
+  }
+}
+
+function completeBigCanvas() {
+  playSound(state.writingKana);
+  const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
+  progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
+  state.userData.writingProgress[state.writingKana] = progress;
+  state.userData.todayWritten++; checkLevel(); saveUserData();
+  document.getElementById('bigMessage')?.classList.remove('hidden');
+  setTimeout(() => {
+    if (progress.count >= TOTAL_PRACTICE) { state.showComplete = true; render(); return; }
+    state.practiceMode = 'small'; state.currentSet = 1;
+    state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+    state.activeSmallIndex = 0; resetBigCanvas(); render();
+  }, 800);
+}
+
+function resetBigCanvas() {
+  state.bigPaths = []; state.bigCurrentPath = []; state.bigStrokeCount = 0; state.bigIsDrawing = false;
+  document.getElementById('bigMessage')?.classList.add('hidden');
+  drawBigCanvas();
+}
+
+function initSmallCanvases() {
+  for (let i = 0; i < CANVAS_PER_SET; i++) {
+    const canvas = document.getElementById(`smallCanvas${i}`);
+    if (!canvas) continue;
+    if (!state.smallCanvases[i]) state.smallCanvases[i] = {done:false,paths:[],currentPath:[],isDrawing:false};
+    drawSmallCanvas(i);
+    canvas.onpointerdown = e => { if (i !== state.activeSmallIndex || state.smallCanvases[i].done) return; e.preventDefault(); state.smallCanvases[i].isDrawing = true; state.smallCanvases[i].currentPath = [getCoords(canvas, e)]; };
+    canvas.onpointermove = e => { if (!state.smallCanvases[i]?.isDrawing) return; e.preventDefault(); state.smallCanvases[i].currentPath.push(getCoords(canvas, e)); drawSmallCanvas(i); };
+    canvas.onpointerup = canvas.onpointerleave = e => {
+      if (!state.smallCanvases[i]?.isDrawing) return;
+      e.preventDefault(); state.smallCanvases[i].isDrawing = false;
+      if (state.smallCanvases[i].currentPath.length >= 3) {
+        state.smallCanvases[i].paths.push([...state.smallCanvases[i].currentPath]);
+        const info = getKanaInfo(state.writingKana);
+        if (state.smallCanvases[i].paths.length >= (info?.strokes || 1)) completeSmallCanvas(i);
+      }
+      state.smallCanvases[i].currentPath = []; drawSmallCanvas(i);
+    };
+  }
+}
+
+function drawSmallCanvas(i) {
+  const canvas = document.getElementById(`smallCanvas${i}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d'); const s = canvas.width; const sc = state.smallCanvases[i];
+  ctx.fillStyle = sc?.done ? '#dcfce7' : '#fff'; ctx.fillRect(0, 0, s, s);
+  ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 0.5; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(s/2, 0); ctx.lineTo(s/2, s); ctx.moveTo(0, s/2); ctx.lineTo(s, s/2); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = `bold ${s * 0.6}px serif`; ctx.fillStyle = sc?.done ? 'rgba(34,197,94,0.2)' : 'rgba(99,102,241,0.15)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(state.writingKana, s/2, s/2);
+  if (sc) {
+    [...(sc.paths || []), sc.currentPath || []].forEach(path => {
+      if (!path || path.length < 2) return;
+      ctx.beginPath(); ctx.strokeStyle = sc.done ? '#22c55e' : '#6366f1'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      path.forEach((pt, j) => j === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)); ctx.stroke();
+    });
+  }
+  if (sc?.done) { ctx.fillStyle = '#22c55e'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillText('✓', s - 5, 3); }
+  else if (sc?.paths?.length > 0) { const info = getKanaInfo(state.writingKana); ctx.fillStyle = '#6366f1'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(`${sc.paths.length}/${info?.strokes || '?'}`, 3, 3); }
+  if (i === state.activeSmallIndex && !sc?.done) { ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, s - 2, s - 2); }
+}
+
+function completeSmallCanvas(i) {
+  state.smallCanvases[i].done = true; playSound(state.writingKana);
+  const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
+  progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
+  state.userData.writingProgress[state.writingKana] = progress;
+  state.userData.todayWritten++; checkLevel(); saveUserData();
+  if (progress.count >= TOTAL_PRACTICE) { setTimeout(() => { state.showComplete = true; render(); }, 500); return; }
+  if (i < CANVAS_PER_SET - 1) { state.activeSmallIndex = i + 1; render(); }
+  else { setTimeout(() => { if (state.currentSet < TOTAL_SETS) { state.currentSet++; state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false})); state.activeSmallIndex = 0; render(); } }, 500); }
+}
+
+function switchToBig() { state.practiceMode = 'big'; resetBigCanvas(); render(); }
+function getCoords(canvas, e) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
+}
+
+// ===== Quiz =====
+function generateQuiz(mode) {
+  state.quizMode = mode; state.showResult = false;
+  const kanaList = TYPE_ALL[state.currentType];
+  let quiz = {};
+  if (mode === 'similar') {
+    const available = SIMILAR_KANA.filter(g => g.group.some(k => kanaList.find(x => x.kana === k)));
+    if (available.length === 0) { generateQuiz('recognize'); return; }
+    const group = available[Math.floor(Math.random() * available.length)];
+    const correct = group.group[Math.floor(Math.random() * group.group.length)];
+    const info = getKanaInfo(correct);
+    quiz = { kana: correct, correctAnswer: correct, options: [...group.group].sort(() => Math.random() - 0.5), hint: group.hint, question: `"${info?.romaji}" 발음은?` };
+  } else if (mode === 'listen') {
+    const item = kanaList[Math.floor(Math.random() * kanaList.length)];
+    const others = kanaList.filter(k => k.kana !== item.kana).sort(() => Math.random() - 0.5).slice(0, 3);
+    quiz = { kana: item.kana, correctAnswer: item.kana, options: [item.kana, ...others.map(k => k.kana)].sort(() => Math.random() - 0.5), question: '들리는 발음은?' };
+    setTimeout(() => playSound(item.kana), 300);
+  } else {
+    const item = kanaList[Math.floor(Math.random() * kanaList.length)];
+    const others = kanaList.filter(k => k.romaji !== item.romaji).sort(() => Math.random() - 0.5).slice(0, 3);
+    quiz = { kana: item.kana, correctAnswer: item.romaji, options: [item.romaji, ...others.map(k => k.romaji)].sort(() => Math.random() - 0.5), question: '이 가나의 발음은?' };
+  }
+  state.currentQuiz = quiz; state.activeTab = 'quiz'; render();
+}
+
+function checkAnswer(answer) {
+  const correct = answer === state.currentQuiz.correctAnswer;
+  state.isCorrect = correct; state.showResult = true;
+  if (correct) playSound(state.currentQuiz.kana);
+  state.userData.totalReviews++; if (correct) state.userData.correctAnswers++; saveUserData(); render();
+  setTimeout(() => generateQuiz(state.quizMode), 1500);
+}
+
+// ===== Nav =====
+function setMainTab(tab) { state.mainTab = tab; render(); }
+function setActiveTab(tab) {
+  state.activeTab = tab; state.freeMode = tab === 'free';
+  if (tab === 'write') {
+    const progress = state.userData.writingProgress[state.writingKana] || { count: 0 };
+    state.practiceMode = progress.count === 0 ? 'big' : 'small';
+    if (state.practiceMode === 'small') {
+      state.currentSet = Math.min(TOTAL_SETS, Math.floor(progress.count / CANVAS_PER_SET) + 1);
+      state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+      state.activeSmallIndex = 0;
+    }
+    resetBigCanvas();
+  }
+  if (tab === 'free') { state.practiceMode = 'big'; resetBigCanvas(); }
+  if (tab === 'quiz' && !state.currentQuiz) { generateQuiz('recognize'); return; }
+  render();
+}
+
+function changeType(type) {
+  if (!state.freeMode && state.userData.level < ({hiragana:1,katakana:2,dakuten:3,youon:4}[type])) return;
+  state.currentType = type;
+  const data = TYPE_DATA[type];
+  state.currentRow = Object.keys(data)[0];
+  state.writingKana = data[state.currentRow][0].kana;
+  if (!state.freeMode) {
+    const progress = state.userData.writingProgress[state.writingKana] || { count: 0 };
+    state.practiceMode = progress.count === 0 ? 'big' : 'small';
+    state.currentSet = 1;
+    state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+    state.activeSmallIndex = 0;
+  }
+  resetBigCanvas(); render();
+}
+
+function changeRow(row) {
+  state.currentRow = row;
+  state.writingKana = TYPE_DATA[state.currentType][row][0].kana;
+  if (!state.freeMode) {
+    const progress = state.userData.writingProgress[state.writingKana] || { count: 0 };
+    state.practiceMode = progress.count === 0 ? 'big' : 'small';
+    state.currentSet = 1;
+    state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+    state.activeSmallIndex = 0;
+  }
+  resetBigCanvas(); render();
+}
+
+function selectKana(kana) {
+  state.writingKana = kana;
+  if (!state.freeMode) {
+    const progress = state.userData.writingProgress[kana] || { count: 0 };
+    state.practiceMode = progress.count === 0 ? 'big' : 'small';
+    state.currentSet = Math.min(TOTAL_SETS, Math.floor(progress.count / CANVAS_PER_SET) + 1);
+    state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+    state.activeSmallIndex = 0;
+  }
+  resetBigCanvas(); render();
+}
+
+function startLevel(type) { changeType(type); setActiveTab('write'); }
+function startQuiz(mode) { generateQuiz(mode); }
+function goToNextKana(kana) {
+  state.showComplete = false; state.writingKana = kana;
+  const data = TYPE_DATA[state.currentType];
+  for (const row of Object.keys(data)) { if (data[row].find(k => k.kana === kana)) { state.currentRow = row; break; } }
+  state.practiceMode = 'big'; state.currentSet = 1;
+  state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
+  state.activeSmallIndex = 0; resetBigCanvas(); render();
+}
+function closeComplete() { state.showComplete = false; render(); }
+function goHome() { state.showComplete = false; state.activeTab = 'home'; render(); }
+function resetAll() { if (confirm('모든 데이터를 초기화할까요?')) { localStorage.removeItem('kanaDataV10'); location.reload(); } }
+function bindEvents() {}
+
+// ===== Init =====
+const today = new Date().toDateString();
+if (state.userData.lastDate !== today) { state.userData.todayWritten = 0; state.userData.lastDate = today; saveUserData(); }
+checkLevel(); render();
+  </script>
+</body>
+</html>
