@@ -1418,7 +1418,7 @@ function renderNumbersContent() {
     </div>
     <div class="grid-2">
       ${data.map(item => `
-        <div class="card p-3 text-center">
+        <div class="card p-3 text-center adv-card" data-jp="${item.jp}" data-r="${item.r}" data-kr="${item.kr || item.v || ''}" title="더블클릭으로 단어장 추가">
           ${item.n ? `<div class="text-xl font-bold text-gray-800">${item.n}</div>` : ''}
           <div class="text-lg text-indigo-600 font-bold">${item.jp}</div>
           <div class="text-sm text-gray-500">${item.r}</div>
@@ -1472,7 +1472,7 @@ function renderColorsContent() {
   return `
     <div class="grid-2">
       ${ADVANCED_DATA.colors.map(c => `
-        <div class="card p-3 text-center" style="border-left:4px solid ${c.hex};">
+        <div class="card p-3 text-center adv-card" data-jp="${c.jp}" data-r="${c.r}" data-kr="${c.kr}" style="border-left:4px solid ${c.hex};" title="더블클릭으로 단어장 추가">
           <div class="flex items-center justify-center gap-2 mb-1">
             <div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1px solid #ddd;"></div>
             <span class="font-bold">${c.jp}</span>
@@ -1505,7 +1505,7 @@ function renderFamilyContent() {
     </div>
     <div style="display:flex;flex-direction:column;gap:0.5rem;">
       ${data.map(item => `
-        <div class="card p-3 flex justify-between items-center">
+        <div class="card p-3 flex justify-between items-center adv-card" data-jp="${item.jp}" data-r="${item.r}" data-kr="${item.kr}" title="더블클릭으로 단어장 추가">
           <div>
             ${item.n ? `<span class="text-gray-600 mr-2">${item.n}</span>` : ''}
             <span class="font-bold text-indigo-600">${item.jp}</span>
