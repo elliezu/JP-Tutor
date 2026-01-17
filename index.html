@@ -1082,7 +1082,7 @@ function playSound(text) {
     let readText = text.length <= 2 ? text + '。' + text : text;
     const u = new SpeechSynthesisUtterance(readText);
     u.lang = 'ja-JP';
-    u.rate = 0.8;
+    u.rate = 1.0;
     window.speechSynthesis.speak(u);
   }
 }
