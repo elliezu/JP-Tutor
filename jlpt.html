@@ -89,6 +89,7 @@
 <script src="romaji.js"></script>
 <script src="n5-vocab.js"></script>
 <script src="n4-vocab.js"></script>
+<script src="notebook.js"></script>
 <script>
 
 // ========== 프로필 시스템 (index.html과 공유) ==========
@@ -1115,7 +1116,7 @@ function renderKanji() {
       ${data.slice((state.page-1)*ITEMS_PER_PAGE, state.page*ITEMS_PER_PAGE).map((item, idx) => {
         const i = (state.page-1)*ITEMS_PER_PAGE + idx;
         return `
-        <div class="kanji-card" data-kanji="${item.k}" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}" title="더블클릭으로 단어장 추가">>
+        <div class="kanji-card" data-kanji="${item.k}" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}" title="더블클릭으로 단어장 추가">
           <div class="kanji-char">${item.k}</div>
           <div class="kanji-reading">
             <span style="color:#dc2626">음: ${item.o} <span style="font-size:0.65rem;color:#888">${toRomaji(item.o)}</span></span>
@@ -1157,7 +1158,7 @@ function renderVocab() {
       <button class="btn btn-primary btn-sm" onclick="playAllVocab('${currentCat}')" style="margin-bottom:0.75rem">🔊 전체 듣기</button>
     </div>
     ${items.map((item, i) => `
-      <div class="vocab-card" data-jp="${item.jp}" style="margin-bottom:0.5rem" title="더블클릭으로 단어장 추가">>
+      <div class="vocab-card" data-jp="${item.jp}" style="margin-bottom:0.5rem" title="더블클릭으로 단어장 추가">
         <div>
           <div class="vocab-jp">${item.jp}${item.n?` (${item.n})`:''} <span style="font-size:0.7rem;color:#888">${toRomaji(item.jp)}</span></div>
           <div class="vocab-kr">${item.kr}</div>
