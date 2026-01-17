@@ -1194,10 +1194,7 @@ function renderQuiz() {
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
         <div class="text-sm text-gray">${quizState.current + 1} / ${quizState.questions.length}</div>
-        <div style="display:flex;gap:0.25rem">
-          <button class="btn btn-sm btn-gray" onclick="goQuizHome()">🏠 처음으로</button>
-          <button class="btn btn-sm btn-gray" onclick="resetQuiz()" style="color:#dc2626">🔄 리셋</button>
-        </div>
+        <button class="btn btn-sm btn-gray" onclick="resetQuiz()">✕ 그만두기</button>
       </div>
       <div class="progress-bar mb-3"><div class="progress-fill" style="width:${((quizState.current)/quizState.questions.length*100)}%"></div></div>
       <div class="text-center" style="font-size:2.5rem;margin:1.5rem 0">${q.question}</div>
