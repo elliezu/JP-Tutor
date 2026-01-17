@@ -905,6 +905,14 @@ function renderKanji() {
         🔊 한자 발음 &nbsp;│&nbsp; 📖 예문 발음 &nbsp;│&nbsp; ✓ 학습 완료
       </div>
     </div>
+    <div class="card" style="background:#fef3c7;font-size:0.8rem;padding:0.75rem">
+      <div style="font-weight:bold;margin-bottom:0.5rem">💡 JLPT 시험 팁</div>
+      <div style="color:#92400e;line-height:1.7">
+        JLPT에서는 <strong>한자 읽기 문제</strong>가 자주 나와요!<br>
+        📖 버튼으로 <strong>예문 발음</strong>을 들으면서 통째로 익히세요.<br>
+        한자 하나씩 외우는 것보다 <strong>예문 단위로 반복</strong>하는 게 효과적!
+      </div>
+    </div>
     <div class="grid-2">
       ${data.map((item, i) => `
         <div class="kanji-card" style="${learned.includes(i)?'opacity:0.6;background:#f0fdf4':''}">
