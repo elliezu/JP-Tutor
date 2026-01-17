@@ -1205,7 +1205,7 @@ function renderKanji() {
         ⚠️ <strong>같은 한자도 단어마다 읽기가 달라요!</strong><br>
         &nbsp;&nbsp;今(いま)지금 / 今日(きょう)오늘 / 今週(こんしゅう)이번주<br>
         &nbsp;&nbsp;→ <strong>단어째로 외우는 게 중요!</strong><br><br>
-        🔊 음독 발음 &nbsp;│&nbsp; 📖 예문 발음 &nbsp;│&nbsp; ✓ 학습완료
+        🔊 음독 &nbsp;│&nbsp; 🔉 훈독 &nbsp;│&nbsp; 📖 예문 &nbsp;│&nbsp; ✓ 학습완료
       </div>
     </div>
     <div class="card" style="background:#fef3c7;font-size:0.8rem;padding:0.75rem">
@@ -1230,6 +1230,7 @@ function renderKanji() {
           <div class="kanji-example">${item.ex}</div>
           <div style="display:flex;gap:0.25rem;margin-top:0.5rem">
             <button class="btn-sound" onclick="speak('${item.o}')" title="음독">🔊</button>
+            <button class="btn-sound" onclick="speak('${item.u.replace(/[\(\)]/g,'')}')" title="훈독">🔉</button>
             <button class="btn-sound" onclick="speak('${item.ex.split('(')[0]}')" title="예문">📖</button>
             ${!learned.includes(i)?`<button class="btn-sound" onclick="markLearned('${state.level}','kanji',${i});render()">✓</button>`:''}
           </div>
