@@ -320,27 +320,28 @@ function renderCard(card, i) {
   // 타입별 내용
   if (card.type === 'kanji') {
     html += `<div class="card-main">${card.kanji} <button class="speak-btn" onclick="speak('${card.reading}')">🔊</button></div>
-      <div class="card-reading">${card.reading} (${card.onyomi || ''} / ${card.kunyomi || ''})</div>
+      <div class="card-reading">${card.onyomi || ''} (${toRomaji(card.onyomi || '')}) / ${card.kunyomi || ''} (${toRomaji(card.kunyomi || '')})</div>
       <div class="card-meaning">${card.meaning}</div>`;
     if (card.example) {
       html += `<div class="card-example">
-        <div class="card-example-jp">${card.example} <button class="speak-btn" onclick="speak('${card.example}')">🔊</button></div>
+        <div class="card-example-jp">${card.example} <span style="color:#888;font-size:0.8em;">(${toRomaji(card.example)})</span> <button class="speak-btn" onclick="speak('${card.example}')">🔊</button></div>
       </div>`;
     }
   } else if (card.type === 'grammar') {
-    html += `<div class="card-main">${card.pattern} <button class="speak-btn" onclick="speak('${card.pattern}')">🔊</button></div>
+    html += `<div class="card-main">${card.pattern} <span style="color:#888;font-size:0.75em;">(${toRomaji(card.pattern)})</span> <button class="speak-btn" onclick="speak('${card.pattern}')">🔊</button></div>
       <div class="card-meaning">${card.meaning}</div>
       <div class="card-reading">${card.desc || ''}</div>`;
     if (card.examples?.length) {
       html += card.examples.map(ex => `<div class="card-example">
-        <div class="card-example-jp">${ex.jp} <button class="speak-btn" onclick="speak('${ex.jp}')">🔊</button></div>
+        <div class="card-example-jp">${ex.jp} <span style="color:#888;font-size:0.8em;">(${toRomaji(ex.jp)})</span> <button class="speak-btn" onclick="speak('${ex.jp}')">🔊</button></div>
         <div class="card-example-kr">${ex.kr}</div>
       </div>`).join('');
     }
   } else {
     // vocab, conv
-    html += `<div class="card-main">${card.jp || card.main} <button class="speak-btn" onclick="speak('${card.jp || card.main}')">🔊</button></div>`;
-    if (card.reading) html += `<div class="card-reading">${card.reading}</div>`;
+    const mainText = card.jp || card.main;
+    html += `<div class="card-main">${mainText} <span style="color:#888;font-size:0.75em;">(${toRomaji(mainText)})</span> <button class="speak-btn" onclick="speak('${mainText}')">🔊</button></div>`;
+    if (card.reading) html += `<div class="card-reading">${card.reading} (${toRomaji(card.reading)})</div>`;
     html += `<div class="card-meaning">${card.kr || card.meaning}</div>`;
   }
   
@@ -383,8 +384,13 @@ function startQuiz() {
     return;
   }
   
-  // 셔플 및 20개 선택
-  quizData = shuffle([...quizCards]).slice(0, Math.min(20, quizCards.length));
+  // 셔플 및 단어수 x 2배 문제 생성
+  const questionCount = quizCards.length * 2;
+  const shuffled = shuffle([...quizCards]);
+  quizData = [];
+  for (let i = 0; i < questionCount; i++) {
+    quizData.push(shuffled[i % shuffled.length]);
+  }
   quizIndex = 0;
   quizScore = 0;
   
@@ -422,9 +428,10 @@ function showQuizQuestion() {
   Object.values(nb).forEach(arr => allCards.push(...arr));
   
   // 3가지 문제 유형 랜덤
-  const quizType = Math.floor(Math.random() * 3);
+  let quizType = Math.floor(Math.random() * 3);
   const jpText = q.jp || q.kanji || q.pattern || q.main;
   const krText = q.kr || q.meaning;
+  const isKanji = q.kanji && q.onyomi && q.kunyomi;
   
   let questionLabel, questionDisplay, correct, wrongPool;
   
@@ -440,19 +447,44 @@ function showQuizQuestion() {
     questionDisplay = krText;
     correct = jpText;
     wrongPool = allCards.filter(c => (c.jp || c.kanji || c.pattern || c.main) !== jpText).map(c => c.jp || c.kanji || c.pattern || c.main);
-  } else {
-    // Type 3: 일본어 → 발음
+  } else if (isKanji) {
+    // Type 3: 한자 → 음독/훈독 (로마자 병기)
+    questionLabel = '이 한자의 읽는 법은?';
+    questionDisplay = q.kanji;
+    correct = `${q.onyomi} (${toRomaji(q.onyomi)}) / ${q.kunyomi} (${toRomaji(q.kunyomi)})`;
+    const kanjiCards = allCards.filter(c => c.kanji && c.onyomi && c.kunyomi && c.kanji !== q.kanji);
+    wrongPool = kanjiCards.map(c => `${c.onyomi} (${toRomaji(c.onyomi)}) / ${c.kunyomi} (${toRomaji(c.kunyomi)})`);
+  } else if (toRomaji(jpText) !== jpText) {
+    // Type 3: 일본어 → 발음 (히라가나/카타카나)
     questionLabel = '이 단어의 발음은?';
     questionDisplay = jpText;
     correct = `${jpText} (${toRomaji(jpText)})`;
-    wrongPool = allCards.filter(c => (c.jp || c.kanji || c.pattern || c.main) !== jpText).map(c => {
+    wrongPool = allCards.filter(c => {
+      const jp = c.jp || c.kanji || c.pattern || c.main;
+      return jp !== jpText && toRomaji(jp) !== jp;
+    }).map(c => {
       const jp = c.jp || c.kanji || c.pattern || c.main;
       return `${jp} (${toRomaji(jp)})`;
     });
+  } else {
+    // 발음 문제 불가 → 뜻 문제로 대체
+    questionLabel = '이 단어의 뜻은?';
+    questionDisplay = jpText;
+    correct = krText;
+    wrongPool = allCards.filter(c => (c.kr || c.meaning) !== krText).map(c => c.kr || c.meaning);
   }
   
   // 오답 생성
   let wrongs = shuffle([...new Set(wrongPool)]).slice(0, 3);
+  
+  // 보기 부족하면 뜻 문제로 변경
+  if (wrongs.length < 2) {
+    questionLabel = '이 단어의 뜻은?';
+    questionDisplay = jpText;
+    correct = krText;
+    wrongs = shuffle([...new Set(allCards.filter(c => (c.kr || c.meaning) !== krText).map(c => c.kr || c.meaning))]).slice(0, 3);
+  }
+  
   const options = shuffle([correct, ...wrongs]);
   
   // 현재 문제 정답 저장
