@@ -546,14 +546,10 @@ document.addEventListener('visibilitychange', () => {
 // 창 포커스 시 체크 (탭이 계속 보여도 다른 창 갔다 오면 작동)
 window.addEventListener('focus', checkCloudSync);
 
-// 클릭 시 체크 (창이 활성 상태여도 30초마다 체크)
-let lastClickCheck = 0;
-document.addEventListener('click', () => {
-  if (Date.now() - lastClickCheck > 30000) { // 30초 간격
-    lastClickCheck = Date.now();
-    checkCloudSync();
-  }
-});
+// 5분마다 자동 체크 (창이 계속 활성 상태일 때)
+setInterval(() => {
+  if (document.visibilityState === 'visible') checkCloudSync();
+}, 5 * 60 * 1000);
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
