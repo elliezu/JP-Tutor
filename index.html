@@ -305,6 +305,12 @@ window.handleLogout = async function() {
   try {
     await signOut(auth);
     firebaseUser = null;
+    
+    // 게스트 프로필로 초기화
+    currentProfile = '게스트';
+    localStorage.setItem('currentProfile', '게스트');
+    state.userData = loadUserData();
+    
     document.getElementById('userDropdown')?.classList.remove('show');
     render();
   } catch (error) {
@@ -553,6 +559,12 @@ function checkInactivity() {
   if (elapsed > 5 * 60 * 1000) { // 5분
     signOut(auth).then(() => {
       firebaseUser = null;
+      
+      // 게스트 프로필로 초기화
+      currentProfile = '게스트';
+      localStorage.setItem('currentProfile', '게스트');
+      state.userData = loadUserData();
+      
       alert('⏰ 5분간 입력이 없어 자동 로그아웃되었습니다.\n다시 로그인해주세요.');
       render();
     });
