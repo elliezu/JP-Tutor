@@ -26,6 +26,7 @@ function loadStreakData() {
 function saveStreakData(data) {
   const profile = localStorage.getItem('currentProfile') || '게스트';
   localStorage.setItem(`jlpt_streak_${profile}`, JSON.stringify(data));
+  if (window.autoSaveToCloud) window.autoSaveToCloud();
 }
 
 // 오늘 날짜

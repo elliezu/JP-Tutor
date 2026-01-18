@@ -67,6 +67,7 @@ function saveXpData(level, data) {
   const key = `jlpt_${level}_xp`;
   const profile = localStorage.getItem('currentProfile') || '게스트';
   localStorage.setItem(`${key}_${profile}`, JSON.stringify(data));
+  if (window.autoSaveToCloud) window.autoSaveToCloud();
 }
 
 // XP 추가 & 레벨업 체크
