@@ -240,6 +240,13 @@ function hasLocalData() {
   return localStorage.getItem('profiles') !== null;
 }
 
+// 타임스탬프 포맷
+function formatTimestamp(isoString) {
+  if (!isoString) return '없음';
+  const date = new Date(isoString);
+  return `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+
 // 로그인 처리
 window.handleLogin = async function() {
   try {
@@ -251,25 +258,36 @@ window.handleLogin = async function() {
     const hasLocal = hasLocalData();
     
     if (hasCloud && hasLocal) {
-      // 둘 다 있으면 선택
-      const choice = confirm(
-        '⚠️ 데이터 선택 필요\n\n' +
-        '클라우드와 이 기기에 각각 데이터가 있습니다.\n\n' +
-        '[확인] 클라우드 데이터 불러오기\n' +
-        '[취소] 이 기기 데이터 유지 후 저장'
-      );
-      if (choice) {
+      // 타임스탬프 비교
+      const cloudTime = docSnap.data().updatedAt;
+      const localTime = localStorage.getItem('lastCloudSave');
+      const cloudDate = cloudTime ? new Date(cloudTime) : new Date(0);
+      const localDate = localTime ? new Date(localTime) : new Date(0);
+      
+      const cloudNewer = cloudDate > localDate;
+      const msg = cloudNewer 
+        ? `☁️ 클라우드에 최신 학습 데이터가 있습니다.\n\n` +
+          `클라우드: ${formatTimestamp(cloudTime)}\n` +
+          `이 기기: ${formatTimestamp(localTime)}\n\n` +
+          `클라우드 데이터를 불러올까요?\n[취소]를 누르면 이 기기 데이터를 유지합니다.`
+        : `📱 이 기기에 최신 학습 데이터가 있습니다.\n\n` +
+          `이 기기: ${formatTimestamp(localTime)}\n` +
+          `클라우드: ${formatTimestamp(cloudTime)}\n\n` +
+          `클라우드 데이터를 불러올까요?\n[취소]를 누르면 이 기기 데이터를 유지합니다.`;
+      
+      if (confirm(msg)) {
         await downloadFromCloud();
       } else {
-        await uploadToCloud();
         render();
       }
     } else if (hasCloud) {
-      // 클라우드만 있으면 다운로드
-      await downloadFromCloud();
+      if (confirm('☁️ 클라우드에 저장된 학습 데이터가 있습니다.\n불러올까요?')) {
+        await downloadFromCloud();
+      } else {
+        render();
+      }
     } else if (hasLocal) {
-      // 로컬만 있으면 업로드
-      await uploadToCloud();
+      // 로컬만 있으면 그냥 진행
       render();
     } else {
       // 둘 다 없으면 그냥 진행
@@ -358,13 +376,63 @@ async function downloadFromCloud() {
   }
 }
 
-// 클라우드에 저장
+// 하단 네비 저장 버튼용 함수
+window.saveToCloud = async function() {
+  if (!firebaseUser) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+  
+  // 오프라인 체크
+  if (!navigator.onLine) {
+    alert('⚠️ 네트워크가 연결되어있지 않아 클라우드 저장이 어렵습니다.\n타 기기에서 현재 학습상황을 불러올 수 없습니다.');
+    return;
+  }
+  
+  try {
+    await uploadToCloud();
+    const now = new Date();
+    localStorage.setItem('lastCloudSave', now.toISOString());
+    showToast('☁️ 클라우드에 저장 완료!', '#4CAF50');
+  } catch (e) {
+    alert('저장 실패: ' + e.message);
+  }
+};
+
+// 토스트 메시지
+function showToast(msg, color) {
+  const existing = document.querySelector('.toast-msg');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = 'toast-msg';
+  toast.textContent = msg;
+  toast.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:${color || '#333'};color:white;padding:12px 24px;border-radius:25px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+// 마지막 저장 시간 표시
+function getLastSaveText() {
+  const last = localStorage.getItem('lastCloudSave');
+  if (!last) return '';
+  const diff = Date.now() - new Date(last).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return '방금 저장됨';
+  if (mins < 60) return `${mins}분 전 저장`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}시간 전 저장`;
+  return `${Math.floor(hours / 24)}일 전 저장`;
+}
+
+// 클라우드에 저장 (드롭다운용)
 window.cloudSave = async function() {
   document.getElementById('userDropdown')?.classList.remove('show');
   if (!firebaseUser) return;
   
   if (confirm('현재 기기의 학습 데이터를 클라우드에 저장할까요?\n(기존 클라우드 데이터는 덮어쓰기됩니다)')) {
     await uploadToCloud();
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
     alert('☁️ 클라우드에 저장 완료!');
   }
 };
@@ -393,22 +461,33 @@ window.autoSaveToCloud = function() {
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(() => {
     uploadToCloud();
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
   }, 3000); // 3초 후 저장
 };
 
-// 페이지 떠날 때 즉시 저장 - 임시 비활성화
-// window.addEventListener('beforeunload', () => {
-//   if (firebaseUser && saveTimeout) {
-//     clearTimeout(saveTimeout);
-//   }
-// });
+// 창 닫을 때 자동 저장 (confirm 없이)
+window.addEventListener('beforeunload', () => {
+  if (firebaseUser && navigator.onLine) {
+    // 동기 방식으로 저장 시도
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    // sendBeacon으로 비동기 전송 (페이지 닫혀도 전송됨)
+    // Firestore는 sendBeacon 지원 안하므로 localStorage에만 저장 상태 유지
+    localStorage.setItem('pendingSync', 'true');
+  }
+});
 
-// 페이지 숨겨질 때 저장 - 임시 비활성화
-// document.addEventListener('visibilitychange', () => {
-//   if (document.visibilityState === 'hidden' && firebaseUser) {
-//     uploadToCloud();
-//   }
-// });
+// 페이지 로드 시 pending sync 체크
+window.addEventListener('load', async () => {
+  if (localStorage.getItem('pendingSync') === 'true' && firebaseUser && navigator.onLine) {
+    await uploadToCloud();
+    localStorage.removeItem('pendingSync');
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
+  }
+});
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
@@ -1405,9 +1484,10 @@ function renderHeader() {
       <button class="user-info" onclick="toggleUserMenu()" style="background:none;border:none;cursor:pointer;">
         <img src="${user.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
         <span class="user-name">${user.displayName || '사용자'}</span>
-        <span class="sync-status ${status}">${status === 'synced' ? '✓' : '⟳'}</span>
       </button>
       <div class="dropdown-menu" id="userDropdown">
+        <div class="dropdown-item" style="font-size:11px;color:#888;pointer-events:none;">${getLastSaveText() || '저장 기록 없음'}</div>
+        <div class="dropdown-divider"></div>
         <div class="dropdown-item" onclick="cloudSave()">☁️ 학습 저장</div>
         <div class="dropdown-item" onclick="cloudLoad()">📥 학습 불러오기</div>
         <div class="dropdown-divider"></div>
@@ -2123,18 +2203,24 @@ function renderPhraseList(data, title) {
   `;
 }
 function renderNav() {
+  const user = window.getFirebaseUser ? window.getFirebaseUser() : null;
+  const saveBtn = user ? `<button class="nav-btn save-btn" onclick="saveToCloud()"><span>☁️</span><span>저장</span></button>` : '';
   return `<nav><div class="nav-inner">
     ${[{id:'home',icon:'🎯',label:'홈'},{id:'write',icon:'✍️',label:'미션'},{id:'free',icon:'📓',label:'자유'},{id:'quiz',icon:'🧠',label:'퀴즈'},{id:'jlpt',icon:'📚',label:'JLPT'},{id:'notebook',icon:'📖',label:'단어장'}].map(t => t.id==='jlpt'?`<a href="jlpt.html" class="nav-btn" style="text-decoration:none;"><span>${t.icon}</span><span>${t.label}</span></a>`:t.id==='notebook'?`<a href="notebook.html" class="nav-btn" style="text-decoration:none;"><span>${t.icon}</span><span>${t.label}</span></a>`:`<button class="nav-btn ${state.activeTab===t.id?'active':''}" onclick="setActiveTab('${t.id}')"><span>${t.icon}</span><span>${t.label}</span></button>`).join('')}
+    ${saveBtn}
   </div></nav>`;
 }
 
 function renderCompletePopup() {
   const nextKana = getNextKana();
   const info = getKanaInfo(state.writingKana);
+  const user = window.getFirebaseUser ? window.getFirebaseUser() : null;
+  const saveBtn = user ? `<button class="btn btn-full mb-2" style="background:#4CAF50;color:white;" onclick="saveToCloud();closeComplete();">☁️ 학습 저장하기</button>` : '';
   return `<div class="modal-overlay"><div class="modal-content">
     <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
     <div class="text-2xl font-bold text-gray-800 mb-2">축하해요!</div>
     <div class="text-lg text-indigo-600 mb-4"><span style="font-size:2rem;">${state.writingKana}</span> (${info?.romaji})를<br><span class="font-bold">50번</span> 연습 완료!</div>
+    ${saveBtn}
     ${nextKana?`<button class="btn btn-primary btn-full mb-2" onclick="goToNextKana('${nextKana}')">다음 음절 → ${nextKana}</button>`:`<div class="text-green-600 font-bold mb-2">🏆 이 행을 모두 완료!</div>`}
     <button class="btn btn-gray btn-full mb-2" onclick="closeComplete()">계속 연습하기</button>
     <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="goHome()">홈으로</button>

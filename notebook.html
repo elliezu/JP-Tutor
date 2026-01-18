@@ -92,6 +92,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
     <input type="date" id="dateInput">
     <button onclick="loadDate()">불러오기</button>
     <button onclick="loadAllDates()">전체 보기</button>
+    <button id="cloudSaveBtn" onclick="window.saveToCloud()" style="display:none;background:#4CAF50;">☁️ 오늘 학습 저장</button>
   </div>
   
   <div class="stats">
@@ -542,7 +543,43 @@ window.cloudLoad = async () => {
   }
 };
 
-onAuthStateChanged(auth, (user) => updateLoginUI(user));
+onAuthStateChanged(auth, (user) => {
+  updateLoginUI(user);
+  // 저장 버튼 표시/숨김
+  const saveBtn = document.getElementById('cloudSaveBtn');
+  if (saveBtn) saveBtn.style.display = user ? 'inline-block' : 'none';
+});
+
+// 하단 저장 버튼용
+window.saveToCloud = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+  if (!navigator.onLine) {
+    alert('⚠️ 네트워크가 연결되어있지 않아 클라우드 저장이 어렵습니다.\n타 기기에서 현재 학습상황을 불러올 수 없습니다.');
+    return;
+  }
+  try {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
+    
+    // 토스트 메시지
+    const toast = document.createElement('div');
+    toast.textContent = '☁️ 클라우드에 저장 완료!';
+    toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#4CAF50;color:white;padding:12px 24px;border-radius:25px;z-index:9999;font-size:14px;';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  } catch (e) {
+    alert('저장 실패: ' + e.message);
+  }
+};
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
@@ -563,19 +600,6 @@ window.autoSaveToCloud = () => {
     await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
   }, 3000);
 };
-
-// 페이지 숨겨질 때 저장 - 임시 비활성화
-// document.addEventListener('visibilitychange', async () => {
-//   const user = auth.currentUser;
-//   if (document.visibilityState === 'hidden' && user) {
-//     const allData = {};
-//     for (let i = 0; i < localStorage.length; i++) {
-//       const key = localStorage.key(i);
-//       allData[key] = localStorage.getItem(key);
-//     }
-//     await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
-//   }
-// });
 </script>
 
 <nav class="bottom-nav">

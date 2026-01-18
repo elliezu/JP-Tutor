@@ -104,6 +104,7 @@
     <button class="nav-btn" id="navN5" onclick="setLevel('n5')"><span>🟢</span><span>N5</span></button>
     <button class="nav-btn" id="navN4" onclick="setLevel('n4')"><span>🟠</span><span>N4</span></button>
     <a href="notebook.html" class="nav-btn"><span>📖</span><span>단어장</span></a>
+    <button class="nav-btn save-btn" id="cloudSaveBtn" onclick="saveToCloud()" style="display:none;"><span>☁️</span><span>저장</span></button>
   </div>
 </nav>
 <script src="romaji.js"></script>
@@ -1545,11 +1546,31 @@ window.toggleUserMenu = () => {
   document.getElementById('userDropdown')?.classList.toggle('show');
 };
 
+// 하단 네비 저장 버튼용
+window.saveToCloud = async () => {
+  if (!window.firebaseUser) {
+    alert('로그인이 필요합니다.');
+    return;
+  }
+  if (!navigator.onLine) {
+    alert('⚠️ 네트워크가 연결되어있지 않아 클라우드 저장이 어렵습니다.\n타 기기에서 현재 학습상황을 불러올 수 없습니다.');
+    return;
+  }
+  try {
+    await uploadToCloud();
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
+    showToast('☁️ 클라우드에 저장 완료!', '#4CAF50');
+  } catch (e) {
+    alert('저장 실패: ' + e.message);
+  }
+};
+
 window.cloudSave = async () => {
   document.getElementById('userDropdown')?.classList.remove('show');
   if (!window.firebaseUser) return;
   if (confirm('현재 기기의 학습 데이터를 클라우드에 저장할까요?\n(기존 클라우드 데이터는 덮어쓰기됩니다)')) {
     await uploadToCloud();
+    localStorage.setItem('lastCloudSave', new Date().toISOString());
     alert('☁️ 클라우드에 저장 완료!');
   }
 };
@@ -1595,6 +1616,9 @@ window.autoSaveToCloud = () => {
 
 onAuthStateChanged(auth, (user) => {
   window.firebaseUser = user;
+  // 저장 버튼 표시/숨김
+  const saveBtn = document.getElementById('cloudSaveBtn');
+  if (saveBtn) saveBtn.style.display = user ? 'flex' : 'none';
   if (typeof render === 'function') render();
 });
 
@@ -1602,12 +1626,6 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
 });
 
-// 페이지 숨겨질 때 저장 - 임시 비활성화
-// document.addEventListener('visibilitychange', () => {
-//   if (document.visibilityState === 'hidden' && window.firebaseUser) {
-//     uploadToCloud();
-//   }
-// });
 </script>
 </body>
 </html>
