@@ -659,7 +659,7 @@ renderCards();
 <!-- Firebase 동기화 -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -749,6 +749,18 @@ window.cloudLoad = async () => {
     }
   }
 };
+
+// 모바일 리다이렉트 결과 처리 (첫 로딩 시 에러 방지)
+getRedirectResult(auth).then(async (result) => {
+  if (result?.user) {
+    const docSnap = await getDoc(doc(db, 'users', result.user.uid));
+    if (docSnap.exists()) {
+      const cloudData = docSnap.data().data;
+      for (const [key, value] of Object.entries(cloudData)) localStorage.setItem(key, value);
+      location.reload();
+    }
+  }
+}).catch((e) => console.log('Redirect result:', e.message));
 
 onAuthStateChanged(auth, (user) => {
   updateLoginUI(user);

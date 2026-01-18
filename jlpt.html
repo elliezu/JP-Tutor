@@ -1553,7 +1553,7 @@ render();
 <!-- Firebase 동기화 -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1669,6 +1669,13 @@ window.autoSaveToCloud = () => {
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(uploadToCloud, 3000);
 };
+
+// 모바일 리다이렉트 결과 처리 (첫 로딩 시 에러 방지)
+getRedirectResult(auth).then(async (result) => {
+  if (result?.user) {
+    await downloadFromCloud();
+  }
+}).catch((e) => console.log('Redirect result:', e.message));
 
 onAuthStateChanged(auth, (user) => {
   window.firebaseUser = user;
