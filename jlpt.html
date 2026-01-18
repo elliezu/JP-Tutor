@@ -114,8 +114,8 @@
 <script>
 
 // ========== 프로필 시스템 (index.html과 공유) ==========
-let currentProfile = localStorage.getItem('currentProfile') || '기본';
-let profiles = JSON.parse(localStorage.getItem('profiles') || '["기본"]');
+let currentProfile = localStorage.getItem('currentProfile') || '게스트';
+let profiles = JSON.parse(localStorage.getItem('profiles') || '["게스트"]');
 
 function getStorageKey(key) { return 'jlpt_' + currentProfile + '_' + key; }
 
@@ -1550,6 +1550,10 @@ window.toggleUserMenu = () => {
 window.saveToCloud = async () => {
   if (!window.firebaseUser) {
     alert('로그인이 필요합니다.');
+    return;
+  }
+  if (currentProfile === '게스트') {
+    alert('⚠️ 게스트 프로필은 클라우드에 저장할 수 없습니다.\n새 프로필을 만들어주세요.');
     return;
   }
   if (!navigator.onLine) {

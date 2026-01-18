@@ -384,6 +384,12 @@ window.saveToCloud = async function() {
     return;
   }
   
+  // 게스트 프로필은 저장 차단
+  if (currentProfile === '게스트') {
+    alert('⚠️ 게스트 프로필은 클라우드에 저장할 수 없습니다.\n새 프로필을 만들어주세요.');
+    return;
+  }
+  
   // 오프라인 체크
   if (!navigator.onLine) {
     alert('⚠️ 네트워크가 연결되어있지 않아 클라우드 저장이 어렵습니다.\n타 기기에서 현재 학습상황을 불러올 수 없습니다.');
@@ -430,6 +436,12 @@ window.getLastSaveText = function() {
 window.cloudSave = async function() {
   document.getElementById('userDropdown')?.classList.remove('show');
   if (!firebaseUser) return;
+  
+  // 게스트 프로필은 저장 차단
+  if (currentProfile === '게스트') {
+    alert('⚠️ 게스트 프로필은 클라우드에 저장할 수 없습니다.\n새 프로필을 만들어주세요.');
+    return;
+  }
   
   if (confirm('현재 기기의 학습 데이터를 클라우드에 저장할까요?\n(기존 클라우드 데이터는 덮어쓰기됩니다)')) {
     await uploadToCloud();
@@ -487,6 +499,34 @@ window.addEventListener('load', async () => {
     await uploadToCloud();
     localStorage.removeItem('pendingSync');
     localStorage.setItem('lastCloudSave', new Date().toISOString());
+  }
+});
+
+// 탭 돌아올 때 클라우드 싱크 체크 (다른 기기에서 학습했는지)
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && firebaseUser && navigator.onLine) {
+    try {
+      const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+      if (docSnap.exists()) {
+        const cloudTime = docSnap.data().updatedAt;
+        const localTime = localStorage.getItem('lastCloudSave');
+        
+        if (cloudTime && localTime) {
+          const cloudDate = new Date(cloudTime);
+          const localDate = new Date(localTime);
+          
+          // 클라우드가 1분 이상 더 최신이면 알림
+          if (cloudDate - localDate > 60000) {
+            const load = confirm('📱 다른 기기에서 학습 데이터가 업데이트되었습니다.\n\n불러올까요?');
+            if (load) {
+              await downloadFromCloud();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('싱크 체크 실패:', e);
+    }
   }
 });
 
@@ -1338,8 +1378,8 @@ const CANVAS_PER_SET = 5;
 const TOTAL_SETS = 10;
 
 // 프로필 관리 (state 초기화 전에 먼저 정의해야 함!)
-let currentProfile = localStorage.getItem('currentProfile') || '기본';
-let profiles = JSON.parse(localStorage.getItem('profiles') || '["기본"]');
+let currentProfile = localStorage.getItem('currentProfile') || '게스트';
+let profiles = JSON.parse(localStorage.getItem('profiles') || '["게스트"]');
 
 function getStorageKey() {
   return 'kanaDataV10_' + currentProfile;
@@ -2349,9 +2389,25 @@ function completeSmallCanvas(i) {
   progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
   state.userData.writingProgress[state.writingKana] = progress;
   state.userData.todayWritten++; checkLevel(); saveUserData();
-  if (progress.count >= TOTAL_PRACTICE) { setTimeout(() => { state.showComplete = true; render(); }, 500); return; }
-  if (i < CANVAS_PER_SET - 1) { state.activeSmallIndex = i + 1; render(); }
-  else { setTimeout(() => { if (state.currentSet < TOTAL_SETS) { state.currentSet++; state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false})); state.activeSmallIndex = 0; render(); } }, 500); }
+  
+  // 아직 세트 내 남은 칸이 있으면 다음 칸으로
+  if (i < CANVAS_PER_SET - 1) { 
+    state.activeSmallIndex = i + 1; 
+    render(); 
+    return;
+  }
+  
+  // 세트 완료 후 50번 달성 체크
+  if (progress.count >= TOTAL_PRACTICE) { 
+    setTimeout(() => { state.showComplete = true; render(); }, 500); 
+  } else if (state.currentSet < TOTAL_SETS) { 
+    setTimeout(() => {
+      state.currentSet++; 
+      state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false})); 
+      state.activeSmallIndex = 0; 
+      render(); 
+    }, 500); 
+  }
 }
 
 function switchToBig() { state.practiceMode = 'big'; resetBigCanvas(); render(); }
