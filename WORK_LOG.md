@@ -1,6 +1,6 @@
 # JP-Tutor 작업 로그
 
-## 📅 2025-01-19 XP/레벨 시스템 구현
+## 📅 2025-01-19 XP/레벨 시스템 구현 진행중
 
 ### 📊 데이터 현황
 
@@ -48,19 +48,52 @@
 - 열심히: 30개
 - 빡세게: 50개
 
-### 📁 파일 구조
-- xp-system.js: XP/레벨/계급/스트릭 로직
-- jlpt.html: 알아요 버튼, 퀴즈 팝업 UI
-- notebook.html: 단어장 퀴즈 XP 연동
+### 📁 생성된 파일
+- jlpt-xp.js: XP/레벨/계급/복습 로직
+- jlpt-streak.js: 스트릭/일일목표 로직
 
-### ✅ 구현 순서
-1. [x] 설계 문서 저장
-2. [ ] xp-system.js 생성
-3. [ ] jlpt.html 알아요 버튼 추가
-4. [ ] 확인 퀴즈 팝업
-5. [ ] 헤더 XP/레벨 표시
-6. [ ] 계급 안내 팝업
-7. [ ] 설정 팝업 (일일 목표)
-8. [ ] 복습 주기 시스템
-9. [ ] notebook.html XP 연동
-10. [ ] 3일 미접속 강등 로직
+### ✅ 완료된 작업
+1. [x] jlpt-xp.js 생성 (XP, 레벨, 계급, 복습 주기 로직)
+2. [x] jlpt-streak.js 생성 (스트릭, 일일목표 로직)
+3. [x] jlpt.html에 스크립트 연결
+4. [x] 헤더에 레벨/스트릭/목표 표시 UI 추가
+5. [x] 계급 안내 팝업 함수 (showRankInfo)
+6. [x] 설정 팝업 함수 (showSettings)
+7. [x] 앱 시작 시 3일 미접속 강등 체크
+
+### 🐛 현재 버그
+- **헤더 버튼 클릭 이벤트 안 먹힘** (showRankInfo, showSettings 팝업 안 뜸)
+
+### ⏳ 남은 작업
+1. [ ] 헤더 버튼 클릭 이벤트 수정 (버그)
+2. [ ] notebook.html에도 같은 헤더 추가
+3. [ ] 카드에 "알아요" 버튼 추가
+4. [ ] 알아요 클릭 시 확인 퀴즈 팝업
+5. [ ] 퀴즈 정답 시 XP 획득 + 알아요 체크
+6. [ ] 복습 주기 시스템 연동
+7. [ ] notebook.html 퀴즈 XP 연동
+
+### 📁 파일 위치
+- jlpt.html: C:\Users\yzoo2\Documents\GitHub\JP-Tutor\jlpt.html
+- jlpt-xp.js: C:\Users\yzoo2\Documents\GitHub\JP-Tutor\jlpt-xp.js
+- jlpt-streak.js: C:\Users\yzoo2\Documents\GitHub\JP-Tutor\jlpt-streak.js
+- notebook.html: C:\Users\yzoo2\Documents\GitHub\JP-Tutor\notebook.html
+
+### 🔧 다음 채팅 시작 인스트럭션
+```
+JP-Tutor XP 시스템 작업 이어서 해줘.
+
+현재 상태:
+- jlpt-xp.js, jlpt-streak.js 생성 완료
+- 헤더 UI 추가됨 (레벨/스트릭/목표 표시)
+- 버그: 헤더 버튼 클릭 이벤트 안 먹힘 (팝업 안 뜸)
+
+해야 할 작업:
+1. 헤더 버튼 클릭 버그 수정
+2. notebook.html에 같은 헤더 추가
+3. 카드에 알아요 버튼 + 확인 퀴즈 팝업
+4. XP 획득 연동
+
+파일 경로: C:\Users\yzoo2\Documents\GitHub\JP-Tutor
+워크로그: WORK_LOG.md 참고
+```
