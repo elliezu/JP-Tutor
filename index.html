@@ -277,18 +277,20 @@ window.handleLogin = async function() {
       
       if (confirm(msg)) {
         await downloadFromCloud();
+        selectProfileAfterLogin();
       } else {
-        render();
+        selectProfileAfterLogin();
       }
     } else if (hasCloud) {
       if (confirm('☁️ 클라우드에 저장된 학습 데이터가 있습니다.\n불러올까요?')) {
         await downloadFromCloud();
+        selectProfileAfterLogin();
       } else {
-        render();
+        selectProfileAfterLogin();
       }
     } else if (hasLocal) {
-      // 로컬만 있으면 그냥 진행
-      render();
+      // 로컬만 있으면 프로필 선택
+      selectProfileAfterLogin();
     } else {
       // 둘 다 없으면 프로필 생성 안내
       alert('👋 환영합니다!\n\n학습을 시작하려면 프로필을 생성해주세요.');
@@ -299,6 +301,35 @@ window.handleLogin = async function() {
     alert('로그인에 실패했습니다.');
   }
 };
+
+// 로그인 후 프로필 선택
+function selectProfileAfterLogin() {
+  // 게스트/기본 제외한 프로필 목록
+  const userProfiles = profiles.filter(p => p !== '게스트' && p !== '기본');
+  
+  if (userProfiles.length === 0) {
+    // 프로필 없으면 생성 안내
+    alert('👋 환영합니다!\n\n학습을 시작하려면 프로필을 생성해주세요.');
+    render();
+  } else if (userProfiles.length === 1) {
+    // 1개면 자동 선택
+    switchProfile(userProfiles[0]);
+  } else {
+    // 2개 이상이면 선택
+    const choice = prompt(
+      '📚 프로필을 선택해주세요:\n\n' + 
+      userProfiles.map((p, i) => `${i + 1}. ${p}`).join('\n') +
+      '\n\n번호를 입력하세요:'
+    );
+    const idx = parseInt(choice) - 1;
+    if (idx >= 0 && idx < userProfiles.length) {
+      switchProfile(userProfiles[idx]);
+    } else {
+      // 잘못 입력하면 첫 번째 선택
+      switchProfile(userProfiles[0]);
+    }
+  }
+}
 
 // 로그아웃 처리
 window.handleLogout = async function() {
@@ -375,8 +406,8 @@ async function downloadFromCloud() {
       for (const [key, value] of Object.entries(cloudData)) {
         localStorage.setItem(key, value);
       }
-      // 상태 다시 로드
-      location.reload();
+      // profiles 갱신
+      profiles = JSON.parse(localStorage.getItem('profiles') || '["게스트"]');
     }
     syncStatus = 'synced';
   } catch (error) {
@@ -465,6 +496,10 @@ window.cloudLoad = async function() {
   
   if (confirm('클라우드의 학습 데이터를 불러올까요?\n(현재 기기 데이터는 삭제됩니다)')) {
     await downloadFromCloud();
+    // 상태 갱신
+    state.userData = loadUserData();
+    render();
+    alert('📥 불러오기 완료!');
   }
 };
 
@@ -1624,11 +1659,15 @@ function renderHeader() {
       <span>🇯🇵 일본어 학습</span>
       <div style="display:flex;align-items:center;gap:0.5rem;">
         ${userHtml}
-        <select onchange="switchProfile(this.value)" style="padding:0.25rem 0.5rem;border-radius:0.5rem;border:1px solid #ddd;font-size:0.8rem;background:#fff;">
-          ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
-        </select>
-        <button onclick="addProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 추가">➕</button>
-        <button onclick="deleteProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 삭제">🗑️</button>
+        ${user ? `
+          <select onchange="switchProfile(this.value)" style="padding:0.25rem 0.5rem;border-radius:0.5rem;border:1px solid #ddd;font-size:0.8rem;background:#fff;">
+            ${profiles.filter(p => p !== '게스트' && p !== '기본').map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
+          </select>
+          <button onclick="addProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 추가">➕</button>
+          <button onclick="deleteProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 삭제">🗑️</button>
+        ` : `
+          <span style="padding:0.25rem 0.5rem;font-size:0.8rem;color:#888;">게스트</span>
+        `}
         <button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="데이터 초기화">🔄</button>
       </div>
     </div>
