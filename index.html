@@ -538,32 +538,47 @@ async function checkCloudSync() {
   }
 }
 
-// 5분 무입력 시 자동 로그아웃
+// 5분 무입력 시 자동 로그아웃 (모바일 대응)
+let lastActivityTime = Date.now();
 let inactivityTimer = null;
-function resetInactivityTimer() {
-  clearTimeout(inactivityTimer);
-  if (firebaseUser) {
-    inactivityTimer = setTimeout(async () => {
-      if (firebaseUser) {
-        await signOut(auth);
-        firebaseUser = null;
-        alert('⏰ 5분간 입력이 없어 자동 로그아웃되었습니다.\n다시 로그인해주세요.');
-        render();
-      }
-    }, 5 * 60 * 1000); // 5분
+
+function updateLastActivity() {
+  lastActivityTime = Date.now();
+}
+
+function checkInactivity() {
+  if (!firebaseUser) return;
+  
+  const elapsed = Date.now() - lastActivityTime;
+  if (elapsed > 5 * 60 * 1000) { // 5분
+    signOut(auth).then(() => {
+      firebaseUser = null;
+      alert('⏰ 5분간 입력이 없어 자동 로그아웃되었습니다.\n다시 로그인해주세요.');
+      render();
+    });
   }
 }
 
-// 입력 이벤트에서 타이머 리셋
+// 입력 이벤트에서 마지막 활동 시간 갱신
 ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(event => {
-  document.addEventListener(event, resetInactivityTimer);
+  document.addEventListener(event, updateLastActivity);
 });
 
-// 로그인 시 타이머 시작
+// 탭 돌아올 때 체크 (모바일 백그라운드 복귀 대응)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    checkInactivity();
+  }
+});
+
+// PC용 타이머도 유지 (탭 안 벗어나고 방치할 때)
+setInterval(checkInactivity, 60 * 1000); // 1분마다 체크
+
+// 로그인 시 활동 시간 초기화
 const originalHandleLogin = window.handleLogin;
 window.handleLogin = async function() {
   await originalHandleLogin();
-  resetInactivityTimer();
+  updateLastActivity();
 };
 
 // firebaseUser를 window에 노출
