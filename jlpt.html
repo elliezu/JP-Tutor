@@ -1249,15 +1249,23 @@ async function playAllVocab(cat) {
 function renderGrammar() {
   const data = state.level === 'n5' ? N5_GRAMMAR : N4_GRAMMAR;
   const pageData = data.slice((state.page-1)*ITEMS_PER_PAGE, state.page*ITEMS_PER_PAGE);
+  const learned = progress[state.level]?.grammar || [];
   
   return `
     <div class="card">
       <div class="card-title">📝 ${state.level.toUpperCase()} 문법 (${data.length}개)</div>
     </div>
-    ${pageData.map((g, i) => `
-      <div class="grammar-card" data-pattern="${g.pt}" title="더블클릭으로 단어장 추가">
-        <div class="grammar-pattern">${g.pt} <span style="font-size:0.75rem;color:#888">${toRomaji(g.pt)}</span></div>
-        <div class="grammar-meaning"><strong>${g.m}</strong> - ${g.d}</div>
+    ${pageData.map((g, idx) => {
+      const i = (state.page-1)*ITEMS_PER_PAGE + idx;
+      return `
+      <div class="grammar-card" data-pattern="${g.pt}" style="${learned.includes(i)?'opacity:0.7;background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)':''}" title="더블클릭으로 단어장 추가">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="grammar-pattern">${g.pt} <span style="font-size:0.75rem;color:#888">${toRomaji(g.pt)}</span></div>
+            <div class="grammar-meaning"><strong>${g.m}</strong> - ${g.d}</div>
+          </div>
+          ${!learned.includes(i)?`<button onclick="showKnownQuiz('grammar',${i})" style="background:white;border:1px solid #ddd;color:#666;padding:4px 8px;border-radius:4px;font-size:0.75rem;cursor:pointer;white-space:nowrap;">✅알아요</button>`:`<span style="background:#dcfce7;color:#15803d;padding:4px 8px;border-radius:4px;font-size:0.7rem;">✓ 학습완료</span>`}
+        </div>
         ${g.ex.map(e => `
           <div class="grammar-example">
             <div class="grammar-jp">
@@ -1268,7 +1276,7 @@ function renderGrammar() {
           </div>
         `).join('')}
       </div>
-    `).join('')}
+    `}).join('')}
     ${renderPagination(data.length)}
   `;
 }
@@ -1282,11 +1290,27 @@ function resetQuiz() {
 }
 
 function renderQuiz() {
+  const xpData = window.loadXpData ? window.loadXpData(state.level) : { xp: 0, level: 1 };
+  const minLevel = 5;
+  
+  if (xpData.level < minLevel) {
+    return `
+      <div class="card text-center">
+        <div class="card-title">🔒 퀴즈 잠금</div>
+        <div style="font-size:3rem;margin:1rem 0;">🎮</div>
+        <p style="color:#666;margin-bottom:1rem;">Lv.${minLevel} 이상부터 도전할 수 있어요!</p>
+        <p style="color:#888;font-size:0.85rem;">현재 레벨: Lv.${xpData.level}</p>
+        <p style="color:#667eea;font-size:0.85rem;margin-top:0.5rem;">💡 알아요 퀴즈로 먼저 학습해보세요!</p>
+      </div>
+    `;
+  }
+  
   if (!quizState.questions.length || quizState.current >= quizState.questions.length) {
     return `
       <div class="card text-center">
         <div class="card-title">✏️ 퀴즈 선택</div>
         <p class="text-sm text-gray mb-3">학습한 내용을 테스트해보세요!</p>
+        <p style="font-size:0.75rem;color:#667eea;margin-bottom:0.75rem;">🎯 정답당 +5 XP | 전체 정답 보너스 +20 XP</p>
         <div class="grid-2">
           <button class="btn btn-primary" onclick="startQuiz('kanji')">📚 한자 읽기</button>
           <button class="btn btn-green" onclick="startQuiz('vocab')">💬 어휘 뜻</button>
@@ -1380,6 +1404,8 @@ function answerQuiz(idx) {
   quizState.selected = idx;
   if (idx === quizState.questions[quizState.current].correct) {
     quizState.score += 10;
+    // 정답당 +5 XP
+    if (window.addXp) window.addXp(state.level, 5);
   }
   render();
 }
@@ -1389,6 +1415,12 @@ function nextQuestion() {
   quizState.answered = false;
   quizState.selected = null;
   if (quizState.current >= quizState.questions.length) {
+    // 퀴즈 완료 - 전체 정답 보너스 체크
+    const maxScore = quizState.questions.length * 10;
+    if (quizState.score === maxScore && window.addXp) {
+      window.addXp(state.level, 20); // 전체 정답 보너스!
+      setTimeout(() => alert('🎉 전체 정답 보너스 +20 XP!'), 100);
+    }
     quizState.questions = [];
   } else if (quizState.type === 'listening') {
     setTimeout(() => speak(quizState.questions[quizState.current].question), 300);
@@ -1723,7 +1755,13 @@ function showSettings() {
         ${goalsHtml}
       </div>
       <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
-        <button onclick="resetProgress()" class="btn" style="background:#ef4444;color:white;width:100%;">🗑️ 학습 진행도 초기화</button>
+        <div style="font-weight:bold;margin-bottom:0.5rem;">🔧 테스트용 초기화</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+          <button onclick="resetXpOnly()" style="padding:0.5rem;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;border-radius:0.5rem;cursor:pointer;">🎮 XP/레벨 초기화</button>
+          <button onclick="resetStreakOnly()" style="padding:0.5rem;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;border-radius:0.5rem;cursor:pointer;">🔥 스트릭/일일목표 초기화</button>
+          <button onclick="resetProgress()" style="padding:0.5rem;background:#fee2e2;border:1px solid #ef4444;color:#b91c1c;border-radius:0.5rem;cursor:pointer;">📚 학습진행도 초기화</button>
+          <button onclick="resetAll()" style="padding:0.5rem;background:#ef4444;color:white;border:none;border-radius:0.5rem;cursor:pointer;">⚠️ 전체 초기화</button>
+        </div>
       </div>
     `);
   } catch(e) {
@@ -1740,6 +1778,36 @@ function changeDailyGoal(goalId) {
   } catch(e) {
     console.error('changeDailyGoal error:', e);
   }
+}
+
+// 리셋 함수들
+function resetXpOnly() {
+  if (!confirm('XP와 레벨을 초기화할까요?')) return;
+  const profile = localStorage.getItem('currentProfile') || '게스트';
+  localStorage.removeItem(`jlpt_n5_xp_${profile}`);
+  localStorage.removeItem(`jlpt_n4_xp_${profile}`);
+  closePopup();
+  alert('XP/레벨 초기화 완료!');
+  render();
+}
+
+function resetStreakOnly() {
+  if (!confirm('스트릭과 일일 목표를 초기화할까요?')) return;
+  const profile = localStorage.getItem('currentProfile') || '게스트';
+  localStorage.removeItem(`jlpt_streak_${profile}`);
+  closePopup();
+  alert('스트릭/일일목표 초기화 완료!');
+  render();
+}
+
+function resetAll() {
+  if (!confirm('⚠️ 모든 데이터를 초기화할까요?\n(XP, 레벨, 스트릭, 학습진행도)')) return;
+  resetXpOnly();
+  resetStreakOnly();
+  resetProgress();
+  closePopup();
+  alert('전체 초기화 완료!');
+  render();
 }
 
 // ==================== 팝업 유틸 ====================
@@ -1793,6 +1861,9 @@ function showKnownQuiz(type, index, category = null) {
     const vocabData = level === 'n5' ? N5_VOCAB : N4_VOCAB;
     const items = vocabData[category]?.items;
     item = items?.[index];
+  } else if (type === 'grammar') {
+    const data = level === 'n5' ? N5_GRAMMAR : N4_GRAMMAR;
+    item = data[index];
   }
   
   if (!item) return;
@@ -1856,6 +1927,30 @@ function renderKnownStep() {
       const reading = `${item.jp} (${toRomaji(item.jp)})`;
       correct = reading;
       options = [correct, ...others.sort(() => Math.random() - 0.5).slice(0, 3).map(o => `${o.jp} (${toRomaji(o.jp)})`)];
+    }
+  } else if (type === 'grammar') {
+    const data = level === 'n5' ? N5_GRAMMAR : N4_GRAMMAR;
+    const others = data.filter(o => o.pt !== item.pt);
+    
+    if (step === 1) {
+      // Step 1: 문법패턴 → 뜻
+      questionLabel = '이 문법의 뜻은?';
+      questionDisplay = item.pt;
+      correct = item.m;
+      options = [correct, ...others.sort(() => Math.random() - 0.5).slice(0, 3).map(o => o.m)];
+    } else if (step === 2) {
+      // Step 2: 뜻 → 문법패턴
+      questionLabel = '이 뜻의 문법은?';
+      questionDisplay = item.m;
+      correct = item.pt;
+      options = [correct, ...others.sort(() => Math.random() - 0.5).slice(0, 3).map(o => o.pt)];
+    } else if (step === 3) {
+      // Step 3: 문법패턴 → 발음
+      questionLabel = '이 문법의 읽는 법은?';
+      questionDisplay = item.pt;
+      const reading = `${item.pt} (${toRomaji(item.pt)})`;
+      correct = reading;
+      options = [correct, ...others.sort(() => Math.random() - 0.5).slice(0, 3).map(o => `${o.pt} (${toRomaji(o.pt)})`)];
     }
   }
   
@@ -2010,6 +2105,9 @@ function closeKnownPopup() {
 window.showRankInfo = showRankInfo;
 window.showSettings = showSettings;
 window.changeDailyGoal = changeDailyGoal;
+window.resetXpOnly = resetXpOnly;
+window.resetStreakOnly = resetStreakOnly;
+window.resetAll = resetAll;
 window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showKnownQuiz = showKnownQuiz;
