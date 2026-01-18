@@ -383,8 +383,8 @@ function startQuiz() {
     return;
   }
   
-  // 셔플 및 10개 선택
-  quizData = shuffle([...quizCards]).slice(0, Math.min(10, quizCards.length));
+  // 셔플 및 20개 선택
+  quizData = shuffle([...quizCards]).slice(0, Math.min(20, quizCards.length));
   quizIndex = 0;
   quizScore = 0;
   
