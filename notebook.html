@@ -121,6 +121,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
   <div class="modal-content" id="quizContent"></div>
 </div>
 
+<script src="romaji.js"></script>
 <script src="jlpt-xp.js"></script>
 <script src="jlpt-streak.js"></script>
 <script>
@@ -403,11 +404,13 @@ function showQuizQuestion() {
   const content = document.getElementById('quizContent');
   
   if (quizIndex >= quizData.length) {
-    // 결과
+    // 결과 (XP 없음 - 순수 복습용)
+    const perfect = quizScore === quizData.length;
+    
     content.innerHTML = `<div class="quiz-result">
       <h3>퀴즈 완료!</h3>
       <div class="quiz-score">${quizScore} / ${quizData.length}</div>
-      <p>${quizScore === quizData.length ? '🎉 완벽해요!' : quizScore >= quizData.length/2 ? '👍 잘했어요!' : '💪 다시 복습해봐요!'}</p>
+      <p>${perfect ? '🎉 완벽해요!' : quizScore >= quizData.length/2 ? '👍 잘했어요!' : '💪 다시 복습해봐요!'}</p>
       <button class="modal-close" onclick="closeQuiz()">닫기</button>
     </div>`;
     return;
@@ -418,21 +421,49 @@ function showQuizQuestion() {
   const allCards = [];
   Object.values(nb).forEach(arr => allCards.push(...arr));
   
-  // 문제와 선택지
-  const question = q.jp || q.kanji || q.pattern || q.main;
-  const answer = q.kr || q.meaning;
+  // 3가지 문제 유형 랜덤
+  const quizType = Math.floor(Math.random() * 3);
+  const jpText = q.jp || q.kanji || q.pattern || q.main;
+  const krText = q.kr || q.meaning;
+  
+  let questionLabel, questionDisplay, correct, wrongPool;
+  
+  if (quizType === 0) {
+    // Type 1: 일본어 → 뜻
+    questionLabel = '이 단어의 뜻은?';
+    questionDisplay = jpText;
+    correct = krText;
+    wrongPool = allCards.filter(c => (c.kr || c.meaning) !== krText).map(c => c.kr || c.meaning);
+  } else if (quizType === 1) {
+    // Type 2: 뜻 → 일본어
+    questionLabel = '이 뜻의 일본어는?';
+    questionDisplay = krText;
+    correct = jpText;
+    wrongPool = allCards.filter(c => (c.jp || c.kanji || c.pattern || c.main) !== jpText).map(c => c.jp || c.kanji || c.pattern || c.main);
+  } else {
+    // Type 3: 일본어 → 발음
+    questionLabel = '이 단어의 발음은?';
+    questionDisplay = jpText;
+    correct = `${jpText} (${toRomaji(jpText)})`;
+    wrongPool = allCards.filter(c => (c.jp || c.kanji || c.pattern || c.main) !== jpText).map(c => {
+      const jp = c.jp || c.kanji || c.pattern || c.main;
+      return `${jp} (${toRomaji(jp)})`;
+    });
+  }
   
   // 오답 생성
-  let wrongs = allCards.filter(c => (c.kr || c.meaning) !== answer).map(c => c.kr || c.meaning);
-  wrongs = shuffle([...new Set(wrongs)]).slice(0, 3);
+  let wrongs = shuffle([...new Set(wrongPool)]).slice(0, 3);
+  const options = shuffle([correct, ...wrongs]);
   
-  const options = shuffle([answer, ...wrongs]);
+  // 현재 문제 정답 저장
+  quizData[quizIndex].currentCorrect = correct;
   
   content.innerHTML = `
     <h3>문제 ${quizIndex + 1} / ${quizData.length}</h3>
-    <div class="quiz-question">${question}</div>
+    <div style="font-size:0.8rem;color:#888;margin-bottom:0.5rem;">${questionLabel}</div>
+    <div class="quiz-question">${questionDisplay}</div>
     <div class="quiz-options">
-      ${options.map((opt, i) => `<div class="quiz-option" onclick="selectAnswer(this, '${opt.replace(/'/g, "\\'")}', '${answer.replace(/'/g, "\\'")}')">${opt}</div>`).join('')}
+      ${options.map((opt, i) => `<div class="quiz-option" onclick="selectAnswer(this, '${opt.replace(/'/g, "\\'")}', '${correct.replace(/'/g, "\\'")}')">${opt}</div>`).join('')}
     </div>
   `;
 }
