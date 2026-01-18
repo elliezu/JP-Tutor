@@ -525,6 +525,35 @@ onAuthStateChanged(auth, (user) => updateLoginUI(user));
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
 });
+
+// 자동 저장
+let saveTimeout = null;
+window.autoSaveToCloud = () => {
+  const user = auth.currentUser;
+  if (!user) return;
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+  }, 3000);
+};
+
+// 페이지 숨겨질 때 저장
+document.addEventListener('visibilitychange', async () => {
+  const user = auth.currentUser;
+  if (document.visibilityState === 'hidden' && user) {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+  }
+});
 </script>
 
 <nav class="bottom-nav">

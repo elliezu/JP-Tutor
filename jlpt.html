@@ -166,7 +166,7 @@ function loadProgress() {
 
 function saveProgress() {
   localStorage.setItem(getStorageKey('progress'), JSON.stringify(progress));
-  if (typeof autoSaveToCloud === 'function') autoSaveToCloud();
+  if (window.autoSaveToCloud) window.autoSaveToCloud();
 }
 
 // 섹션별 리셋 함수
@@ -1520,7 +1520,13 @@ window.handleLogin = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     window.firebaseUser = result.user;
-    await downloadFromCloud();
+    const docSnap = await getDoc(doc(db, 'users', window.firebaseUser.uid));
+    if (docSnap.exists()) {
+      await downloadFromCloud();
+    } else {
+      await uploadToCloud();
+      render();
+    }
   } catch (e) { alert('로그인 실패'); }
 };
 
@@ -1579,6 +1585,13 @@ onAuthStateChanged(auth, (user) => {
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
+});
+
+// 페이지 숨겨질 때 저장
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && window.firebaseUser) {
+    uploadToCloud();
+  }
 });
 </script>
 </body>

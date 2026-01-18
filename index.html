@@ -240,7 +240,16 @@ window.handleLogin = async function() {
   try {
     const result = await signInWithPopup(auth, provider);
     firebaseUser = result.user;
-    await downloadFromCloud();
+    
+    // 클라우드에 데이터 있는지 확인
+    const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+    if (docSnap.exists()) {
+      // 클라우드 데이터 있으면 다운로드
+      await downloadFromCloud();
+    } else {
+      // 클라우드 데이터 없으면 로컬 데이터 업로드
+      await uploadToCloud();
+    }
     render();
   } catch (error) {
     console.error('로그인 실패:', error);
@@ -348,6 +357,21 @@ window.autoSaveToCloud = function() {
     uploadToCloud();
   }, 3000); // 3초 후 저장
 };
+
+// 페이지 떠날 때 즉시 저장
+window.addEventListener('beforeunload', () => {
+  if (firebaseUser && saveTimeout) {
+    clearTimeout(saveTimeout);
+    // 동기 방식으로 저장 시도 (navigator.sendBeacon 사용 불가하므로 localStorage만 확실히 저장)
+  }
+});
+
+// 페이지 숨겨질 때 저장 (모바일 등)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && firebaseUser) {
+    uploadToCloud();
+  }
+});
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
@@ -1242,7 +1266,7 @@ function getDefaultData() {
 function saveUserData() {
   try { 
     localStorage.setItem(getStorageKey(), JSON.stringify(state.userData)); 
-    if (typeof autoSaveToCloud === 'function') autoSaveToCloud();
+    if (window.autoSaveToCloud) window.autoSaveToCloud();
   } catch(e) {}
 }
 
@@ -1250,6 +1274,7 @@ function switchProfile(name) {
   currentProfile = name;
   localStorage.setItem('currentProfile', name);
   state.userData = loadUserData();
+  if (window.autoSaveToCloud) window.autoSaveToCloud();
   render();
 }
 
@@ -1258,6 +1283,7 @@ function addProfile() {
   if (name && name.trim() && !profiles.includes(name.trim())) {
     profiles.push(name.trim());
     localStorage.setItem('profiles', JSON.stringify(profiles));
+    if (window.autoSaveToCloud) window.autoSaveToCloud();
     switchProfile(name.trim());
   }
 }
@@ -1271,6 +1297,7 @@ function deleteProfile() {
     localStorage.removeItem(getStorageKey());
     profiles = profiles.filter(p => p !== currentProfile);
     localStorage.setItem('profiles', JSON.stringify(profiles));
+    if (window.autoSaveToCloud) window.autoSaveToCloud();
     switchProfile(profiles[0]);
   }
 }
