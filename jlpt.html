@@ -1189,7 +1189,7 @@ function renderKanji() {
             <button class="btn-sound" onclick="speak('${item.o}')" title="음독">🔊</button>
             <button class="btn-sound" onclick="speak('${item.u.replace(/[\(\)]/g,'')}')" title="훈독">🔉</button>
             <button class="btn-sound" onclick="speak('${item.ex.split('(')[0]}')" title="예문">📖</button>
-            ${!learned.includes(i)?`<button class="btn-sound" onclick="markLearned('${state.level}','kanji',${i});render()">✓</button>`:''}
+            ${!learned.includes(i)?`<button class="btn-sound" onclick="showKnownQuiz('kanji',${i})" style="background:#dcfce7;color:#15803d" title="알아요 퀴즈">✅알아요</button>`:`<span style="font-size:0.7rem;color:#15803d;">✓ 완료</span>`}
           </div>
         </div>`;
       }).join('')}
@@ -1219,12 +1219,15 @@ function renderVocab() {
       <button class="btn btn-primary btn-sm" onclick="playAllVocab('${currentCat}')" style="margin-bottom:0.75rem">🔊 전체 듣기</button>
     </div>
     ${items.map((item, i) => `
-      <div class="vocab-card" data-jp="${item.jp}" style="margin-bottom:0.5rem" title="더블클릭으로 단어장 추가">
+      <div class="vocab-card" data-jp="${item.jp}" data-cat="${currentCat}" data-idx="${i}" style="margin-bottom:0.5rem" title="더블클릭으로 단어장 추가">
         <div>
           <div class="vocab-jp">${item.jp}${item.n?` (${item.n})`:''} <span style="font-size:0.7rem;color:#888">${toRomaji(item.jp)}</span></div>
           <div class="vocab-kr">${item.kr}</div>
         </div>
-        <button class="btn-sound" onclick="speak('${item.jp}')">🔊</button>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <button class="btn-sound" onclick="speak('${item.jp}')">🔊</button>
+          <button class="btn-sound" onclick="showKnownQuiz('vocab',${i},'${currentCat}')" style="background:#dcfce7;color:#15803d;font-size:0.65rem;padding:2px 6px;" title="알아요 퀴즈">✅</button>
+        </div>
       </div>
     `).join('')}
   `;
@@ -1649,66 +1652,94 @@ document.addEventListener('click', (e) => {
 
 // ==================== 계급 안내 팝업 ====================
 function showRankInfo() {
-  const xpData = loadXpData(state.level);
-  const rank = getRank(xpData.level);
-  const nextXp = getXpToNextLevel(xpData);
-  const progress = getLevelProgress(xpData);
-  
-  const ranksHtml = RANKS.map(r => {
-    const isCurrent = xpData.level >= r.minLv && xpData.level <= r.maxLv;
-    return `<div style="display:flex;justify-content:space-between;padding:0.5rem;${isCurrent?'background:#e0e7ff;border-radius:0.5rem;font-weight:bold;':''}">
-      <span>${r.icon} ${r.name}</span>
-      <span style="color:#888;">Lv.${r.minLv}~${r.maxLv}</span>
-    </div>`;
-  }).join('');
-  
-  showPopup(`
-    <div style="text-align:center;margin-bottom:1rem;">
-      <div style="font-size:3rem;">${rank.icon}</div>
-      <div style="font-size:1.5rem;font-weight:bold;">${rank.name}</div>
-      <div style="color:#888;">Lv.${xpData.level} | ${xpData.xp} XP</div>
-    </div>
-    <div style="background:#f3f4f6;border-radius:0.5rem;height:8px;margin-bottom:0.5rem;">
-      <div style="background:#667eea;height:100%;border-radius:0.5rem;width:${progress}%;"></div>
-    </div>
-    <div style="text-align:center;font-size:0.8rem;color:#888;margin-bottom:1rem;">
-      다음 레벨까지 ${nextXp} XP
-    </div>
-    <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
-      <div style="font-weight:bold;margin-bottom:0.5rem;">🏆 계급표</div>
-      ${ranksHtml}
-    </div>
-  `);
+  try {
+    const xpData = window.loadXpData ? window.loadXpData(state.level) : { xp: 0, level: 1 };
+    const rank = window.getRank ? window.getRank(xpData.level) : { icon: '🌱', name: '見習い' };
+    const nextXp = window.getXpToNextLevel ? window.getXpToNextLevel(xpData) : 100;
+    const progress = window.getLevelProgress ? window.getLevelProgress(xpData) : 0;
+    const ranks = window.RANKS || [
+      { name: '見習い', icon: '🌱', minLv: 1, maxLv: 5 },
+      { name: '初心者', icon: '🌿', minLv: 6, maxLv: 10 },
+      { name: '中級者', icon: '🌳', minLv: 11, maxLv: 15 },
+      { name: '上級者', icon: '🔥', minLv: 16, maxLv: 20 },
+      { name: '達人', icon: '⭐', minLv: 21, maxLv: 25 },
+      { name: '名人', icon: '👑', minLv: 26, maxLv: 30 }
+    ];
+    
+    const ranksHtml = ranks.map(r => {
+      const isCurrent = xpData.level >= r.minLv && xpData.level <= r.maxLv;
+      return `<div style="display:flex;justify-content:space-between;padding:0.5rem;${isCurrent?'background:#e0e7ff;border-radius:0.5rem;font-weight:bold;':''}">
+        <span>${r.icon} ${r.name}</span>
+        <span style="color:#888;">Lv.${r.minLv}~${r.maxLv}</span>
+      </div>`;
+    }).join('');
+    
+    showPopup(`
+      <div style="text-align:center;margin-bottom:1rem;">
+        <div style="font-size:3rem;">${rank.icon}</div>
+        <div style="font-size:1.5rem;font-weight:bold;">${rank.name}</div>
+        <div style="color:#888;">Lv.${xpData.level} | ${xpData.xp} XP</div>
+      </div>
+      <div style="background:#f3f4f6;border-radius:0.5rem;height:8px;margin-bottom:0.5rem;">
+        <div style="background:#667eea;height:100%;border-radius:0.5rem;width:${progress}%;"></div>
+      </div>
+      <div style="text-align:center;font-size:0.8rem;color:#888;margin-bottom:1rem;">
+        다음 레벨까지 ${nextXp} XP
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
+        <div style="font-weight:bold;margin-bottom:0.5rem;">🏆 계급표</div>
+        ${ranksHtml}
+      </div>
+    `);
+  } catch(e) {
+    console.error('showRankInfo error:', e);
+    alert('계급 정보를 불러올 수 없습니다.');
+  }
 }
 
 // ==================== 설정 팝업 ====================
 function showSettings() {
-  const goalInfo = getDailyGoalInfo();
-  
-  const goalsHtml = DAILY_GOALS.map(g => `
-    <label style="display:flex;align-items:center;padding:0.5rem;cursor:pointer;${goalInfo.id === g.id ? 'background:#e0e7ff;border-radius:0.5rem;' : ''}">
-      <input type="radio" name="dailyGoal" value="${g.id}" ${goalInfo.id === g.id ? 'checked' : ''} onchange="changeDailyGoal('${g.id}')" style="margin-right:0.5rem;">
-      <span>${g.name}</span>
-      <span style="margin-left:auto;color:#888;">${g.count}개</span>
-    </label>
-  `).join('');
-  
-  showPopup(`
-    <div style="font-weight:bold;font-size:1.1rem;margin-bottom:1rem;">⚙️ 설정</div>
-    <div style="margin-bottom:1rem;">
-      <div style="font-weight:bold;margin-bottom:0.5rem;">📌 하루 목표</div>
-      ${goalsHtml}
-    </div>
-    <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
-      <button onclick="resetProgress()" class="btn" style="background:#ef4444;color:white;width:100%;">🗑️ 학습 진행도 초기화</button>
-    </div>
-  `);
+  try {
+    const goalInfo = window.getDailyGoalInfo ? window.getDailyGoalInfo() : { id: 'normal', todayCount: 0, count: 20, streak: 0 };
+    const goals = window.DAILY_GOALS || [
+      { id: 'easy', name: '가볍게', count: 10 },
+      { id: 'normal', name: '보통', count: 20 },
+      { id: 'hard', name: '열심히', count: 30 },
+      { id: 'extreme', name: '빡세게', count: 50 }
+    ];
+    
+    const goalsHtml = goals.map(g => `
+      <label style="display:flex;align-items:center;padding:0.5rem;cursor:pointer;${goalInfo.id === g.id ? 'background:#e0e7ff;border-radius:0.5rem;' : ''}">
+        <input type="radio" name="dailyGoal" value="${g.id}" ${goalInfo.id === g.id ? 'checked' : ''} onchange="changeDailyGoal('${g.id}')" style="margin-right:0.5rem;">
+        <span>${g.name}</span>
+        <span style="margin-left:auto;color:#888;">${g.count}개</span>
+      </label>
+    `).join('');
+    
+    showPopup(`
+      <div style="font-weight:bold;font-size:1.1rem;margin-bottom:1rem;">⚙️ 설정</div>
+      <div style="margin-bottom:1rem;">
+        <div style="font-weight:bold;margin-bottom:0.5rem;">📌 하루 목표</div>
+        ${goalsHtml}
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
+        <button onclick="resetProgress()" class="btn" style="background:#ef4444;color:white;width:100%;">🗑️ 학습 진행도 초기화</button>
+      </div>
+    `);
+  } catch(e) {
+    console.error('showSettings error:', e);
+    alert('설정을 불러올 수 없습니다.');
+  }
 }
 
 function changeDailyGoal(goalId) {
-  setDailyGoal(goalId);
-  closePopup();
-  render();
+  try {
+    if (window.setDailyGoal) window.setDailyGoal(goalId);
+    closePopup();
+    render();
+  } catch(e) {
+    console.error('changeDailyGoal error:', e);
+  }
 }
 
 // ==================== 팝업 유틸 ====================
@@ -1747,6 +1778,232 @@ function closePopup() {
     }
   }
 })();
+
+// ==================== 알아요 퀴즈 시스템 ====================
+function showKnownQuiz(type, index, category = null) {
+  const level = state.level;
+  let question, correct, options = [];
+  
+  if (type === 'kanji') {
+    const data = level === 'n5' ? N5_KANJI : N4_KANJI;
+    const item = data[index];
+    if (!item) return;
+    
+    question = item.k;
+    correct = item.m;
+    
+    // 다른 한자들에서 오답 보기 생성
+    const others = data.filter((_, i) => i !== index);
+    const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
+    options = [correct, ...shuffled.map(o => o.m)].sort(() => Math.random() - 0.5);
+  } else if (type === 'vocab') {
+    const vocabData = level === 'n5' ? N5_VOCAB : N4_VOCAB;
+    const items = vocabData[category]?.items;
+    if (!items || !items[index]) return;
+    
+    const item = items[index];
+    question = item.jp;
+    correct = item.kr;
+    
+    // 같은 카테고리에서 오답 보기 생성
+    const others = items.filter((_, i) => i !== index);
+    const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
+    options = [correct, ...shuffled.map(o => o.kr)].sort(() => Math.random() - 0.5);
+  }
+  
+  if (options.length < 4) {
+    // 보기가 4개 미만이면 그냥 알아요 처리
+    handleKnownCorrect(type, index, category);
+    return;
+  }
+  
+  const quizHtml = `
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div style="font-size:0.8rem;color:#666;margin-bottom:0.5rem;">이 ${type === 'kanji' ? '한자' : '단어'}의 뜻은?</div>
+      <div style="font-size:2.5rem;font-weight:bold;color:#667eea;">${question}</div>
+    </div>
+    <div id="quizOptions" style="display:flex;flex-direction:column;gap:0.5rem;">
+      ${options.map((opt, i) => `
+        <button class="quiz-opt-btn" onclick="checkKnownQuiz('${type}',${index},'${category}','${opt.replace(/'/g,"\\'")}','${correct.replace(/'/g,"\\'")}',this)" 
+          style="width:100%;padding:0.75rem;border:2px solid #e5e7eb;border-radius:0.5rem;background:white;cursor:pointer;font-size:0.9rem;text-align:left;">
+          ${opt}
+        </button>
+      `).join('')}
+    </div>
+  `;
+  
+  showKnownPopup(quizHtml);
+}
+
+function checkKnownQuiz(type, index, category, selected, correct, btnEl) {
+  const buttons = document.querySelectorAll('#quizOptions .quiz-opt-btn');
+  buttons.forEach(btn => btn.disabled = true);
+  
+  if (selected === correct) {
+    btnEl.style.background = '#dcfce7';
+    btnEl.style.borderColor = '#22c55e';
+    btnEl.style.color = '#15803d';
+    
+    setTimeout(() => {
+      handleKnownCorrect(type, index, category);
+    }, 500);
+  } else {
+    btnEl.style.background = '#fee2e2';
+    btnEl.style.borderColor = '#ef4444';
+    btnEl.style.color = '#b91c1c';
+    
+    // 정답 표시
+    buttons.forEach(btn => {
+      if (btn.textContent.trim() === correct) {
+        btn.style.background = '#dcfce7';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#15803d';
+      }
+    });
+    
+    setTimeout(() => {
+      closeKnownPopup();
+      alert('틀렸어요! 다시 한번 확인해보세요 💪');
+    }, 1000);
+  }
+}
+
+function handleKnownCorrect(type, index, category) {
+  const level = state.level;
+  
+  // 알아요 체크 (복습 시스템에 등록)
+  if (window.markKnown) {
+    const cardId = type === 'vocab' ? `${category}_${index}` : index;
+    window.markKnown(level, type, cardId);
+  }
+  
+  // XP 획득
+  let xpResult = null;
+  if (window.addXp) {
+    xpResult = window.addXp(level, window.XP_REWARDS?.correct || 10);
+  }
+  
+  // 학습 기록 (일일 목표)
+  let studyResult = null;
+  if (window.recordStudy) {
+    studyResult = window.recordStudy();
+  }
+  
+  // 학습완료 마킹
+  markLearned(level, type, index);
+  
+  closeKnownPopup();
+  
+  // XP 획득 알림
+  let msg = `✅ 알아요! +${window.XP_REWARDS?.correct || 10} XP`;
+  if (xpResult?.leveledUp) {
+    msg += `\n🎉 레벨업! Lv.${xpResult.level}`;
+  }
+  if (studyResult?.goalComplete) {
+    msg += `\n🎯 일일 목표 달성! +${window.XP_REWARDS?.dailyGoal || 50} XP`;
+    if (window.addXp) window.addXp(level, window.XP_REWARDS?.dailyGoal || 50);
+  }
+  if (studyResult?.streak7Bonus) {
+    msg += `\n🔥 7일 연속! +${window.XP_REWARDS?.streak7 || 100} XP`;
+    if (window.addXp) window.addXp(level, window.XP_REWARDS?.streak7 || 100);
+  }
+  
+  alert(msg);
+  render();
+}
+
+function showKnownPopup(content) {
+  const existing = document.getElementById('knownPopup');
+  if (existing) existing.remove();
+  
+  const popup = document.createElement('div');
+  popup.id = 'knownPopup';
+  popup.innerHTML = `
+    <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1001;display:flex;align-items:center;justify-content:center;" onclick="closeKnownPopup()">
+      <div style="background:white;border-radius:1rem;padding:1.5rem;max-width:350px;width:90%;" onclick="event.stopPropagation()">
+        ${content}
+        <button onclick="closeKnownPopup()" style="width:100%;margin-top:1rem;padding:0.5rem;background:#e5e7eb;color:#374151;border:none;border-radius:0.5rem;cursor:pointer;font-size:0.85rem;">취소</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+}
+
+function closeKnownPopup() {
+  document.getElementById('knownPopup')?.remove();
+}
+
+// ========== 계급 안내 팝업 ==========
+function showRankInfo() {
+  const xpData = window.loadXpData ? window.loadXpData(state.level) : { xp: 0, level: 1 };
+  const rank = window.getRank ? window.getRank(xpData.level) : { icon: '🌱', name: '見習い' };
+  const progress = window.getLevelProgress ? window.getLevelProgress(xpData) : 0;
+  const nextXp = window.getXpToNextLevel ? window.getXpToNextLevel(xpData) : 100;
+  
+  const ranksHtml = window.RANKS?.map(r => `
+    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem;${xpData.level >= r.minLv && xpData.level <= r.maxLv ? 'background:#667eea20;border-radius:0.5rem;' : ''}">
+      <span style="font-size:1.2rem;">${r.icon}</span>
+      <span style="flex:1;">${r.name}</span>
+      <span style="font-size:0.75rem;color:#6b7280;">Lv.${r.minLv}-${r.maxLv}</span>
+    </div>
+  `).join('') || '';
+  
+  showKnownPopup(`
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div style="font-size:2.5rem;">${rank.icon}</div>
+      <div style="font-size:1.2rem;font-weight:bold;">${rank.name}</div>
+      <div style="font-size:0.9rem;color:#667eea;">Lv.${xpData.level} · ${xpData.xp} XP</div>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#6b7280;margin-bottom:0.25rem;">
+        <span>다음 레벨까지</span>
+        <span>${nextXp} XP</span>
+      </div>
+      <div style="height:0.5rem;background:#e5e7eb;border-radius:1rem;overflow:hidden;">
+        <div style="height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:${progress}%;"></div>
+      </div>
+    </div>
+    <div style="font-size:0.8rem;font-weight:bold;margin-bottom:0.5rem;">📊 계급표</div>
+    <div style="font-size:0.85rem;">${ranksHtml}</div>
+  `);
+}
+
+// ========== 설정 팝업 ==========
+function showSettings() {
+  const goalInfo = window.getDailyGoalInfo ? window.getDailyGoalInfo() : { id: 'normal', count: 20 };
+  const goals = window.DAILY_GOALS || [
+    { id: 'easy', name: '가볍게', count: 10 },
+    { id: 'normal', name: '보통', count: 20 },
+    { id: 'hard', name: '열심히', count: 30 },
+    { id: 'extreme', name: '빡세게', count: 50 }
+  ];
+  
+  const goalsHtml = goals.map(g => `
+    <button onclick="changeDailyGoal('${g.id}')" style="flex:1;padding:0.5rem;border:2px solid ${goalInfo.id === g.id ? '#667eea' : '#e5e7eb'};background:${goalInfo.id === g.id ? '#667eea20' : 'white'};border-radius:0.5rem;cursor:pointer;">
+      <div style="font-weight:bold;">${g.name}</div>
+      <div style="font-size:0.75rem;color:#6b7280;">${g.count}개/일</div>
+    </button>
+  `).join('');
+  
+  showKnownPopup(`
+    <div style="font-size:1rem;font-weight:bold;margin-bottom:1rem;">⚙️ 설정</div>
+    <div style="font-size:0.85rem;font-weight:bold;margin-bottom:0.5rem;">🎯 일일 목표</div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">${goalsHtml}</div>
+    <div style="font-size:0.75rem;color:#6b7280;background:#f3f4f6;padding:0.75rem;border-radius:0.5rem;">
+      💡 일일 목표를 달성하면 스트릭이 쌓이고 보너스 XP를 받아요!<br>
+      ⚠️ 3일 연속 미접속 시 레벨이 1 강등돼요.
+    </div>
+  `);
+}
+
+function changeDailyGoal(goalId) {
+  if (window.setDailyGoal) {
+    window.setDailyGoal(goalId);
+    closeKnownPopup();
+    showSettings(); // 업데이트된 설정 다시 표시
+    render(); // 헤더 업데이트
+  }
+}
 
 </script>
 </body>

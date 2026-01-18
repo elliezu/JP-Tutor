@@ -82,9 +82,15 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
 </head>
 <body>
 <div class="container" style="padding-bottom: 70px;">
-  <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
-    <h1>📖 나의 단어장</h1>
-    <div id="loginArea"></div>
+  <div class="header" style="display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h1>📖 나의 단어장</h1>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="loginArea"></div>
+        <button onclick="showSettings()" title="설정" style="background:none;border:none;font-size:1.2rem;cursor:pointer;">⚙️</button>
+      </div>
+    </div>
+    <div id="xpHeader" style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:10px;color:white;font-size:0.85rem;"></div>
   </div>
   
   <div class="date-selector">
@@ -114,6 +120,8 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
   <div class="modal-content" id="quizContent"></div>
 </div>
 
+<script src="jlpt-xp.js"></script>
+<script src="jlpt-streak.js"></script>
 <script>
 // 프로필 시스템
 let currentProfile = localStorage.getItem('currentProfile') || '게스트';
@@ -445,7 +453,135 @@ function closeQuiz() {
   document.getElementById('quizModal').classList.remove('show');
 }
 
+// ==================== XP 시스템 UI ====================
+function updateXpHeader() {
+  const header = document.getElementById('xpHeader');
+  if (!header) return;
+  
+  // N5, N4 중 더 높은 레벨로 표시 (또는 마지막 학습한 레벨)
+  const lastLevel = localStorage.getItem('lastStudyLevel') || 'n5';
+  const xpData = window.loadXpData ? window.loadXpData(lastLevel) : { xp: 0, level: 1 };
+  const rank = window.getRank ? window.getRank(xpData.level) : { icon: '🌱', name: '見習い' };
+  const goalInfo = window.getDailyGoalInfo ? window.getDailyGoalInfo() : { todayCount: 0, count: 20, streak: 0 };
+  
+  header.innerHTML = `
+    <button onclick="showRankInfo()" style="background:rgba(255,255,255,0.2);border:none;padding:4px 10px;border-radius:15px;color:white;font-size:0.8rem;cursor:pointer;">
+      ${rank.icon} Lv.${xpData.level}
+    </button>
+    <span>🔥 ${goalInfo.streak}일 스트릭</span>
+    <span>📊 ${goalInfo.todayCount}/${goalInfo.count}</span>
+  `;
+}
+
+function showRankInfo() {
+  try {
+    const lastLevel = localStorage.getItem('lastStudyLevel') || 'n5';
+    const xpData = window.loadXpData ? window.loadXpData(lastLevel) : { xp: 0, level: 1 };
+    const rank = window.getRank ? window.getRank(xpData.level) : { icon: '🌱', name: '見習い' };
+    const nextXp = window.getXpToNextLevel ? window.getXpToNextLevel(xpData) : 100;
+    const progress = window.getLevelProgress ? window.getLevelProgress(xpData) : 0;
+    const ranks = window.RANKS || [
+      { name: '見習い', icon: '🌱', minLv: 1, maxLv: 5 },
+      { name: '初心者', icon: '🌿', minLv: 6, maxLv: 10 },
+      { name: '中級者', icon: '🌳', minLv: 11, maxLv: 15 },
+      { name: '上級者', icon: '🔥', minLv: 16, maxLv: 20 },
+      { name: '達人', icon: '⭐', minLv: 21, maxLv: 25 },
+      { name: '名人', icon: '👑', minLv: 26, maxLv: 30 }
+    ];
+    
+    const ranksHtml = ranks.map(r => {
+      const isCurrent = xpData.level >= r.minLv && xpData.level <= r.maxLv;
+      return `<div style="display:flex;justify-content:space-between;padding:0.5rem;${isCurrent?'background:#e0e7ff;border-radius:0.5rem;font-weight:bold;':''}">
+        <span>${r.icon} ${r.name}</span>
+        <span style="color:#888;">Lv.${r.minLv}~${r.maxLv}</span>
+      </div>`;
+    }).join('');
+    
+    showXpPopup(`
+      <div style="text-align:center;margin-bottom:1rem;">
+        <div style="font-size:3rem;">${rank.icon}</div>
+        <div style="font-size:1.5rem;font-weight:bold;">${rank.name}</div>
+        <div style="color:#888;">Lv.${xpData.level} | ${xpData.xp} XP</div>
+      </div>
+      <div style="background:#f3f4f6;border-radius:0.5rem;height:8px;margin-bottom:0.5rem;">
+        <div style="background:#667eea;height:100%;border-radius:0.5rem;width:${progress}%;"></div>
+      </div>
+      <div style="text-align:center;font-size:0.8rem;color:#888;margin-bottom:1rem;">
+        다음 레벨까지 ${nextXp} XP
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:1rem;">
+        <div style="font-weight:bold;margin-bottom:0.5rem;">🏆 계급표</div>
+        ${ranksHtml}
+      </div>
+    `);
+  } catch(e) {
+    console.error('showRankInfo error:', e);
+  }
+}
+
+function showSettings() {
+  try {
+    const goalInfo = window.getDailyGoalInfo ? window.getDailyGoalInfo() : { id: 'normal', todayCount: 0, count: 20, streak: 0 };
+    const goals = window.DAILY_GOALS || [
+      { id: 'easy', name: '가볍게', count: 10 },
+      { id: 'normal', name: '보통', count: 20 },
+      { id: 'hard', name: '열심히', count: 30 },
+      { id: 'extreme', name: '빡세게', count: 50 }
+    ];
+    
+    const goalsHtml = goals.map(g => `
+      <label style="display:flex;align-items:center;padding:0.5rem;cursor:pointer;${goalInfo.id === g.id ? 'background:#e0e7ff;border-radius:0.5rem;' : ''}">
+        <input type="radio" name="dailyGoal" value="${g.id}" ${goalInfo.id === g.id ? 'checked' : ''} onchange="changeDailyGoal('${g.id}')" style="margin-right:0.5rem;">
+        <span>${g.name}</span>
+        <span style="margin-left:auto;color:#888;">${g.count}개</span>
+      </label>
+    `).join('');
+    
+    showXpPopup(`
+      <div style="font-weight:bold;font-size:1.1rem;margin-bottom:1rem;">⚙️ 설정</div>
+      <div style="margin-bottom:1rem;">
+        <div style="font-weight:bold;margin-bottom:0.5rem;">📌 하루 목표</div>
+        ${goalsHtml}
+      </div>
+    `);
+  } catch(e) {
+    console.error('showSettings error:', e);
+  }
+}
+
+function changeDailyGoal(goalId) {
+  try {
+    if (window.setDailyGoal) window.setDailyGoal(goalId);
+    closeXpPopup();
+    updateXpHeader();
+  } catch(e) {
+    console.error('changeDailyGoal error:', e);
+  }
+}
+
+function showXpPopup(content) {
+  const existing = document.getElementById('xpPopup');
+  if (existing) existing.remove();
+  
+  const popup = document.createElement('div');
+  popup.id = 'xpPopup';
+  popup.innerHTML = `
+    <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="closeXpPopup()">
+      <div style="background:white;border-radius:1rem;padding:1.5rem;max-width:350px;width:90%;max-height:80vh;overflow-y:auto;" onclick="event.stopPropagation()">
+        ${content}
+        <button onclick="closeXpPopup()" style="width:100%;margin-top:1rem;padding:0.75rem;background:#667eea;color:white;border:none;border-radius:0.5rem;cursor:pointer;">닫기</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+}
+
+function closeXpPopup() {
+  document.getElementById('xpPopup')?.remove();
+}
+
 // 초기 로드
+updateXpHeader();
 renderCards();
 </script>
 
