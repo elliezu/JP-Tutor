@@ -511,13 +511,34 @@ window.syncNow = async () => {
   document.getElementById('userDropdown')?.classList.remove('show');
   const user = auth.currentUser;
   if (!user) return;
-  const allData = {};
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    allData[key] = localStorage.getItem(key);
+  
+  const choice = confirm(
+    '동기화 방향 선택:\n\n' +
+    '▶ 확인: 클라우드 → 이 기기 (다운로드)\n' +
+    '▶ 취소: 이 기기 → 클라우드 (업로드)'
+  );
+  
+  if (choice) {
+    // 다운로드
+    const docSnap = await getDoc(doc(db, 'users', user.uid));
+    if (docSnap.exists()) {
+      const cloudData = docSnap.data().data;
+      for (const [key, value] of Object.entries(cloudData)) localStorage.setItem(key, value);
+      location.reload();
+    } else {
+      alert('클라우드에 데이터가 없습니다.');
+    }
+  } else {
+    // 업로드
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+    alert('업로드 완료!');
   }
-  await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
-  alert('동기화 완료!');
+};
 };
 
 onAuthStateChanged(auth, (user) => updateLoginUI(user));

@@ -1543,8 +1543,17 @@ window.toggleUserMenu = () => {
 
 window.syncNow = async () => {
   document.getElementById('userDropdown')?.classList.remove('show');
-  await uploadToCloud();
-  alert('동기화 완료!');
+  const choice = confirm(
+    '동기화 방향 선택:\n\n' +
+    '▶ 확인: 클라우드 → 이 기기 (다운로드)\n' +
+    '▶ 취소: 이 기기 → 클라우드 (업로드)'
+  );
+  if (choice) {
+    await downloadFromCloud();
+  } else {
+    await uploadToCloud();
+    alert('업로드 완료!');
+  }
 };
 
 async function uploadToCloud() {
