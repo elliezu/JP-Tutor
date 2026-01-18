@@ -290,7 +290,8 @@ window.handleLogin = async function() {
       // 로컬만 있으면 그냥 진행
       render();
     } else {
-      // 둘 다 없으면 그냥 진행
+      // 둘 다 없으면 프로필 생성 안내
+      alert('👋 환영합니다!\n\n학습을 시작하려면 프로필을 생성해주세요.');
       render();
     }
   } catch (error) {
@@ -1395,6 +1396,13 @@ function switchProfile(name) {
 }
 
 function addProfile() {
+  // 로그인 안 된 상태 경고
+  const user = window.getFirebaseUser ? window.getFirebaseUser() : null;
+  if (!user) {
+    const proceed = confirm('⚠️ 로그인하지 않은 상태입니다.\n\n이 기기에만 저장되며, 다른 기기에서 사용하려면 로그인 후 저장해야 합니다.\n\n계속 프로필을 만들까요?');
+    if (!proceed) return;
+  }
+  
   const name = prompt('새 프로필 이름:');
   if (name && name.trim() && !profiles.includes(name.trim())) {
     profiles.push(name.trim());
