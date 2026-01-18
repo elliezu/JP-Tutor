@@ -2,7 +2,7 @@
   "name": "JP-Tutor 일본어 학습",
   "short_name": "JP-Tutor",
   "description": "JLPT N5/N4 일본어 학습 앱",
-  "start_url": "/JP-Tutor/jlpt.html",
+  "start_url": "/JP-Tutor/index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
