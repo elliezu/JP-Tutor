@@ -400,7 +400,7 @@ window.saveToCloud = async function() {
 };
 
 // 토스트 메시지
-function showToast(msg, color) {
+window.showToast = function(msg, color) {
   const existing = document.querySelector('.toast-msg');
   if (existing) existing.remove();
   
@@ -410,10 +410,10 @@ function showToast(msg, color) {
   toast.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:${color || '#333'};color:white;padding:12px 24px;border-radius:25px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);`;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
-}
+};
 
 // 마지막 저장 시간 표시
-function getLastSaveText() {
+window.getLastSaveText = function() {
   const last = localStorage.getItem('lastCloudSave');
   if (!last) return '';
   const diff = Date.now() - new Date(last).getTime();
@@ -423,7 +423,7 @@ function getLastSaveText() {
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}시간 전 저장`;
   return `${Math.floor(hours / 24)}일 전 저장`;
-}
+};
 
 // 클라우드에 저장 (드롭다운용)
 window.cloudSave = async function() {
@@ -1486,7 +1486,7 @@ function renderHeader() {
         <span class="user-name">${user.displayName || '사용자'}</span>
       </button>
       <div class="dropdown-menu" id="userDropdown">
-        <div class="dropdown-item" style="font-size:11px;color:#888;pointer-events:none;">${getLastSaveText() || '저장 기록 없음'}</div>
+        <div class="dropdown-item" style="font-size:11px;color:#888;pointer-events:none;">${window.getLastSaveText ? window.getLastSaveText() : '저장 기록 없음'}</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-item" onclick="cloudSave()">☁️ 학습 저장</div>
         <div class="dropdown-item" onclick="cloudLoad()">📥 학습 불러오기</div>
