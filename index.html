@@ -502,33 +502,49 @@ window.addEventListener('load', async () => {
   }
 });
 
-// 탭 돌아올 때 클라우드 싱크 체크 (다른 기기에서 학습했는지)
-document.addEventListener('visibilitychange', async () => {
-  if (document.visibilityState === 'visible' && firebaseUser && navigator.onLine) {
-    try {
-      const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
-      if (docSnap.exists()) {
-        const cloudTime = docSnap.data().updatedAt;
-        const localTime = localStorage.getItem('lastCloudSave');
+// 싱크 체크 함수 (다른 기기에서 학습했는지)
+let lastSyncCheck = 0;
+async function checkCloudSync() {
+  // 5초 내 중복 체크 방지
+  if (Date.now() - lastSyncCheck < 5000) return;
+  lastSyncCheck = Date.now();
+  
+  if (!firebaseUser || !navigator.onLine) return;
+  
+  try {
+    const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+    if (docSnap.exists()) {
+      const cloudTime = docSnap.data().updatedAt;
+      const localTime = localStorage.getItem('lastCloudSave');
+      
+      if (cloudTime && localTime) {
+        const cloudDate = new Date(cloudTime);
+        const localDate = new Date(localTime);
         
-        if (cloudTime && localTime) {
-          const cloudDate = new Date(cloudTime);
-          const localDate = new Date(localTime);
-          
-          // 클라우드가 1분 이상 더 최신이면 알림
-          if (cloudDate - localDate > 60000) {
-            const load = confirm('📱 다른 기기에서 학습 데이터가 업데이트되었습니다.\n\n불러올까요?');
-            if (load) {
-              await downloadFromCloud();
-            }
+        // 클라우드가 1분 이상 더 최신이면 알림
+        if (cloudDate - localDate > 60000) {
+          const load = confirm('📱 다른 기기에서 학습 데이터가 업데이트되었습니다.\n\n불러올까요?');
+          if (load) {
+            await downloadFromCloud();
+          } else {
+            // 거절하면 로컬 시간 갱신 (다시 안 물어보게)
+            localStorage.setItem('lastCloudSave', new Date().toISOString());
           }
         }
       }
-    } catch (e) {
-      console.error('싱크 체크 실패:', e);
     }
+  } catch (e) {
+    console.error('싱크 체크 실패:', e);
   }
+}
+
+// 탭 활성화 시 체크
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') checkCloudSync();
 });
+
+// 창 포커스 시 체크 (탭이 계속 보여도 다른 창 갔다 오면 작동)
+window.addEventListener('focus', checkCloudSync);
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
