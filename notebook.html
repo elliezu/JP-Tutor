@@ -479,7 +479,9 @@ function updateLoginUI(user) {
           <span class="sync-icon">✓</span>
         </button>
         <div class="dropdown-menu" id="userDropdown">
-          <div class="dropdown-item" onclick="window.syncNow()">🔄 동기화</div>
+          <div class="dropdown-item" onclick="window.cloudSave()">☁️ 학습 저장</div>
+          <div class="dropdown-item" onclick="window.cloudLoad()">📥 학습 불러오기</div>
+          <div class="dropdown-divider"></div>
           <div class="dropdown-item" onclick="window.handleLogout()">🚪 로그아웃</div>
         </div>
       </div>
@@ -507,19 +509,28 @@ window.handleLogout = async () => {
   updateLoginUI(null);
 };
 
-window.syncNow = async () => {
+window.cloudSave = async () => {
   document.getElementById('userDropdown')?.classList.remove('show');
   const user = auth.currentUser;
   if (!user) return;
   
-  const choice = confirm(
-    '동기화 방향 선택:\n\n' +
-    '▶ 확인: 클라우드 → 이 기기 (다운로드)\n' +
-    '▶ 취소: 이 기기 → 클라우드 (업로드)'
-  );
+  if (confirm('현재 기기의 학습 데이터를 클라우드에 저장할까요?\n(기존 클라우드 데이터는 덮어쓰기됩니다)')) {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+    alert('☁️ 클라우드에 저장 완료!');
+  }
+};
+
+window.cloudLoad = async () => {
+  document.getElementById('userDropdown')?.classList.remove('show');
+  const user = auth.currentUser;
+  if (!user) return;
   
-  if (choice) {
-    // 다운로드
+  if (confirm('클라우드의 학습 데이터를 불러올까요?\n(현재 기기 데이터는 삭제됩니다)')) {
     const docSnap = await getDoc(doc(db, 'users', user.uid));
     if (docSnap.exists()) {
       const cloudData = docSnap.data().data;
@@ -528,17 +539,7 @@ window.syncNow = async () => {
     } else {
       alert('클라우드에 데이터가 없습니다.');
     }
-  } else {
-    // 업로드
-    const allData = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      allData[key] = localStorage.getItem(key);
-    }
-    await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
-    alert('업로드 완료!');
   }
-};
 };
 
 onAuthStateChanged(auth, (user) => updateLoginUI(user));

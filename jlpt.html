@@ -1040,15 +1040,19 @@ function render() {
   const app = document.getElementById('app');
   const levelColor = state.level === 'n5' ? '#10b981' : '#f59e0b';
   
-  const loginHtml = firebaseUser ? `
+  const user = window.firebaseUser;
+  const status = window.syncStatus || 'synced';
+  const loginHtml = user ? `
     <div class="dropdown">
       <button class="user-info" onclick="toggleUserMenu()" style="background:none;border:none;cursor:pointer;">
-        <img src="${firebaseUser.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
-        <span class="user-name">${firebaseUser.displayName?.split(' ')[0] || ''}</span>
-        <span class="sync-icon">${syncStatus === 'synced' ? '✓' : '⟳'}</span>
+        <img src="${user.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
+        <span class="user-name">${user.displayName?.split(' ')[0] || ''}</span>
+        <span class="sync-icon">${status === 'synced' ? '✓' : '⟳'}</span>
       </button>
       <div class="dropdown-menu" id="userDropdown">
-        <div class="dropdown-item" onclick="syncNow()">🔄 동기화</div>
+        <div class="dropdown-item" onclick="cloudSave()">☁️ 학습 저장</div>
+        <div class="dropdown-item" onclick="cloudLoad()">📥 학습 불러오기</div>
+        <div class="dropdown-divider"></div>
         <div class="dropdown-item" onclick="handleLogout()">🚪 로그아웃</div>
       </div>
     </div>
@@ -1541,19 +1545,22 @@ window.toggleUserMenu = () => {
   document.getElementById('userDropdown')?.classList.toggle('show');
 };
 
-window.syncNow = async () => {
+window.cloudSave = async () => {
   document.getElementById('userDropdown')?.classList.remove('show');
-  const choice = confirm(
-    '동기화 방향 선택:\n\n' +
-    '▶ 확인: 클라우드 → 이 기기 (다운로드)\n' +
-    '▶ 취소: 이 기기 → 클라우드 (업로드)'
-  );
-  if (choice) {
-    await downloadFromCloud();
-  } else {
+  if (!window.firebaseUser) return;
+  if (confirm('현재 기기의 학습 데이터를 클라우드에 저장할까요?\n(기존 클라우드 데이터는 덮어쓰기됩니다)')) {
     await uploadToCloud();
-    alert('업로드 완료!');
+    alert('☁️ 클라우드에 저장 완료!');
   }
+};
+
+window.cloudLoad = async () => {
+  document.getElementById('userDropdown')?.classList.remove('show');
+  if (!window.firebaseUser) return;
+  if (confirm('클라우드의 학습 데이터를 불러올까요?\n(현재 기기 데이터는 삭제됩니다)')) {
+    await downloadFromCloud();
+  }
+};
 };
 
 async function uploadToCloud() {
