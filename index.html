@@ -185,12 +185,169 @@
     
     /* Aspect ratio */
     .aspect-square { aspect-ratio: 1/1; width: 100%; }
+    
+    /* 로그인 관련 */
+    .login-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; background: white; border: 1px solid #ddd; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; }
+    .login-btn:hover { background: #f3f4f6; }
+    .user-info { display: flex; align-items: center; gap: 0.5rem; }
+    .user-avatar { width: 1.75rem; height: 1.75rem; border-radius: 50%; }
+    .user-name { font-size: 0.75rem; color: #374151; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sync-status { font-size: 0.6rem; padding: 0.15rem 0.4rem; border-radius: 0.25rem; }
+    .sync-status.synced { background: #d1fae5; color: #059669; }
+    .sync-status.syncing { background: #fef3c7; color: #d97706; }
+    .dropdown { position: relative; }
+    .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 160px; z-index: 100; display: none; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { padding: 0.6rem 1rem; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    .dropdown-item:hover { background: #f3f4f6; }
+    .dropdown-item:first-child { border-radius: 0.5rem 0.5rem 0 0; }
+    .dropdown-item:last-child { border-radius: 0 0 0.5rem 0.5rem; }
+    .dropdown-divider { border-top: 1px solid #e5e7eb; margin: 0.25rem 0; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   
-  <script>
+  <!-- Firebase SDK -->
+  <script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// Firebase 설정
+const firebaseConfig = {
+  apiKey: "AIzaSyAgphZ8FIOMY6vMhcUbg8ZvqkpxxZ_untI",
+  authDomain: "jp-tutor-7a967.firebaseapp.com",
+  projectId: "jp-tutor-7a967",
+  storageBucket: "jp-tutor-7a967.firebasestorage.app",
+  messagingSenderId: "937449734884",
+  appId: "1:937449734884:web:7827046017d4496363a2f1"
+};
+
+// Firebase 초기화
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const provider = new GoogleAuthProvider();
+
+// 전역 변수
+let firebaseUser = null;
+let syncStatus = 'synced';
+
+// 로그인 처리
+window.handleLogin = async function() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    firebaseUser = result.user;
+    await downloadFromCloud();
+    render();
+  } catch (error) {
+    console.error('로그인 실패:', error);
+    alert('로그인에 실패했습니다.');
+  }
+};
+
+// 로그아웃 처리
+window.handleLogout = async function() {
+  try {
+    await signOut(auth);
+    firebaseUser = null;
+    document.getElementById('userDropdown')?.classList.remove('show');
+    render();
+  } catch (error) {
+    console.error('로그아웃 실패:', error);
+  }
+};
+
+// 사용자 메뉴 토글
+window.toggleUserMenu = function() {
+  const menu = document.getElementById('userDropdown');
+  menu?.classList.toggle('show');
+};
+
+// 클릭 시 드롭다운 닫기
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    document.getElementById('userDropdown')?.classList.remove('show');
+  }
+});
+
+// 클라우드에 저장
+async function uploadToCloud() {
+  if (!firebaseUser) return;
+  
+  syncStatus = 'syncing';
+  render();
+  
+  try {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      allData[key] = localStorage.getItem(key);
+    }
+    
+    await setDoc(doc(db, 'users', firebaseUser.uid), {
+      data: allData,
+      updatedAt: new Date().toISOString()
+    });
+    
+    syncStatus = 'synced';
+  } catch (error) {
+    console.error('업로드 실패:', error);
+    syncStatus = 'synced';
+  }
+  render();
+}
+
+// 클라우드에서 불러오기
+async function downloadFromCloud() {
+  if (!firebaseUser) return;
+  
+  syncStatus = 'syncing';
+  render();
+  
+  try {
+    const docSnap = await getDoc(doc(db, 'users', firebaseUser.uid));
+    
+    if (docSnap.exists()) {
+      const cloudData = docSnap.data().data;
+      for (const [key, value] of Object.entries(cloudData)) {
+        localStorage.setItem(key, value);
+      }
+      // 상태 다시 로드
+      location.reload();
+    }
+    syncStatus = 'synced';
+  } catch (error) {
+    console.error('다운로드 실패:', error);
+    syncStatus = 'synced';
+  }
+}
+
+// 지금 동기화
+window.syncNow = async function() {
+  document.getElementById('userDropdown')?.classList.remove('show');
+  await uploadToCloud();
+  alert('동기화 완료!');
+};
+
+// 인증 상태 감지
+onAuthStateChanged(auth, (user) => {
+  firebaseUser = user;
+  if (typeof render === 'function') render();
+});
+
+// 데이터 변경 시 자동 저장 (디바운스)
+let saveTimeout = null;
+window.autoSaveToCloud = function() {
+  if (!firebaseUser) return;
+  
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    uploadToCloud();
+  }, 3000); // 3초 후 저장
+};
 // ===== 데이터 =====
 const HIRAGANA = {
   'あ행': [
@@ -1076,7 +1233,10 @@ function getDefaultData() {
 }
 
 function saveUserData() {
-  try { localStorage.setItem(getStorageKey(), JSON.stringify(state.userData)); } catch(e) {}
+  try { 
+    localStorage.setItem(getStorageKey(), JSON.stringify(state.userData)); 
+    if (typeof autoSaveToCloud === 'function') autoSaveToCloud();
+  } catch(e) {}
 }
 
 function switchProfile(name) {
@@ -1166,16 +1326,35 @@ function render() {
 }
 
 function renderHeader() {
+  const userHtml = firebaseUser ? `
+    <div class="dropdown">
+      <button class="user-info" onclick="toggleUserMenu()" style="background:none;border:none;cursor:pointer;">
+        <img src="${firebaseUser.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
+        <span class="user-name">${firebaseUser.displayName || '사용자'}</span>
+        <span class="sync-status ${syncStatus}">${syncStatus === 'synced' ? '✓동기화됨' : '⟳동기화중'}</span>
+      </button>
+      <div class="dropdown-menu" id="userDropdown">
+        <div class="dropdown-item" onclick="syncNow()">🔄 지금 동기화</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" onclick="handleLogout()">🚪 로그아웃</div>
+      </div>
+    </div>
+  ` : `
+    <button class="login-btn" onclick="handleLogin()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" height="16">
+      로그인
+    </button>
+  `;
+
   return `<header>
     <div class="header-title">
       <span>🇯🇵 일본어 학습</span>
       <div style="display:flex;align-items:center;gap:0.5rem;">
+        ${userHtml}
         <select onchange="switchProfile(this.value)" style="padding:0.25rem 0.5rem;border-radius:0.5rem;border:1px solid #ddd;font-size:0.8rem;background:#fff;">
           ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
         </select>
         <button onclick="addProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 추가">➕</button>
-        <button onclick="deleteProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 삭제">🗑️</button>
-        <button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="데이터 초기화">🔄</button>
       </div>
     </div>
     <div class="header-tabs">

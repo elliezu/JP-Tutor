@@ -83,6 +83,17 @@
     .nav-btn span:first-child { font-size: 1.25rem; }
     .add-toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 1rem 2rem; border-radius: 10px; z-index: 9999; animation: fadeInOut 2s; }
     @keyframes fadeInOut { 0%,100% { opacity: 0; } 10%,90% { opacity: 1; } }
+    /* 로그인 */
+    .login-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.6rem; background: rgba(255,255,255,0.2); border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.75rem; color: white; }
+    .user-info { display: flex; align-items: center; gap: 0.4rem; }
+    .user-avatar { width: 1.5rem; height: 1.5rem; border-radius: 50%; }
+    .user-name { font-size: 0.7rem; color: white; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sync-icon { font-size: 0.7rem; }
+    .dropdown { position: relative; }
+    .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); min-width: 130px; z-index: 200; display: none; margin-top: 0.5rem; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.8rem; color: #374151; }
+    .dropdown-item:hover { background: #f3f4f6; }
   </style>
 </head>
 <body>
@@ -155,6 +166,7 @@ function loadProgress() {
 
 function saveProgress() {
   localStorage.setItem(getStorageKey('progress'), JSON.stringify(progress));
+  if (typeof autoSaveToCloud === 'function') autoSaveToCloud();
 }
 
 // 섹션별 리셋 함수
@@ -1028,6 +1040,20 @@ function render() {
   const app = document.getElementById('app');
   const levelColor = state.level === 'n5' ? '#10b981' : '#f59e0b';
   
+  const loginHtml = firebaseUser ? `
+    <div class="dropdown">
+      <button class="user-info" onclick="toggleUserMenu()" style="background:none;border:none;cursor:pointer;">
+        <img src="${firebaseUser.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
+        <span class="user-name">${firebaseUser.displayName?.split(' ')[0] || ''}</span>
+        <span class="sync-icon">${syncStatus === 'synced' ? '✓' : '⟳'}</span>
+      </button>
+      <div class="dropdown-menu" id="userDropdown">
+        <div class="dropdown-item" onclick="syncNow()">🔄 동기화</div>
+        <div class="dropdown-item" onclick="handleLogout()">🚪 로그아웃</div>
+      </div>
+    </div>
+  ` : `<button class="login-btn" onclick="handleLogin()">🔐 로그인</button>`;
+  
   app.innerHTML = `
     <header>
       <div class="header-top">
@@ -1036,11 +1062,11 @@ function render() {
           <span class="header-title">🎯 JLPT ${state.level.toUpperCase()} 마스터</span>
         </div>
         <div class="header-controls">
+          ${loginHtml}
           <select onchange="switchProfile(this.value)">
             ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
           </select>
           <button onclick="addProfile()" title="프로필 추가">➕</button>
-          <button onclick="resetProgress()" title="진행도 초기화">🔄</button>
         </div>
       </div>
       <div class="level-tabs">
@@ -1465,6 +1491,95 @@ if (levelParam === 'n5' || levelParam === 'n4') {
 
 loadProgress();
 render();
+</script>
+
+<!-- Firebase 동기화 -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgphZ8FIOMY6vMhcUbg8ZvqkpxxZ_untI",
+  authDomain: "jp-tutor-7a967.firebaseapp.com",
+  projectId: "jp-tutor-7a967",
+  storageBucket: "jp-tutor-7a967.firebasestorage.app",
+  messagingSenderId: "937449734884",
+  appId: "1:937449734884:web:7827046017d4496363a2f1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+window.firebaseUser = null;
+window.syncStatus = 'synced';
+
+window.handleLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    window.firebaseUser = result.user;
+    await downloadFromCloud();
+  } catch (e) { alert('로그인 실패'); }
+};
+
+window.handleLogout = async () => {
+  await signOut(auth);
+  window.firebaseUser = null;
+  document.getElementById('userDropdown')?.classList.remove('show');
+  render();
+};
+
+window.toggleUserMenu = () => {
+  document.getElementById('userDropdown')?.classList.toggle('show');
+};
+
+window.syncNow = async () => {
+  document.getElementById('userDropdown')?.classList.remove('show');
+  await uploadToCloud();
+  alert('동기화 완료!');
+};
+
+async function uploadToCloud() {
+  if (!window.firebaseUser) return;
+  window.syncStatus = 'syncing'; render();
+  const allData = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    allData[key] = localStorage.getItem(key);
+  }
+  await setDoc(doc(db, 'users', window.firebaseUser.uid), { data: allData, updatedAt: new Date().toISOString() });
+  window.syncStatus = 'synced'; render();
+}
+
+async function downloadFromCloud() {
+  if (!window.firebaseUser) return;
+  window.syncStatus = 'syncing';
+  const docSnap = await getDoc(doc(db, 'users', window.firebaseUser.uid));
+  if (docSnap.exists()) {
+    const cloudData = docSnap.data().data;
+    for (const [key, value] of Object.entries(cloudData)) localStorage.setItem(key, value);
+    location.reload();
+  }
+  window.syncStatus = 'synced';
+}
+
+let saveTimeout = null;
+window.autoSaveToCloud = () => {
+  if (!window.firebaseUser) return;
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(uploadToCloud, 3000);
+};
+
+onAuthStateChanged(auth, (user) => {
+  window.firebaseUser = user;
+  if (typeof render === 'function') render();
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
+});
 </script>
 </body>
 </html>

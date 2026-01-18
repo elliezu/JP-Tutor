@@ -67,12 +67,24 @@ body { font-family: 'Noto Sans JP', sans-serif; background: linear-gradient(135d
 .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem; border: none; background: none; color: #9ca3af; font-size: 0.7rem; cursor: pointer; text-decoration: none; min-width: 60px; }
 .nav-btn.active { color: #667eea; }
 .nav-btn span:first-child { font-size: 1.25rem; }
+/* 로그인 */
+.login-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; background: #667eea; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.8rem; color: white; }
+.user-info { display: flex; align-items: center; gap: 0.4rem; background: none; border: none; cursor: pointer; }
+.user-avatar { width: 1.75rem; height: 1.75rem; border-radius: 50%; }
+.user-name { font-size: 0.8rem; color: #374151; }
+.sync-icon { font-size: 0.75rem; color: #667eea; }
+.dropdown { position: relative; }
+.dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 140px; z-index: 200; display: none; }
+.dropdown-menu.show { display: block; }
+.dropdown-item { padding: 0.6rem 1rem; cursor: pointer; font-size: 0.85rem; color: #374151; }
+.dropdown-item:hover { background: #f3f4f6; }
 </style>
 </head>
 <body>
 <div class="container" style="padding-bottom: 70px;">
-  <div class="header">
+  <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
     <h1>📖 나의 단어장</h1>
+    <div id="loginArea"></div>
   </div>
   
   <div class="date-selector">
@@ -435,6 +447,86 @@ function closeQuiz() {
 // 초기 로드
 renderCards();
 </script>
+
+<!-- Firebase 동기화 -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgphZ8FIOMY6vMhcUbg8ZvqkpxxZ_untI",
+  authDomain: "jp-tutor-7a967.firebaseapp.com",
+  projectId: "jp-tutor-7a967",
+  storageBucket: "jp-tutor-7a967.firebasestorage.app",
+  messagingSenderId: "937449734884",
+  appId: "1:937449734884:web:7827046017d4496363a2f1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+function updateLoginUI(user) {
+  const area = document.getElementById('loginArea');
+  if (user) {
+    area.innerHTML = `
+      <div class="dropdown">
+        <button class="user-info" onclick="document.getElementById('userDropdown').classList.toggle('show')">
+          <img src="${user.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
+          <span class="user-name">${user.displayName?.split(' ')[0] || ''}</span>
+          <span class="sync-icon">✓</span>
+        </button>
+        <div class="dropdown-menu" id="userDropdown">
+          <div class="dropdown-item" onclick="window.syncNow()">🔄 동기화</div>
+          <div class="dropdown-item" onclick="window.handleLogout()">🚪 로그아웃</div>
+        </div>
+      </div>
+    `;
+  } else {
+    area.innerHTML = `<button class="login-btn" onclick="window.handleLogin()">🔐 로그인</button>`;
+  }
+}
+
+window.handleLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const docSnap = await getDoc(doc(db, 'users', result.user.uid));
+    if (docSnap.exists()) {
+      const cloudData = docSnap.data().data;
+      for (const [key, value] of Object.entries(cloudData)) localStorage.setItem(key, value);
+      location.reload();
+    }
+  } catch (e) { alert('로그인 실패'); }
+};
+
+window.handleLogout = async () => {
+  await signOut(auth);
+  document.getElementById('userDropdown')?.classList.remove('show');
+  updateLoginUI(null);
+};
+
+window.syncNow = async () => {
+  document.getElementById('userDropdown')?.classList.remove('show');
+  const user = auth.currentUser;
+  if (!user) return;
+  const allData = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    allData[key] = localStorage.getItem(key);
+  }
+  await setDoc(doc(db, 'users', user.uid), { data: allData, updatedAt: new Date().toISOString() });
+  alert('동기화 완료!');
+};
+
+onAuthStateChanged(auth, (user) => updateLoginUI(user));
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
+});
+</script>
+
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <a href="index.html" class="nav-btn"><span>🏠</span><span>홈</span></a>
