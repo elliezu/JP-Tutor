@@ -2129,6 +2129,37 @@ window.handleKnownCorrect = handleKnownCorrect;
 window.showKnownPopup = showKnownPopup;
 window.closeKnownPopup = closeKnownPopup;
 
+// ===== PWA 설치 안내 =====
+(function() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  const dismissed = localStorage.getItem('pwa_install_dismissed');
+  
+  if (!isStandalone && !dismissed) {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
+    if (isIOS || isAndroid) {
+      setTimeout(() => {
+        const popup = document.createElement('div');
+        popup.id = 'pwaInstallPopup';
+        popup.innerHTML = `
+          <div style="position:fixed;bottom:0;left:0;right:0;background:white;padding:1rem;box-shadow:0 -4px 20px rgba(0,0,0,0.15);z-index:9999;border-radius:1rem 1rem 0 0;">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <img src="icon-192.png" style="width:50px;height:50px;border-radius:12px;">
+              <div style="flex:1;">
+                <div style="font-weight:bold;font-size:0.95rem;">📱 앱으로 설치하기</div>
+                <div style="font-size:0.8rem;color:#666;">${isIOS ? '공유 버튼 → 홈 화면에 추가' : '메뉴 → 홈 화면에 추가'}</div>
+              </div>
+              <button onclick="document.getElementById('pwaInstallPopup').remove();localStorage.setItem('pwa_install_dismissed','1')" style="background:none;border:none;font-size:1.5rem;color:#999;cursor:pointer;">×</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(popup);
+      }, 2000);
+    }
+  }
+})();
+
 </script>
 </body>
 </html>
