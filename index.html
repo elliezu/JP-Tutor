@@ -308,7 +308,9 @@ window.handleLogout = async function() {
     
     // 게스트 프로필로 초기화
     currentProfile = '게스트';
+    profiles = ['게스트'];
     localStorage.setItem('currentProfile', '게스트');
+    localStorage.setItem('profiles', '["게스트"]');
     state.userData = loadUserData();
     
     document.getElementById('userDropdown')?.classList.remove('show');
@@ -562,7 +564,9 @@ function checkInactivity() {
       
       // 게스트 프로필로 초기화
       currentProfile = '게스트';
+      profiles = ['게스트'];
       localStorage.setItem('currentProfile', '게스트');
+      localStorage.setItem('profiles', '["게스트"]');
       state.userData = loadUserData();
       
       alert('⏰ 5분간 입력이 없어 자동 로그아웃되었습니다.\n다시 로그인해주세요.');
