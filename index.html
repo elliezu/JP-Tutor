@@ -348,6 +348,13 @@ window.autoSaveToCloud = function() {
     uploadToCloud();
   }, 3000); // 3초 후 저장
 };
+
+// firebaseUser를 window에 노출
+window.getFirebaseUser = () => firebaseUser;
+window.getSyncStatus = () => syncStatus;
+</script>
+
+<script>
 // ===== 데이터 =====
 const HIRAGANA = {
   'あ행': [
@@ -1326,12 +1333,15 @@ function render() {
 }
 
 function renderHeader() {
-  const userHtml = firebaseUser ? `
+  const user = window.getFirebaseUser ? window.getFirebaseUser() : null;
+  const status = window.getSyncStatus ? window.getSyncStatus() : 'synced';
+  
+  const userHtml = user ? `
     <div class="dropdown">
       <button class="user-info" onclick="toggleUserMenu()" style="background:none;border:none;cursor:pointer;">
-        <img src="${firebaseUser.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
-        <span class="user-name">${firebaseUser.displayName || '사용자'}</span>
-        <span class="sync-status ${syncStatus}">${syncStatus === 'synced' ? '✓동기화됨' : '⟳동기화중'}</span>
+        <img src="${user.photoURL || ''}" class="user-avatar" onerror="this.style.display='none'">
+        <span class="user-name">${user.displayName || '사용자'}</span>
+        <span class="sync-status ${status}">${status === 'synced' ? '✓' : '⟳'}</span>
       </button>
       <div class="dropdown-menu" id="userDropdown">
         <div class="dropdown-item" onclick="syncNow()">🔄 지금 동기화</div>
@@ -1355,6 +1365,8 @@ function renderHeader() {
           ${profiles.map(p => `<option value="${p}" ${p===currentProfile?'selected':''}>${p}</option>`).join('')}
         </select>
         <button onclick="addProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 추가">➕</button>
+        <button onclick="deleteProfile()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="프로필 삭제">🗑️</button>
+        <button onclick="resetAll()" style="background:none;border:none;cursor:pointer;font-size:1rem;" title="데이터 초기화">🔄</button>
       </div>
     </div>
     <div class="header-tabs">
