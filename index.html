@@ -538,18 +538,33 @@ async function checkCloudSync() {
   }
 }
 
-// 탭 활성화 시 체크
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') checkCloudSync();
+// 5분 무입력 시 자동 로그아웃
+let inactivityTimer = null;
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  if (firebaseUser) {
+    inactivityTimer = setTimeout(async () => {
+      if (firebaseUser) {
+        await signOut(auth);
+        firebaseUser = null;
+        alert('⏰ 5분간 입력이 없어 자동 로그아웃되었습니다.\n다시 로그인해주세요.');
+        render();
+      }
+    }, 5 * 60 * 1000); // 5분
+  }
+}
+
+// 입력 이벤트에서 타이머 리셋
+['click', 'keydown', 'touchstart', 'pointerdown'].forEach(event => {
+  document.addEventListener(event, resetInactivityTimer);
 });
 
-// 창 포커스 시 체크 (탭이 계속 보여도 다른 창 갔다 오면 작동)
-window.addEventListener('focus', checkCloudSync);
-
-// 5분마다 자동 체크 (창이 계속 활성 상태일 때)
-setInterval(() => {
-  if (document.visibilityState === 'visible') checkCloudSync();
-}, 5 * 60 * 1000);
+// 로그인 시 타이머 시작
+const originalHandleLogin = window.handleLogin;
+window.handleLogin = async function() {
+  await originalHandleLogin();
+  resetInactivityTimer();
+};
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
