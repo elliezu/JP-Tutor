@@ -2304,6 +2304,7 @@ function checkAnswer(answer) {
 // ===== Nav =====
 function setMainTab(tab) { state.mainTab = tab; render(); }
 function setActiveTab(tab) {
+  state.mainTab = 'kana'; // 가나마스터 탭으로 전환
   state.activeTab = tab; state.freeMode = tab === 'free';
   if (tab === 'write') {
     const progress = state.userData.writingProgress[state.writingKana] || { count: 0 };
