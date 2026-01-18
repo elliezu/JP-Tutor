@@ -1602,12 +1602,12 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) document.getElementById('userDropdown')?.classList.remove('show');
 });
 
-// 페이지 숨겨질 때 저장
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden' && window.firebaseUser) {
-    uploadToCloud();
-  }
-});
+// 페이지 숨겨질 때 저장 - 임시 비활성화
+// document.addEventListener('visibilitychange', () => {
+//   if (document.visibilityState === 'hidden' && window.firebaseUser) {
+//     uploadToCloud();
+//   }
+// });
 </script>
 </body>
 </html>

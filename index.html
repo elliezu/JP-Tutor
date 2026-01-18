@@ -396,20 +396,19 @@ window.autoSaveToCloud = function() {
   }, 3000); // 3초 후 저장
 };
 
-// 페이지 떠날 때 즉시 저장
-window.addEventListener('beforeunload', () => {
-  if (firebaseUser && saveTimeout) {
-    clearTimeout(saveTimeout);
-    // 동기 방식으로 저장 시도 (navigator.sendBeacon 사용 불가하므로 localStorage만 확실히 저장)
-  }
-});
+// 페이지 떠날 때 즉시 저장 - 임시 비활성화
+// window.addEventListener('beforeunload', () => {
+//   if (firebaseUser && saveTimeout) {
+//     clearTimeout(saveTimeout);
+//   }
+// });
 
-// 페이지 숨겨질 때 저장 (모바일 등)
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden' && firebaseUser) {
-    uploadToCloud();
-  }
-});
+// 페이지 숨겨질 때 저장 - 임시 비활성화
+// document.addEventListener('visibilitychange', () => {
+//   if (document.visibilityState === 'hidden' && firebaseUser) {
+//     uploadToCloud();
+//   }
+// });
 
 // firebaseUser를 window에 노출
 window.getFirebaseUser = () => firebaseUser;
