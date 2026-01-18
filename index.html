@@ -1257,31 +1257,7 @@ const TOTAL_PRACTICE = 50;
 const CANVAS_PER_SET = 5;
 const TOTAL_SETS = 10;
 
-// ===== State =====
-let state = {
-  mainTab: 'kana',
-  activeTab: 'home',
-  currentType: 'hiragana',
-  currentRow: 'あ행',
-  writingKana: 'あ',
-  userData: loadUserData(),
-  practiceMode: 'big',
-  currentSet: 1,
-  smallCanvases: [],
-  activeSmallIndex: 0,
-  freeMode: false,
-  bigPaths: [],
-  bigCurrentPath: [],
-  bigStrokeCount: 0,
-  bigIsDrawing: false,
-  showComplete: false,
-  quizMode: 'recognize',
-  currentQuiz: null,
-  showResult: false,
-  isCorrect: false,
-};
-
-// 프로필 관리
+// 프로필 관리 (state 초기화 전에 먼저 정의해야 함!)
 let currentProfile = localStorage.getItem('currentProfile') || '기본';
 let profiles = JSON.parse(localStorage.getItem('profiles') || '["기본"]');
 
@@ -1306,6 +1282,30 @@ function saveUserData() {
     if (window.autoSaveToCloud) window.autoSaveToCloud();
   } catch(e) {}
 }
+
+// ===== State =====
+let state = {
+  mainTab: 'kana',
+  activeTab: 'home',
+  currentType: 'hiragana',
+  currentRow: 'あ행',
+  writingKana: 'あ',
+  userData: loadUserData(),
+  practiceMode: 'big',
+  currentSet: 1,
+  smallCanvases: [],
+  activeSmallIndex: 0,
+  freeMode: false,
+  bigPaths: [],
+  bigCurrentPath: [],
+  bigStrokeCount: 0,
+  bigIsDrawing: false,
+  showComplete: false,
+  quizMode: 'recognize',
+  currentQuiz: null,
+  showResult: false,
+  isCorrect: false,
+};
 
 function switchProfile(name) {
   currentProfile = name;
