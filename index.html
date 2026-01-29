@@ -2437,9 +2437,15 @@ function drawBigCanvas() {
 function completeBigCanvas() {
   playSound(state.writingKana);
   const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
+  const wasPassed = progress.passed;
   progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
   state.userData.writingProgress[state.writingKana] = progress;
-  state.userData.todayWritten++; checkLevel(); saveUserData();
+  
+  // 이미 통과한 글자 재연습은 미션 카운트 안 함
+  if (!wasPassed) {
+    state.userData.todayWritten++;
+  }
+  checkLevel(); saveUserData();
   document.getElementById('bigMessage')?.classList.remove('hidden');
   setTimeout(() => {
     if (progress.count >= TOTAL_PRACTICE) { state.showComplete = true; render(); return; }
@@ -2500,9 +2506,15 @@ function drawSmallCanvas(i) {
 function completeSmallCanvas(i) {
   state.smallCanvases[i].done = true; playSound(state.writingKana);
   const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
+  const wasPassed = progress.passed;
   progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
   state.userData.writingProgress[state.writingKana] = progress;
-  state.userData.todayWritten++; checkLevel(); saveUserData();
+  
+  // 이미 통과한 글자 재연습은 미션 카운트 안 함
+  if (!wasPassed) {
+    state.userData.todayWritten++;
+  }
+  checkLevel(); saveUserData();
   
   // 아직 세트 내 남은 칸이 있으면 다음 칸으로
   if (i < CANVAS_PER_SET - 1) { 
