@@ -1531,6 +1531,7 @@ let state = {
   bigStrokeCount: 0,
   bigIsDrawing: false,
   showComplete: false,
+  showMissionComplete: false,
   quizMode: 'recognize',
   currentQuiz: null,
   showResult: false,
@@ -1626,6 +1627,7 @@ function render() {
       <main>${state.mainTab === 'kana' ? (state.activeTab === 'home' ? renderHome() : state.activeTab === 'write' ? renderWrite() : state.activeTab === 'free' ? renderFree() : renderQuiz()) : renderAdvanced()}</main>
       ${renderNav()}
       ${state.showComplete ? renderCompletePopup() : ''}
+      ${state.showMissionComplete ? renderMissionCompletePopup() : ''}
     </div>
   `;
   bindEvents();
@@ -2377,7 +2379,7 @@ function renderCompletePopup() {
   const nextKana = getNextKana();
   const info = getKanaInfo(state.writingKana);
   const user = window.getFirebaseUser ? window.getFirebaseUser() : null;
-  const saveBtn = user ? `<button class="btn btn-full mb-2" style="background:#4CAF50;color:white;" onclick="saveToCloud();closeComplete();">☁️ 학습 저장하기</button>` : '';
+  const saveBtn = user ? `<button class="btn btn-full mb-2" style="background:#4CAF50;color:white;" onclick="saveAndGoNext()">☁️ 학습 저장하기</button>` : '';
   return `<div class="modal-overlay"><div class="modal-content">
     <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
     <div class="text-2xl font-bold text-gray-800 mb-2">축하해요!</div>
@@ -2388,6 +2390,18 @@ function renderCompletePopup() {
     <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="goHome()">홈으로</button>
   </div></div>`;
 }
+
+function renderMissionCompletePopup() {
+  return `<div class="modal-overlay"><div class="modal-content">
+    <div style="font-size:4rem;margin-bottom:1rem;">🏆</div>
+    <div class="text-2xl font-bold text-gray-800 mb-2">오늘의 미션 달성!</div>
+    <div class="text-lg text-indigo-600 mb-4">250번 따라쓰기 완료!<br><span class="font-bold">대단해요! 🎉</span></div>
+    <button class="btn btn-primary btn-full mb-2" onclick="closeMissionComplete()">계속 연습하기</button>
+    <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="closeMissionComplete();goHome();">홈으로</button>
+  </div></div>`;
+}
+
+function closeMissionComplete() { state.showMissionComplete = false; render(); }
 
 // ===== Canvas =====
 function initBigCanvas() {
@@ -2503,15 +2517,22 @@ function completeSmallCanvas(i) {
   state.userData.writingProgress[state.writingKana] = progress;
   
   // 이미 통과한 글자 재연습은 미션 카운트 안 함 + 250 달성 후 카운트 안 함
-  if (!wasPassed && state.userData.todayWritten < 250) {
+  const justCompletedMission = !wasPassed && state.userData.todayWritten < 250;
+  if (justCompletedMission) {
     state.userData.todayWritten++;
   }
+  const missionComplete = state.userData.todayWritten === 250 && justCompletedMission;
   checkLevel(); saveUserData();
   
   // 아직 세트 내 남은 칸이 있으면 다음 칸으로
   if (i < CANVAS_PER_SET - 1) { 
     state.activeSmallIndex = i + 1; 
-    render(); 
+    // 250 미션 달성 시 팝업
+    if (missionComplete) {
+      setTimeout(() => { state.showMissionComplete = true; render(); }, 300);
+    } else {
+      render();
+    }
     return;
   }
   
@@ -2523,6 +2544,10 @@ function completeSmallCanvas(i) {
       state.currentSet++; 
       state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false})); 
       state.activeSmallIndex = 0; 
+      // 250 미션 달성 시 팝업
+      if (missionComplete) {
+        state.showMissionComplete = true;
+      }
       render(); 
     }, 500); 
   }
@@ -2641,6 +2666,15 @@ function goToNextKana(kana) {
   state.activeSmallIndex = 0; resetBigCanvas(); render();
 }
 function closeComplete() { state.showComplete = false; render(); }
+function saveAndGoNext() {
+  saveToCloud();
+  const nextKana = getNextKana();
+  if (nextKana) {
+    goToNextKana(nextKana);
+  } else {
+    closeComplete();
+  }
+}
 function goHome() { state.showComplete = false; state.activeTab = 'home'; render(); }
 function resetAll() { if (confirm('"' + currentProfile + '" 프로필의 모든 데이터를 초기화할까요?')) { localStorage.removeItem(getStorageKey()); location.reload(); } }
 function bindEvents() {}
