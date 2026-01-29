@@ -1491,8 +1491,8 @@ const TOTAL_SETS = 10;
 let currentProfile = localStorage.getItem('currentProfile') || '게스트';
 let profiles = JSON.parse(localStorage.getItem('profiles') || '["게스트"]');
 
-// 테스트용 미션 목표 (나중에 250으로 변경)
-const DAILY_MISSION_GOAL = 5;
+// 미션 목표
+const DAILY_MISSION_GOAL = 250;
 
 function getStorageKey() {
   return 'kanaDataV10_' + currentProfile;
