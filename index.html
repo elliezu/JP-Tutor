@@ -2436,18 +2436,10 @@ function drawBigCanvas() {
 
 function completeBigCanvas() {
   playSound(state.writingKana);
-  const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
-  const wasPassed = progress.passed;
-  progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
-  state.userData.writingProgress[state.writingKana] = progress;
-  
-  // 이미 통과한 글자 재연습은 미션 카운트 안 함
-  if (!wasPassed) {
-    state.userData.todayWritten++;
-  }
-  checkLevel(); saveUserData();
+  // 큰 캔버스는 가이드용이므로 카운트/미션에 포함 안 함
   document.getElementById('bigMessage')?.classList.remove('hidden');
   setTimeout(() => {
+    const progress = state.userData.writingProgress[state.writingKana] || { count: 0, passed: false };
     if (progress.count >= TOTAL_PRACTICE) { state.showComplete = true; render(); return; }
     state.practiceMode = 'small'; state.currentSet = 1;
     state.smallCanvases = Array(CANVAS_PER_SET).fill(null).map(() => ({done:false,paths:[],currentPath:[],isDrawing:false}));
