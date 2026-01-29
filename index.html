@@ -2502,8 +2502,8 @@ function completeSmallCanvas(i) {
   progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
   state.userData.writingProgress[state.writingKana] = progress;
   
-  // 이미 통과한 글자 재연습은 미션 카운트 안 함
-  if (!wasPassed) {
+  // 이미 통과한 글자 재연습은 미션 카운트 안 함 + 250 달성 후 카운트 안 함
+  if (!wasPassed && state.userData.todayWritten < 250) {
     state.userData.todayWritten++;
   }
   checkLevel(); saveUserData();
