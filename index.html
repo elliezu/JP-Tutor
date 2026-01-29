@@ -1506,7 +1506,7 @@ function loadUserData() {
 }
 
 function getDefaultData() {
-  return { writingProgress: {}, todayWritten: 0, lastDate: null, totalReviews: 0, correctAnswers: 0, level: 1 };
+  return { writingProgress: {}, todayWritten: 0, currentRound: 1, lastDate: null, totalReviews: 0, correctAnswers: 0, level: 1 };
 }
 
 function saveUserData() {
@@ -1689,14 +1689,20 @@ function renderHeader() {
 }
 
 function renderHome() {
+  const round = state.userData.currentRound || 1;
+  const missionDone = state.userData.todayWritten >= DAILY_MISSION_GOAL;
   return `<div style="padding:1rem;">
     <div class="card card-gradient" style="margin-bottom:1rem;">
       <div class="flex justify-between items-center mb-2">
-        <div><div class="font-bold text-lg">🔥 오늘의 연습</div><div class="text-sm" style="opacity:0.8">Lv.${state.userData.level}</div></div>
+        <div><div class="font-bold text-lg">🔥 ${round}회차 학습</div><div class="text-sm" style="opacity:0.8">Lv.${state.userData.level}</div></div>
         <div class="text-center"><div class="text-3xl font-bold">${state.userData.todayWritten}</div><div class="text-xs" style="opacity:0.7">/ ${DAILY_MISSION_GOAL}</div></div>
       </div>
       <div class="progress-bg mb-3"><div class="progress-fill" style="width:${Math.min(100, (state.userData.todayWritten / DAILY_MISSION_GOAL) * 100)}%"></div></div>
-      <button class="btn btn-white btn-full font-bold" onclick="setActiveTab('write')">미션 따라쓰기 →</button>
+      ${missionDone 
+        ? `<div class="text-center mb-2" style="color:#fff;font-weight:bold;">🏆 ${round}회차 완료!</div>
+           <button class="btn btn-white btn-full font-bold mb-2" onclick="startNextRound()">다음 미션 시작 →</button>
+           <button class="btn btn-full font-bold" style="background:rgba(255,255,255,0.3);color:#fff;" onclick="setActiveTab('write')">계속 연습하기</button>`
+        : `<button class="btn btn-white btn-full font-bold" onclick="setActiveTab('write')">미션 따라쓰기 →</button>`}
     </div>
     <button class="card btn-full flex items-center gap-3" style="text-align:left;cursor:pointer;" onclick="setActiveTab('free')">
       <span class="text-3xl">📓</span>
@@ -2395,16 +2401,25 @@ function renderCompletePopup() {
 }
 
 function renderMissionCompletePopup() {
+  const round = state.userData.currentRound || 1;
   return `<div class="modal-overlay"><div class="modal-content">
     <div style="font-size:4rem;margin-bottom:1rem;">🏆</div>
-    <div class="text-2xl font-bold text-gray-800 mb-2">오늘의 미션 달성!</div>
+    <div class="text-2xl font-bold text-gray-800 mb-2">${round}회차 미션 달성!</div>
     <div class="text-lg text-indigo-600 mb-4">${DAILY_MISSION_GOAL}번 따라쓰기 완료!<br><span class="font-bold">대단해요! 🎉</span></div>
-    <button class="btn btn-primary btn-full mb-2" onclick="closeMissionComplete()">계속 연습하기</button>
+    <button class="btn btn-primary btn-full mb-2" onclick="closeMissionComplete();startNextRound();">다음 미션 시작 →</button>
+    <button class="btn btn-gray btn-full mb-2" onclick="closeMissionComplete()">계속 연습하기</button>
     <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="closeMissionComplete();goHome();">홈으로</button>
   </div></div>`;
 }
 
 function closeMissionComplete() { state.showMissionComplete = false; render(); }
+
+function startNextRound() {
+  state.userData.currentRound = (state.userData.currentRound || 1) + 1;
+  state.userData.todayWritten = 0;
+  saveUserData();
+  render();
+}
 
 // ===== Canvas =====
 function initBigCanvas() {
@@ -2739,7 +2754,14 @@ document.addEventListener('dblclick', function(e) {
 
 // ===== Init =====
 const today = new Date().toDateString();
-if (state.userData.lastDate !== today) { state.userData.todayWritten = 0; state.userData.lastDate = today; saveUserData(); }
+if (state.userData.lastDate !== today) { 
+  state.userData.todayWritten = 0; 
+  state.userData.currentRound = 1;
+  state.userData.lastDate = today; 
+  saveUserData(); 
+}
+// 기존 데이터에 currentRound 없으면 추가
+if (!state.userData.currentRound) { state.userData.currentRound = 1; }
 checkLevel(); render();
 
 // ===== PWA 설치 안내 =====
