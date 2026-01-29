@@ -1491,6 +1491,9 @@ const TOTAL_SETS = 10;
 let currentProfile = localStorage.getItem('currentProfile') || '게스트';
 let profiles = JSON.parse(localStorage.getItem('profiles') || '["게스트"]');
 
+// 테스트용 미션 목표 (나중에 250으로 변경)
+const DAILY_MISSION_GOAL = 5;
+
 function getStorageKey() {
   return 'kanaDataV10_' + currentProfile;
 }
@@ -1690,9 +1693,9 @@ function renderHome() {
     <div class="card card-gradient" style="margin-bottom:1rem;">
       <div class="flex justify-between items-center mb-2">
         <div><div class="font-bold text-lg">🔥 오늘의 연습</div><div class="text-sm" style="opacity:0.8">Lv.${state.userData.level}</div></div>
-        <div class="text-center"><div class="text-3xl font-bold">${state.userData.todayWritten}</div><div class="text-xs" style="opacity:0.7">/ 250</div></div>
+        <div class="text-center"><div class="text-3xl font-bold">${state.userData.todayWritten}</div><div class="text-xs" style="opacity:0.7">/ ${DAILY_MISSION_GOAL}</div></div>
       </div>
-      <div class="progress-bg mb-3"><div class="progress-fill" style="width:${Math.min(100, (state.userData.todayWritten / 250) * 100)}%"></div></div>
+      <div class="progress-bg mb-3"><div class="progress-fill" style="width:${Math.min(100, (state.userData.todayWritten / DAILY_MISSION_GOAL) * 100)}%"></div></div>
       <button class="btn btn-white btn-full font-bold" onclick="setActiveTab('write')">미션 따라쓰기 →</button>
     </div>
     <button class="card btn-full flex items-center gap-3" style="text-align:left;cursor:pointer;" onclick="setActiveTab('free')">
@@ -2395,7 +2398,7 @@ function renderMissionCompletePopup() {
   return `<div class="modal-overlay"><div class="modal-content">
     <div style="font-size:4rem;margin-bottom:1rem;">🏆</div>
     <div class="text-2xl font-bold text-gray-800 mb-2">오늘의 미션 달성!</div>
-    <div class="text-lg text-indigo-600 mb-4">250번 따라쓰기 완료!<br><span class="font-bold">대단해요! 🎉</span></div>
+    <div class="text-lg text-indigo-600 mb-4">${DAILY_MISSION_GOAL}번 따라쓰기 완료!<br><span class="font-bold">대단해요! 🎉</span></div>
     <button class="btn btn-primary btn-full mb-2" onclick="closeMissionComplete()">계속 연습하기</button>
     <button style="background:none;border:none;color:#9ca3af;cursor:pointer;" onclick="closeMissionComplete();goHome();">홈으로</button>
   </div></div>`;
@@ -2516,18 +2519,18 @@ function completeSmallCanvas(i) {
   progress.count++; if (progress.count >= TOTAL_PRACTICE) progress.passed = true;
   state.userData.writingProgress[state.writingKana] = progress;
   
-  // 이미 통과한 글자 재연습은 미션 카운트 안 함 + 250 달성 후 카운트 안 함
-  const justCompletedMission = !wasPassed && state.userData.todayWritten < 250;
+  // 이미 통과한 글자 재연습은 미션 카운트 안 함 + 미션 달성 후 카운트 안 함
+  const justCompletedMission = !wasPassed && state.userData.todayWritten < DAILY_MISSION_GOAL;
   if (justCompletedMission) {
     state.userData.todayWritten++;
   }
-  const missionComplete = state.userData.todayWritten === 250 && justCompletedMission;
+  const missionComplete = state.userData.todayWritten === DAILY_MISSION_GOAL && justCompletedMission;
   checkLevel(); saveUserData();
   
   // 아직 세트 내 남은 칸이 있으면 다음 칸으로
   if (i < CANVAS_PER_SET - 1) { 
     state.activeSmallIndex = i + 1; 
-    // 250 미션 달성 시 팝업
+    // 미션 달성 시 팝업
     if (missionComplete) {
       setTimeout(() => { state.showMissionComplete = true; render(); }, 300);
     } else {
